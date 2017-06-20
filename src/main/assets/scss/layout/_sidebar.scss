@@ -1,0 +1,446 @@
+/* ----------------------------------------------
+ * 移动优先页面框架布局 -- 侧边栏
+ * ---------------------------------------------- */
+.sidebar{
+  position: absolute;
+  width: 220px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1051;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background-color: #2e3e50;
+  @include transition( width .2s cubic-bezier(.35,0,.25,1));
+
+  // 小屏幕隐藏
+  @include responsive-mobile(){
+    margin-left: 0;
+    @include translate3d(-$sidebar_width, 0, 0);
+    @include transition( transform .3s ease );
+  }
+
+  @include responsive-sm(){
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
+}
+
+// 头部左侧Logo位置
+.navbar-header{
+  @extend %topbarbg;
+  position: relative;
+  background: #2e3e50!important;
+
+  // Logo
+  .navbar-brand{
+    padding: 0;
+    float: none;
+
+    .brand-logo {
+      display: block;
+      text-align: center;
+      color: $white-1;
+      font-size: 18px;
+      //height: 49px;
+      line-height: 49px;
+      //padding-left: 24px;
+      @include fadeIn();
+      padding:30px 0;
+
+      @include responsive-sm(){
+        border-bottom: 1px solid lighten($sidebar_bg, 10%);
+      }
+
+      img{
+        margin: 0 auto;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+      }
+      span{
+        display: inline-block;
+        width: 100%;
+        font-size: 16px;
+        padding-bottom: 20px;
+      }
+      hr{
+        display: block;
+        width: 60%;
+        margin: 0 auto;
+        //background-color:transparent;
+        background: linear-gradient(left,rgba(83, 83, 83, 0.17),#000000,rgba(83, 83, 83, 0.17));
+        background: -webkit-linear-gradient(left,rgba(83, 83, 83, 0.17),#000000,rgba(83, 83, 83, 0.17));
+        //background: -moz-linear-gradient(left,rgba(83, 83, 83, 0.17),#000000,rgba(83, 83, 83, 0.17));
+        //background: -ms-linear-gradient(left,rgba(83, 83, 83, 0.17),#000000,rgba(83, 83, 83, 0.17));
+        box-shadow: 0 -1px 1px rgba(122, 121, 121, 0.63);
+      }
+    }
+  }
+
+  @include responsive-sm(){
+    background: $sidebar_bg no-repeat;
+    filter: none;
+    width: $sidebar_width;
+    text-align: center;
+
+    &:before,&:after{
+      display: none;
+    }
+
+    .navbar-brand{ width: 100%; }
+  }
+}
+
+.sidebar .sidebar-inner{
+  width: 100%;
+  height: 100%;
+  padding-top: 100px;
+  overflow: hidden;
+  position: relative;
+  @include transition( width .2s cubic-bezier(.35,0,.25,1));
+
+  @include responsive-sm(){
+    padding-top: 50px;
+  }
+}
+
+.sidebar{
+  nav{
+    padding-bottom: 36px;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    /*border-top: 1px solid lighten($sidebar_bg, 10%);*/
+
+    &::before, &::after{
+      @include clearfix();
+    }
+  }
+
+  nav ul{
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li{
+      position: relative;
+      display: block;
+      /*border-left: 3px solid transparent;*/
+      @include transition(border-left-color .4s ease);
+    }
+
+    &::before, &::after{
+      @include clearfix();
+    }
+  }
+
+  // -----------------
+  // 菜单内容
+  ul li a{
+    position: relative;
+    display: block;
+    padding: 12px 24px 12px 60px;
+    color: $sidebar_item_color;
+    letter-spacing: .025em;
+    font-weight: 400;
+    cursor: pointer;
+    white-space: nowrap;
+    @include fadeInLeft(0.5s);
+
+    .label{
+      @include fadeInRight(0.5s);
+    }
+
+    em{
+      font-size: 20px;
+      width: 1.5em;
+      display: inline-block;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      color: $sidebar_icon_color;
+      vertical-align: middle;
+    }
+
+    span{
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    i.fa-angle-down{
+      @include font-size(18px);
+      margin-top: 2px;
+      position: absolute;
+      top: 12px;
+      right: 24px;
+    }
+
+    @include responsive-sm(){
+      .label{
+        margin: 2px 0 0;
+
+      }
+    }
+
+    &:hover{
+      background: lighten($sidebar_bg, 10%);
+
+      em{ color: $white-1; }
+    }
+  }
+
+  // -----------------
+  // 菜单分类
+  .nav-heading{
+    padding: 12px 15px;
+    color: #919da8;
+    font-size: 13px;
+    letter-spacing: .035em;
+    pointer-events: none;
+    cursor: default;
+    white-space: nowrap;
+
+    @include fadeIn();
+  }
+}
+
+// -----------------
+// 二级菜单
+.sidebar .sidebar-subnav{
+  background-color: $sidebar_bg;
+
+  li{
+    border-left: none !important;
+
+    a{
+      display: block;
+      position: relative;
+      padding: 10px 20px 10px 92px;
+      font-weight: 400;
+
+      span{
+        color: #fff!important;
+      }
+    }
+  }
+
+  .sidebar-subnav-header{
+    color: #515253;
+    display: none;
+    padding: 10px 20px;
+    font-weight: 700;
+  }
+}
+
+.sidebar .sidebar-subnav.subnav-floating{
+  li a{
+    color: $text_primary;
+
+    &:hover{
+      background: $light-1 !important;
+    }
+  }
+}
+
+
+
+// -----------------
+// 菜单激活
+%menu-active{
+  background-color: $topbar_color;
+}
+
+.sidebar ul li.active{
+  /*border-left-color: $topbar_color;*/
+  //@extend %menu-active;
+
+  &>a{
+    @extend %menu-active;
+    background: #243140;
+    border-left:5px solid #4ba9e1;
+    padding-left:55px;
+
+    em{ color: $white-1; }
+  }
+
+  &>a.sidebar-group{
+    background-color: darken($sidebar_bg, 10%);
+    border-left: 0 none;
+    padding-left:60px;
+  }
+}
+
+.sidebar .sidebar-subnav.subnav-floating li.active{
+  a{
+    background-color: $light-1;
+
+    &:hover{
+      background: lighten($sidebar_bg, 10%);
+    }
+  }
+}
+.sidebar-subnav{
+  li{
+    &.active{
+      a{
+        padding-left: 88px!important;
+      }
+    }
+  }
+}
+
+// -----------------
+// 小屏幕菜单展开
+.sidebar-open{
+  .sidebar{
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+// -----------------
+// 大屏幕菜单收起
+.sidebar-collapsed{
+  .sidebar{
+    width: $sidebar_collapse_width;
+  }
+
+  .sidebar .sidebar-inner{
+    li.nav-heading{
+      display: none;
+    }
+
+    li a{
+      text-indent: -3px;
+      padding: 20px 0;
+      text-align: center;
+
+      .pull-right,
+      span{
+        display: none;
+      }
+
+      i,em{
+        font-size: 1.4em;
+      }
+    }
+
+    // 二级菜单隐藏不显示
+    .sidebar-subnav{
+      display: none;
+    }
+  }
+}
+
+// -----------------
+// 二级菜单浮动
+.sidebar-collapsed .sidebar .sidebar-subnav.subnav-floating{
+  display: block;
+  position: absolute;
+  left: 69px;
+  top: 50px;
+  z-index: 1110;
+  min-width: 200px;
+  height: auto;
+  overflow: auto;
+  @include border();
+  background-color: $white-1;
+
+  .sidebar-subnav-header{
+    display: block;
+    background-color: #fcfcfc;
+    @include border(bottom);
+  }
+
+  li a{
+    padding-left: 30px;
+  }
+}
+
+@media screen and (min-width: 768px){
+  .sidebar-inner{
+    padding-top:0!important;
+
+    .navbar-header{
+      width: 100%;
+    }
+  }
+  .content-wrapper{
+    left: 220px!important;
+  }
+  .brand-logo{
+    border-bottom:0 none!important;
+  }
+  .sidebar-collapsed{
+    .content-wrapper{
+      left:70px!important;
+    }
+    .sidebar-toggle {
+      left: 90px!important;
+    }
+    .sidebar{
+      ul{
+        li.active{
+          &>a.sidebar-group{
+            padding-left:0;
+          }
+        }
+      }
+      .sidebar-inner{
+        li{
+          a{
+            i{
+              transform: rotate(-90deg);
+              right: 10px;
+              top: 17px;
+            }
+          }
+        }
+      }
+    }
+    .sidebar-subnav.subnav-floating{
+      //overflow: scroll!important;
+      border: 1px solid #12161a!important;
+      background-color: #2e3e50!important;
+
+      .sidebar-subnav-header{
+        border-bottom: 1px solid #12161a!important;
+        background-color: #2e3e50!important;
+        color: #fff;
+      }
+      li.active{
+        a{
+          background: #2e3e50;
+          padding-left: 25px!important;
+        }
+      }
+    }
+    .brand-logo{
+      line-height: 30px!important;
+
+      img{
+        width: 40px!important;
+        height: 40px!important;
+      }
+      span{
+        font-size: 12px!important;
+      }
+    }
+
+  }
+}
+@media screen and (max-width: 767px){
+  .sidebar{
+    transform: translate(-220px,0);
+  }
+  .sidebar-toggle{
+    display: none;
+  }
+  .sidebar-inner{
+    padding-top:0!important;
+  }
+}

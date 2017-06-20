@@ -1,0 +1,72 @@
+@import "../../imports";
+@import "tpl";
+
+$background-color: #23b7e5;
+
+.navbar-inverse,.jumbotron,.row.nav,.sider {
+  @include responsive-mobile(){
+    display: none;
+  }
+}
+
+.nav {
+  font-size: 14px;
+  a {
+    color: #333;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+}
+
+.sider{
+  border-right: 1px solid #d7d8d9;
+  padding-right: 0;
+  .sider-title {
+    padding: 10px 18px 10px 18px;
+    color: #777;
+    font-size: 18px;
+  }
+  .active {
+    font-weight: bold;
+  }
+  a {
+    display: block;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: auto;
+    line-height: inherit;
+    color: #444;
+    padding: 10px 18px 10px 18px;
+    &:hover {
+      background-color: #f3f3f3;
+    }
+  }
+}
+
+.ico{
+  width: 3px;
+  height: 100%;
+  background-color: $background-color;
+
+}
+.padding{
+  margin-top: 50px;
+  margin-bottom: 80px;
+  ul {
+    padding-left: 30px;
+    li {
+      font-size: 13px;
+      line-height: 24px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      list-style: none;
+      a {
+        color: $background-color;
+      }
+    }
+  }
+}
+
+.linkTitle {
+  padding-left: 30px;
+}

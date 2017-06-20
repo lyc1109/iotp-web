@@ -1,0 +1,87 @@
+@import "../../imports";
+@import "tpl";
+
+.jumbotron {
+  background-color: #2c2e3a;
+  color: #fff;
+  font-family: Montserrat, sans-serif;
+  padding-top: 100px;
+}
+#allCategory{
+  position:absolute;z-index: 999;
+  border: solid 1px #5bc0de;
+  width: 250px;
+  padding: 5px;
+  background-color: aliceblue;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+#sider-left{
+  margin-right: 10px;
+  padding: 0px;
+  background-color: #fffdef;
+
+}
+#nav-wrap{
+  overflow: hidden;
+}
+#helpnav{
+  overflow: hidden; position: relative; max-height: 624px;
+  overflow-y: scroll;
+  width: 212px;
+
+}
+#helpnav span{
+  margin: 0 10px;
+  font-size: 14px;
+  color: #999;
+  line-height: 45px;
+  display: block;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-bottom: dashed 1px #dfe3e6;
+}
+#helpnav ul{
+  padding: 5px 0px;
+  margin: 0px;
+  border-left: 4px solid #fffdef;
+}
+#helpnav li{
+  display: block;
+}
+#helpnav li a{
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 0 10px;
+  text-decoration: none;
+  color: #333;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+#helpnav ul:hover{
+  background-color: white;
+  border-left: 4px solid #5bc0de;
+}
+#helpnav ul.active{
+  background-color: white;
+  border-left: 4px solid #5bc0de;
+  font-weight: bold;
+}
+
+table a{
+  color: #5bc0de;
+}
+td{
+  font-size: 1.1em;
+}
+@media only screen and (max-width: 767px) {
+  #nav-wrap {
+    display: none;
+  }
+  .table {
+    margin-top: 65px;
+  }
+}

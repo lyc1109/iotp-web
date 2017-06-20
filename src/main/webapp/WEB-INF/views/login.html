@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layouts/layout-single-page">
+<head>
+    <title>登录页面</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/login/login.css}"/>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+
+    <div class="login-box">
+        <div class="backdrop">
+            <div class="login-form">
+                <!--<h4>Spring Bootstrap</h4>-->
+
+                <h2>欢迎登录品智云</h2>
+
+                <div class="login-form-body">
+                    <img src="" th:src="@{/dist/images/logo/logo.png}" class="user-avatar img-circle" width="128" height="128" id="userAvatar"/>
+
+                    <form id="loginForm" role="form" data-parsley-validate="true" th:action="@{/login}" method="post">
+                        <div class="form-group">
+                            <i class="fa fa-mobile form-control-icon"></i>
+                            <input type="text" class="form-control input-lg" id="username" name="username" placeholder="用户名/手机号码"
+                                   data-parsley-required="true"/>
+                        </div>
+                        <div class="form-group">
+                            <i class="fa fa-lock form-control-icon"></i>
+                            <input type="password" class="form-control input-lg" id="password" name="password" placeholder="密码"
+                                   data-parsley-required="true"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block btn-lg clearfix" id="btnLogin">登录</button>
+                    </form>
+
+                    <div class="alert alert-danger alert-dismissible login-msg" role="alert" th:if="${#httpServletRequest.getParameterMap().containsKey('error')}">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        用户名或密码错误!
+                    </div>
+
+                    <div class="alert alert-info alert-dismissible login-msg" role="alert" th:if="${#httpServletRequest.getParameterMap().containsKey('logout')}">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        您已经登出了系统!
+                    </div>
+
+                    <div class="alert alert-info alert-dismissible" role="alert" id="resetPwdTips" style="display: none;">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        新账户首次登录，请点击 <a class="forgot-pass" th:href="@{/user/password/reset}">【找回密码】</a>重置密码！
+                    </div>
+                </div>
+
+                <div class="login-form-footer clearfix">
+                    <a class="forgot-pass" th:href="@{/user/password/reset}">找回密码?</a>
+
+                    <a class="pull-right forgot-pass" href="javascript:;" id="btnRegister">注册</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/backstretch/jquery.backstretch.min.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    function fetchUserInfo() {
+        App.ajax.get({
+            url: "/sys/user/avatar",
+            data: {
+                mobile: $("#username").val()
+            },
+            onSuccess: function (resp) {
+                if(resp.isExist===true){
+                    if(resp.hasPwd !== true){
+                        $("#resetPwdTips").fadeIn();
+                    }else{
+                        if(resp.userAvatar){
+                            $("#userAvatar").attr("src", resp.userAvatar);
+                        }else{
+                            $("#userAvatar").attr("src", "/dist/images/logo/logo.png");
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    $(function () {
+        // 新账户提示重置密码
+        var isFirstLogin = App.cache.get("isFirstLogin");
+        if(isFirstLogin === null || typeof isFirstLogin === undefined)
+            $("#resetPwdTips").fadeIn();
+
+        // 自动隐藏提示消息
+        if($(".login-msg").length > 0){
+            setTimeout(function () {
+                $(".login-msg").fadeOut(600);
+                window.history.pushState({}, 0, "/login");
+            }, 3000);
+        }
+        // 自动切换背景
+//        $(".login-box").backstretch([
+//            App.ossUrl + "/assets/images/login/login_bg1.jpg",
+//            App.ossUrl + "/assets/images/login/login_bg4.jpg",
+//            App.ossUrl + "/assets/images/login/login_bg2.jpg",
+//            App.ossUrl + "/assets/images/login/login_bg3.jpg"
+//        ], {duration: 5000, fade: 500});
+
+        var lastTime;
+        $("#username").on("keyup blur",function(event){
+            //我们可以用jQuery的event.timeStamp来标记时间，这样每次的keyup事件都会修改lastTime的值，lastTime必需是全局变量
+            lastTime = event.timeStamp;
+            setTimeout(function(){
+                //如果时间差为0，也就是你停止输入0.6s之内都没有其它的keyup事件产生，这个时候就可以去请求服务器了
+                if(lastTime - event.timeStamp == 0){
+                    fetchUserInfo();
+                }
+            },600);
+        });
+
+        $("#btnRegister").on("click", function () {
+            Messenger.info({
+                title: "暂未开放注册",
+                message: "商务合作请拨打：020-82036466"
+            });
+        });
+
+        $("#loginForm").submit(function () {
+            App.cache.put("isFirstLogin", false);
+            return true;
+        });
+
+        // 检测是否谷歌浏览器
+        var browser = new App.browser();
+        var downloadUrl = "http://shmedias.oss-cn-shenzhen.aliyuncs.com/softs/chrome_windows.exe";
+        if(browser.getOSInfo().os.indexOf("Mac") > -1)
+            downloadUrl = "http://shmedias.oss-cn-shenzhen.aliyuncs.com/softs/chrome_mac.dmg";
+
+        if(browser.getBrowserInfo().browser !== "chrome"){
+            Messenger.warning({
+                title: "系统提示",
+                message: "为了更好的体验，强烈推荐使用谷歌浏览器。"
+            }, function () {
+                window.open(downloadUrl, '_blank');
+            });
+        }
+    });
+    /*]]>*/
+</script>
+</section>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="content-heading">
+        <div class="title">Dlg对话框</div>
+        <small>Dlg支持异步加载，居中显示，宽高设置等特性</small>
+    </div>
+
+    <h3>实例</h3>
+    <h4 class="margin-top-m">静态实例</h4>
+    <div class="bg padding">
+        <button type="button" class="btn btn-primary margin-bottom" id="staticSmodal">弹出对话框</button>
+<pre>
+$("#staticSmodal").on("click", function(){
+    new Dlg({
+        title: "我是静态对话框",
+        template: function () {
+            return $("#staticSmodalContent").html();
+        },
+        onOk: function () {
+            this.close();
+        }
+    });
+});
+</pre>
+    </div>
+
+
+    <h4 class="margin-top-m">异步加载实例</h4>
+    <div class="bg padding">
+
+        <button type="button" class="btn btn-primary margin-bottom" id="ajaxSmodal">弹出对话框</button>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#smodalJs" role="tab" data-toggle="tab">JavaScript</a></li>
+            <li role="presentation"><a href="#smodalHtml" role="tab" data-toggle="tab">Html</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content margin-top-m">
+            <div role="tabpanel" class="tab-pane active" id="smodalJs">
+<pre>
+# Javascript
+$("#ajaxSmodal").on("click", function(){
+    new Dlg({
+        title: "我是异步加载对话框",
+        width: 600,
+        height: 500,
+        url: "/demo/dialog/content",
+        onOk: function (result) {
+            alert(result.returnMsg);
+        }
+    });
+});
+
+</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="smodalHtml">
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+&lt;head&gt;
+    &lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class="padding-m"&gt;
+    &lt;h3&gt;微信小程序之代码构建初探：如何继续使用html与css开发小程序&lt;/h3&gt;
+    微信小程序似乎会给互联网带来一场非比寻常的变革。随处可见关于小程序的文章也让我们感受到它正在刮起一阵风暴，所以呢，抽空研究研究它，还是非常有必要的，
+    加上最近小程序公测，通过注册未认证的小程序，我们可以得到一个appid，下载最新的开发工具，就可以开始尝试编写一些demo了。
+
+    但是在开发小程序的时候，由于我们比较常用的编辑器对于.wxml, .wxss后缀的文件并没有多少支持，目前我所知道的，
+    除了vs code有一个叫做vs wxml的插件之外，几乎没有其他插件了，因此，没有代码补全，没有emmet支持，没有代码高亮，
+    这极大的影响了开发效率，我也知道有很多来尝试小程序开发的同学为此而非常困扰。
+
+    好在，办法总是有的。
+
+    大家都知道大多数编辑器对于html与css的支持非常全面完善，特别是emmet插件，对于html和css来说，已经变得必不可少了。
+    而微信的wxml与wxss其实与html与css差别并不大。
+    因此，我们只需要在开发时，将代码写在html与css中，在保存时，通过构建工具，将文件的后缀名改成.wxml与.wxss即可。
+    这样一来，我们就不用在内置工具中开发，不用到处找对于小程序支持良好的IDE，也不用等各位大佬出新的插件了，就用我们各自最喜欢最熟悉的编辑器就可以。
+    下面我以我最熟悉的gulp为例，与大家分享一下具体如何实现。
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;script type="text/javascript"&gt;
+    /**
+     * 对话框确定函数
+     */
+    function onOkFn() {
+        // 返回true或其它非false对象即关闭对话框
+        // 也可使用 this.close() 关闭
+        return {
+            returnMsg: "我是回调函数返回的消息"
+        };
+    }
+
+    /**
+     * 对话框内容加载完毕回调函数
+     * @param dlg 当前对话框对象
+     */
+    function onLoaded() {
+        alert("对话框加载完毕");
+    }
+&lt;/script&gt;
+&lt;/html&gt;
+</pre>
+            </div>
+        </div>
+    </div>
+
+
+    <h4 class="margin-top-m">Jquery插件实例</h4>
+    <div class="bg padding">
+        <button type="button" class="btn btn-primary margin-bottom" id="jqueryDlg">弹出对话框</button>
+<pre>
+$("#jqueryDlg").dlg({
+    title: "我是Jquery插件方式的对话框",
+    template: function () {
+        return $("#staticSmodalContent").html();
+    }
+})
+</pre>
+    </div>
+
+    <h3>参数说明</h3>
+    <div class="bg padding">
+        <ul>
+            <li>
+                <code>id</code>，对话框id唯一标识，默认随机生成
+            </li>
+            <li>
+                <code>title</code>，标题，String|Function, 不需要标题设为false
+            </li>
+            <li>
+                <code>width</code>，宽度，默认500
+            </li>
+            <li>
+                <code>height</code>，宽度，默认400
+            </li>
+            <li>
+                <code>url</code>，异步获取HTML Url
+            </li>
+            <li>
+                <code>template</code>，对话框内容，string|Function, 若参数url不为空则此参数无效
+            </li>
+            <li>
+                <code>buttons</code>，按钮数组。默认：[{id: "btnCancel",class: "btn-default",text: "取消", onClick: null},{id: "btnOk",class: "btn-primary",text: "确定", onClick: null}]
+            </li>
+            <li>
+                <code>onOk</code>，默认确定按钮回调函数，配合<code>onOkFn()</code>方法使用。具体使用参考异步加载实例中的Html。
+            </li>
+            <li>
+                <code>onLoaded</code>，对话框异步加载完毕内容回调函数。也可配合<code>onLoadedFn()</code>使用。
+            </li>
+        </ul>
+    </div>
+
+    <h3>Jquery插件方法</h3>
+    <div class="bg padding">
+        <ul>
+            <li>
+                <code>close</code>，关闭对话框
+            </li>
+        </ul>
+
+        <pre>$("#smodal").smodal("close")</pre>
+    </div>
+
+    <!--静态实例内容-->
+    <div id="staticSmodalContent" class="hidden">
+        <div class="padding">
+            <h3>静态实例内容</h3>
+            <p>微信小程序似乎会给互联网带来一场非比寻常的变革。随处可见关于小程序的文章也让我们感受到它正在刮起一阵风暴，所以呢，抽空研究研究它，还是非常有必要的，
+            加上最近小程序公测，通过注册未认证的小程序，我们可以得到一个appid，下载最新的开发工具，就可以开始尝试编写一些demo了。</p>
+
+            <p>但是在开发小程序的时候，由于我们比较常用的编辑器对于.wxml, .wxss后缀的文件并没有多少支持，目前我所知道的，
+            除了vs code有一个叫做vs wxml的插件之外，几乎没有其他插件了，因此，没有代码补全，没有emmet支持，没有代码高亮，
+            这极大的影响了开发效率，我也知道有很多来尝试小程序开发的同学为此而非常困扰。</p>
+
+            <p>好在，办法总是有的。</p>
+
+            <p>大家都知道大多数编辑器对于html与css的支持非常全面完善，特别是emmet插件，对于html和css来说，已经变得必不可少了。</p>
+
+            <p>而微信的wxml与wxss其实与html与css差别并不大。因此，我们只需要在开发时，将代码写在html与css中，在保存时，通过构建工具，将文件的后缀名改成.wxml与.wxss即可。
+            这样一来，我们就不用在内置工具中开发，不用到处找对于小程序支持良好的IDE，也不用等各位大佬出新的插件了，就用我们各自最喜欢最熟悉的编辑器就可以。
+            下面我以我最熟悉的gulp为例，与大家分享一下具体如何实现。</p>
+        </div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        $("#staticSmodal").on("click", function(){
+            new Dlg({
+                title: "我是静态对话框",
+                template: function () {
+                    return $("#staticSmodalContent").html();
+                },
+                onOk: function () {
+                    this.close();
+                }
+            });
+        });
+
+        $("#ajaxSmodal").on("click", function(){
+            new Dlg({
+                title: "我是异步加载对话框",
+                width: 600,
+                height: 500,
+                url: "/demo/dialog/content",
+                onOk: function (result) {
+                    alert(result.returnMsg);
+                }
+            });
+        });
+
+        $("#jqueryDlg").dlg({
+            title: "我是Jquery插件方式的对话框",
+            template: function () {
+                return $("#staticSmodalContent").html();
+            }
+        })
+    });
+    /*]]>*/
+</script>
+</section>
+</html>

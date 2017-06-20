@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='productMgm'">
+<head>
+    <title></title>
+</head>
+<body  class="sbs">
+
+<section layout:fragment="heading" th:remove="tag">
+    <div class="alert alert-danger alert-dismissible margin-bottom-l font-m" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" style="right: 0;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        <strong>警告: </strong>
+
+        <div class="padding-s margin-top-s">1. 修改配件将会影响用户已购买的设备，可能导致配件（如滤芯）不能显示或数据异常。</div>
+        <div class="padding-s">2. 新增的配件会自动添加到用户已购买的设备中。</div>
+    </div>
+
+
+    <div class="title">智能模板管理</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post"
+          th:object="${entity}"
+          th:action="@{|/iot/deviceModel/*{id}|}">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">模板类型</label>
+            <div class="col-sm-6">
+                <p class="form-control-static" th:if="*{#strings.equals(iotDeviceType, 'iWater')}">智能水机</p>
+                <p class="form-control-static" th:if="*{#strings.equals(iotDeviceType, 'iAirCleaner')}">空气净化器</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">模板代码</label>
+            <div class="col-sm-6">
+                <!--<input type="text" class="form-control" name="modelCode" th:value="*{modelCode}" data-parsley-required="true"/>-->
+                <p class="form-control-static" th:text="*{modelCode}"></p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label required-label">模板名称</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="modelName" name="modelName" th:value="*{modelName}" data-parsley-required="true"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">备注</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" rows="5" id="memos" name="memos" th:text="*{memos}" style="height: 60px;"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span th:remove="tag" class="form-control-static" th:if="*{#strings.equals(iotDeviceType, 'iWater')}">配件管理</span>
+            </label>
+            <div class="col-sm-9">
+
+                <div class="padding border" style="margin-top: 7px;" id="partsContainer">
+                    <div class="form-group text-s font-second font-bold">
+                        <div class="col-sm-2 col-right-min">序号</div>
+                        <div class="col-sm-5 col-min">所属产品配件</div>
+                        <div class="col-sm-3 col-min">净水通量（升）</div>
+                        <div class="col-sm-2 align-right"></div>
+                    </div>
+
+                    <hr class="margin-bottom-m"/>
+
+                    <div class="form-group part-item"
+                         th:each="part, itStar : *{parts}"
+                         data:id="${part.id}"
+                         data:status="${part.status}"
+                         th:attr="id='partItem' + ${part.orderNo}">
+                        <div class="col-sm-2 col-right-min">
+                            <input type="number" class="form-control part-orderNo" placeholder="排序号" th:value="${part.orderNo}"
+                                   data-parsley-required="true"/>
+                        </div>
+                        <div class="col-sm-5 col-min">
+                            <select class="form-control part-productId" data-placeholder="请选择滤芯配件"  style="width: 100%;" data-parsley-required="true">
+                                <option th:value="${part.productId}" th:text="|${part.name}(${part.code})|"></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 col-left-min col-right-zero">
+                            <input type="number" class="form-control part-totalWaterflow" placeholder="净水通量" th:value="${part.totalWaterflow}"
+                                   data-parsley-required="true"/>
+                            <!--<div class="input-group">
+
+                                <span class="input-group-addon">升</span>
+                            </div>-->
+                        </div>
+                        <div class="col-sm-2 col-left-zero align-right">
+                            <button type="button" class="btn btn-sm btn-danger part-action-delete">删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="form-group">
+            <div class="col-sm-11 align-right">
+                <button type="button" class="btn btn-sm btn-default part-action-add">添加滤芯</button>
+                &nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-success" id="btnSave">保存配置</button>
+            </div>
+        </div>
+
+        <input type="hidden" id="entityId" name="id" th:value="*{id}"/>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/iot/iot-device-model.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/3rd/JsRender/jsrender.min.js}"></script>
+
+    <script type="text/x-jsrender" id="partTpl">
+        <div class="form-group part-item"
+             data-id="-1"
+             data-status="0"
+             id="partItem0">
+            <div class="col-sm-2 col-right-min">
+                <input type="number" class="form-control part-orderNo" placeholder="排序号" data-parsley-required="true"/>
+            </div>
+            <div class="col-sm-5 col-min">
+                <select class="form-control part-productId" data-placeholder="请选择滤芯配件"  style="width: 100%;" data-parsley-required="true">
+                </select>
+            </div>
+            <div class="col-sm-3 col-left-min col-right-zero">
+                <input type="number" class="form-control part-totalWaterflow" placeholder="净水通量"
+                       data-parsley-required="true"/>
+            </div>
+            <div class="col-sm-2 col-left-zero align-right">
+                <button type="button" class="btn btn-sm btn-danger part-action-delete">删除</button>
+            </div>
+        </div>
+    </script>
+
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            IotDeviceModel.init()
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

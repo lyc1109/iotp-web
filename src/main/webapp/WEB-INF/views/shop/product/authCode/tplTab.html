@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="leaseProductNav(nav_code)">
+    <ul class="nav nav-tabs margin-bottom-s" role="tablist">
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('leaseProduct', nav_code)} ? 'active' : ''">
+            <a href="#" th:href="@{/lease/product}">租赁产品管理</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('authCode', nav_code)} ? 'active' : ''">
+            <a href="javascript:;" th:href="@{/shop/product/authCode(type='leaseProduct')}">产品授权管理</a>
+        </li>
+    </ul>
+</th:block>
+</body>
+</html>

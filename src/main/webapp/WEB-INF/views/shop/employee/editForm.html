@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='shopCfg_Employee'">
+<head>
+    <title>编辑员工信息</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${entity.isNew()} ? '新增员工' : '修改员工信息'">员工详情</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post"
+          th:object="${entity}"
+          th:action="@{/shop/employee/}+*{id}">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>员工工号</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="employeeId" th:value="*{employeeId}" data-parsley-required="true" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>员工姓名</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" th:value="*{name}" data-parsley-required="true"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>手机号码</span>
+            </label>
+            <div class="col-sm-8">
+                <div th:if="${isNew} or *{#strings.isEmpty(mobile)}">
+                    <input type="tel" class="form-control" name="mobile" id="mobile" th:value="*{mobile}"
+                           pattern="/(^13\d{9}$)|(^14)[5,7]\d{8}$|(^15[0,1,2,3,5,6,7,8,9]\d{8}$)|(^17)[0,3,6,7,8]\d{8}$|(^18\d{9}$)|(^199\d{8}$)/g"
+                           data-parsley-required="true"
+                           data-parsley-error-message="请输入正确手机号码"/>
+                </div>
+
+                <p class="form-control-static" th:if="not ${isNew}" th:text="*{mobile}"></p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>电子邮件</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="email" class="form-control" name="email" th:value="*{email}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>员工角色</span>
+            </label>
+            <div class="col-sm-8" id="employeeRoleDiv">
+                <label class="radio-inline">
+                    <input type="radio" class="icheck" name="employeeRole" id="employeeRole0" value="SUPER_ADMIN"
+                           data-parsley-required="true"
+                           data-parsley-errors-container="#employeeRoleDiv"
+                           th:checked="*{employeeRole == 'SUPER_ADMIN'}"/>
+                    <span class="text-s">超级管理员</span>
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" class="icheck" name="employeeRole" id="employeeRole1" value="ADMIN" th:checked="*{employeeRole == 'ADMIN'}"/>
+                    <span class="text-s">管理员</span>
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" class="icheck" name="employeeRole" id="employeeRole2" value="SERVICE_MAN" th:checked="*{employeeRole == 'SERVICE_MAN'}"/>
+                    <span class="text-s">服务人员</span>
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" class="icheck" name="employeeRole" id="employeeRole3" value="CUSTOM_SERVICER" th:checked="*{employeeRole == 'CUSTOM_SERVICER'}"/>
+                    <span class="text-s">客服人员</span>
+                </label>
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 font-s text-second">
+                <hr/>
+
+                <div class="font-bold">说明：</div>
+                <div class="padding">
+                    <div class="padding-top-s text-s">* 手机号码将作为默认登录账号，且注册后将不可修改，仅允许用户本人重新绑定</div>
+                    <div class="padding-top-s text-s">* 登录密码默认为空，新员工将通过登录页面【找回密码】进行重置</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save" style="width:81px;" type="button" id="btnSave" value="保存"/>
+            </div>
+        </div>
+
+        <div class="row" style="height:45px;">
+        </div>
+        <div class="form-group">
+            <div style="border: 1px solid #DDD">
+                <table class="table table-striped margin-bottom-zero">
+                    <thead>
+                    <tr style="background-color: #F1F1F1;">
+                        <th class="text-s" width="180px" style="font-weight:normal;border-right: 1px solid #DDD;">员工角色类型</th>
+                        <th class="text-s" style="font-weight:normal;">权限说明</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;border-right: 1px solid #DDD;">
+                            超级管理员
+                        </td>
+                        <td class="text-s" style="font-weight:normal;">
+                            拥有全部管理权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;border-right: 1px solid #DDD;">
+                            管理员
+                        </td>
+                        <td class="text-s" style="font-weight:normal;">
+                            具备除【添加管理员】、【删除管理员】功能之外的全部管理权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;border-right: 1px solid #DDD;">
+                            服务人员
+                        </td>
+                        <td class="text-s" style="font-weight:normal;">
+                            拥有工单系统中所有功能权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;border-right: 1px solid #DDD;" rowspan="6">
+                            客服人员
+                        </td>
+                        <td class="text-s" style="font-weight:normal;">
+                            服务订单管理的全部功能权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;">
+                            服务工单管理的全部功能权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;">
+                            评价管理的全部功能权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;">
+                            具备除【删除会员】功能之外的全部会员管理功能权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;">
+                            具备除【上架／下架】、【删除商品】功能之外的全部商品管理功能权限
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-s" style="font-weight:normal;">
+                            具备除【启用／禁用】、【删除服务】、【服务商管理】功能之外的全部服务管理功能权限
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <input type="hidden" id="id" name="id" th:value="*{id}"/>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $("#btnSave").on("click", function () {
+                if(!$('#iotForm').parsley().validate()) {
+                    return false;
+                }
+
+                if($("#mobile").length > 0){
+                    App.ajax.get({
+                        url: "/shop/employee/isExist",
+                        data: {
+                            id: $("#id").val(),
+                            mobile: $("#mobile").val(),
+                            userLoginName: $("#loginName").val()
+                        },
+                        onSuccess: function (resp) {
+                            if (resp.isExist) {
+                                Messenger.warning({
+                                    title: "重复提示",
+                                    message: resp.errorMsg
+                                });
+                            } else {
+                                Messenger.confirm("是否确定增加该员工信息？", function () {
+                                    $("#iotForm").submit();
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    $("#iotForm").submit();
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

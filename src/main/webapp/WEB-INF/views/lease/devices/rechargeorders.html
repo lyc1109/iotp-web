@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='leaseCfg_LeaseDevice'">
+<head>
+    <link rel="stylesheet" th:href="@{/dist/css/pages/lease/rechargeorders.css}"/>
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+    <div id="rechargeorders" v-cloak="cloak">
+        <div class="rechargeorders">
+            <h1>
+                <span class="title">充值订单详情</span>
+            </h1>
+            <div class="rechargeordersMain">
+                    <el-row v-for="item in rechargeordersTab" class="rechargeordersTab">
+                        <a :href="item.url">
+                            <el-col :span="3"><b>{{item.title}}:</b></el-col>
+                            <el-col :span="17"><span :class="item.style">{{item.content}}</span></el-col>
+                        </a>
+                    </el-row>
+            </div>
+        </div>
+    </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/leaseDevice/rechargeorders.js}"></script>
+</section>
+</body>
+</html>

@@ -1,0 +1,107 @@
+/*
+全局变量设定
+---------------
+包括导航宽度、颜色、字体大小等常用变量
+--------------- */
+
+
+/* === 头部导航常量 === */
+$topbar_height: 50px;
+$topbar_color: #23b7e5;
+
+
+/* === 侧边栏常量 === */
+$sidebar_width: 200px;                                            // 侧边栏宽度
+$sidebar_collapse_width: 70px;                                    // 侧边栏收起后宽度
+$sidebar_bg: #293038;                                             // 侧边栏背景色
+$sidebar_item_color: #fff;                                        // 侧边栏内容颜色
+$sidebar_icon_color: #aeb9c2;                                     // 侧边栏图标颜色
+
+$helpbar_width: 280px;                                            // 右边栏宽度
+
+
+/* === 字体大小 === */
+$text_size: 14px;
+$text_size_s: 12px;
+$text_size_m: 16px;
+$text_size_l: 20px;
+$text_size_xl: 28px;
+
+
+/* === 图标大小 === */
+$icon_size: 16px;
+$icon_size_m: 20px;
+$icon_size_l: 24px;
+$icon_size_xl: 30px;
+$icon_size_xxl: 40px;
+
+
+/* === 页面背景色 === */
+$page_bg: #f5f7fa;
+
+
+/* === 边框颜色 === */
+$border-gray: #DDD;
+$border: lighten($border-gray, 5%);
+
+
+/* === 字体颜色 === */
+$text_primary: #656565;
+$text_second:  lighten($text_primary, 20%);
+$text_light:   lighten($text_primary, 40%);
+
+
+/* === 其它搭配颜色 === */
+$primary: #2F8CFC;
+$success: #27c24c;
+
+$white-1: #ffffff;
+$red-1: #d9534f;
+$red-2: #FF0000;
+$blue-1: #03A9F4;
+$blue-2: #1FC9FD;
+$blue-3: #2196F3;
+$darkblue-1: #0066CC;
+$darkblue-2: #0066FF;
+$orange-1: #FF5722;
+$orange-2: #FF6633;
+$orange-3: #E27A3F;
+$orange-4: #edce8c;
+$green-1: #18BA1D;
+$green-2: #339900;
+$green-3: #209C83;
+$green-4: #339966;
+$pink-1: #FF6666;
+$pink-2: #FF3366;
+$yellow-1: #f0ad4e;
+$yellow-2: #FF9933;
+$black: #000000;
+$purple: #CC33FF;
+$transparent: rgba(0,0,0,0);
+$light-1: #f2f2f2;
+$light-2: #F5F5F5;
+$cyan: #00DCCB;
+$cyan-2: #00BCD4;
+
+
+/* === 间距大小定义 === */
+$xs: 5px;
+$s: 10px;
+$m: 15px;
+$l: 25px;
+$xl: 30px;
+$xxl: 50px;
+
+
+/* === 默认占位图 === */
+$placeholder-img: url('/dist/images/placeholder.png');
+$avatar-img: url('/dist/images/user_avatar.png');
+
+
+/* === 媒体查询宽度定义，用于响应式断点 === */
+$screen_mobile:     320px !default;                                 // 手机
+$screen_tablet:     768px !default;                                 // 平板
+$screen_pc:         996px !default;                                 // 电脑
+
+$screen_mobile_max: ($screen_tablet - 1) !default;                  // 手机最大宽度
+$screen_tablet_max: ($screen_pc - 1) !default;                      // 平板最大宽度

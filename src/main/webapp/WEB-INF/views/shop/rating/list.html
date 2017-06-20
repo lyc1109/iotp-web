@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='ratingMgm'">
+<head>
+    <title>评价管理</title>
+    <style>
+        .fa-star{
+            color: #ffa500;
+        }
+        .fa-star-o{
+            color: #dddddd;
+        }
+        .fa-star-half-full{
+            color: #ffa500;
+        }
+        .list-inline{
+            margin: 0 0 0 15px;
+            height: 32px;
+            line-height: 32px;
+        }
+        .list-inline li{
+        }
+        .rating-rating,.ratingList{
+            color: #666;
+        }
+        .rating-rating.active{
+            font-weight: 500;
+            color: #387ef5;
+        }
+        .list-inline{
+            margin-left: 0px;
+
+        }
+        .list-inline li{
+            padding-right: 23px;
+        }
+    </style>
+
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div>
+        <div class="pull-left title">评价管理</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm grid-refresh">
+                <span class="fa fa-refresh"></span> 刷新
+            </button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <ul class="nav nav-tabs margin-bottom" role="tablist">
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase(nav_code,'rating')} ? 'active' : ''">
+            <a href="javascript:;" class="view-nav" data:view-type="30">用户评价</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase(nav_code,'count')} ? 'active' : ''">
+            <a href="/shop/rating/count"  data:view-type="40">统计分析</a>
+        </li>
+    </ul>
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="input-group margin-right-l pull-left" style="width:260px;">
+            <input type="text" class="form-control grid-search" id="searchPhrase" placeholder="单号/产品名称" th:value="${searchPhrase}"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" type="button" id="btnSearch" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+        <div class="input-group pull-left">
+            <ul class="list-inline">
+                <li><a  class="rating-rating" data-rating="0.0" data-view-type="10"><i class="glyphicon glyphicon-heart-empty"></i> 待回复<span></span></a></li>
+                <li><a  class="rating-rating" data-rating="0.0" data-view-type="30"><i class="glyphicon glyphicon-heart-empty"></i> 全部评价<span></span></a></li>
+                <li><a  class="rating-rating" data-rating="5.0" data-view-type="30"><i class="glyphicon glyphicon-heart-empty"></i> 非常满意<span th:text="|(${totalRating5})|">(5)</span></a></li>
+                <li><a class="rating-rating" data-rating="4.0" data-view-type="30"><i class="glyphicon glyphicon-heart-empty"></i> 满意<span  th:text="|(${totalRating4})|">(5)</span></a></li>
+                <li><a class="rating-rating" data-rating="3.0" data-view-type="30"><i class="glyphicon glyphicon-heart-empty"></i> 一般<span  th:text="|(${totalRating3})|">(5)</span></a></li>
+                <li><a class="rating-rating" data-rating="2.0" data-view-type="30"><i class="glyphicon glyphicon-heart-empty"></i> 不满意<span  th:text="|(${totalRating2})|">(5)</span></a></li>
+                <li><a class="rating-rating" data-rating="1.0" data-view-type="30"><i class="glyphicon glyphicon-heart-empty"></i> 非常不满意<span th:text="|(${totalRating1})|">(5)</span></a></li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="data-grid-container bootgrid-no-header">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-formatter="idFormatter" data-visible="false"></th>
+                <th data-width="60px" data-column-id="status" data-sortable="false">状态</th>
+                <th data-width="150px" data-column-id="tradeOrderCode" data-formatter="serviceOrderIdFormatter" data-sortable="false" data:visible="!${#authentication.getPrincipal().isServiceVendor()}">服务单号</th>
+                <th data-width="150px" data-column-id="workOrderCode" data-formatter="workOrderFormatter" data-sortable="false" data:visible="${#authentication.getPrincipal().isServiceVendor()}">工单号</th>
+                <th data-width="30%" data-th-title="true" data-column-id="productName" data-sortable="false">产品名称</th>
+                <th data-width="80px" data-column-id="authorMemberName" data-sortable="false">客户姓名</th>
+                <th data-width="100px" data-column-id="rating" data-formatter="ratingFormatter">客户评分</th>
+                <th data-column-id="review">评价</th>
+                <th data-width="160px" data-column-id="latest_replied_at" data-formatter="formatterDate2" data-order="desc">评价时间</th>
+                <th data-width="160px" data-column-id="rated_at" data-formatter="formatterDate" data-order="desc" data-visible="false">创建时间时间</th>
+                <th data-width="100px" data-column-id="commands" data-formatter="commands" data-sortable="false">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+        <input class="view-filter-field" type="hidden" id="viewType" th:value="${viewType}"/>
+        <input  type="hidden" id="rating" th:value="${rating}"/>
+        <input id="isServiceVendor" type="hidden" th:value="${#authentication.getPrincipal().isServiceVendor()}"/>
+
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/shop/rating";
+
+        var RatingView = (function (RAT) {
+            RAT = {
+                _init:function () {
+
+                },
+                _viewReply:function (url) {
+                    new Dlg({
+                        id:"viewReply",
+                        title:"查看回复",
+                        url:url,
+                        width:700,
+                        height:600,
+                        buttons:[{
+                            id: "btnOk",
+                            class: "btn-default",
+                            text: "关闭"
+                        }],
+                        onLoaded:function () {
+
+                        },
+                        onOk:function (rs) {
+                            reloadGird();
+                            this.close();
+
+                        }
+                    })
+                }
+            }
+            return RAT;
+        }(window.RatingView||{}))
+
+        $(function () {
+
+            //同步筛选栏
+            $(".rating-rating").each(function () {
+                var viewType = $("#viewType").val();
+                var rating = $("#rating").val();
+                if($(this).data("rating")==rating && $(this).data("viewType")==viewType){
+                    $(this).addClass("active");
+                    $(this).find("i").attr("class","glyphicon glyphicon-heart");
+                }
+            });
+
+
+
+
+            _bootgrid = new BootGrid({
+                url: _baseUrl,
+                data: {
+                    viewType: $("#viewType").val(),
+                    searchPhrase: $("#searchPhrase").val(),
+                    rating:$("#rating").val()
+                },
+                rowCount:15,
+                multiSort:true,
+                searchEnable: false,
+                formatters: {
+                    idFormatter: function(column, row) {
+                        return "";
+                    },
+                    ratingFormatter:function (column,row) {
+                        var html = "<span class=\"fa fa-star\"></span> ";
+                        if(row.rating>=2){
+                            html += "<span class=\"fa fa-star\"></span> "
+                        }else{
+                            html += "<span class=\"fa fa-star-o\"></span> "
+                        }
+                        if(row.rating>=3){
+                            html += "<span class=\"fa fa-star\"></span> "
+                        }else{
+                            html += "<span class=\"fa fa-star-o\"></span> "
+                        }
+                        if(row.rating>=4){
+                            html += "<span class=\"fa fa-star\"></span> "
+                        }else{
+                            html += "<span class=\"fa fa-star-o\"></span> "
+                        }
+                        if(row.rating>=5){
+                            html += "<span class=\"fa fa-star\"></span>"
+                        }else{
+                            html += "<span class=\"fa fa-star-o\"></span> "
+                        }
+                        return html ;
+                    },
+                    serviceOrderIdFormatter:function (column,row) {
+                        var orderUrl = "/shop/serviceOrder/"+row.tradeOrderId;
+                        return "<a href='"+orderUrl+"' target='_blank'>"+row.tradeOrderCode+"</a>"
+                    },
+                    workOrderFormatter:function (column,row) {
+                        var orderUrl = "/shop/workOrder/"+row.workOrderId;
+                        return "<a href='"+orderUrl+"'>"+row.workOrderCode+"</a>"
+                    },
+                    serviceAddressFormatter: function (column, row) {
+                        return row.serviceAddress.province + " - " + row.serviceAddress.city;
+                    },
+                    serviceTimeFormatter: function (column, row) {
+                        return moment(row.serviceDate).format("MM月DD日") + " " + row.serviceTime;
+                    },
+                    formatterDate:function (column,row) {
+                        var date = row.ratedAt;
+                        return (date !== null && date !== "") ? moment(date).format("YYYY-MM-DD HH:mm:ss") : "";
+                    },
+                    formatterDate2:function (column,row) {
+                        var date = row.latest_replied_at;
+                        return (date !== null && date !== "") ? moment(date).format("YYYY-MM-DD HH:mm:ss") : "";
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" title=\"查看详情\" class=\"btn btn-xs btn-default cmd-view-form\" data-row-id=\"" + row.id + "\">查看回复</button> ";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+                    $(".cmd-view-form").on("click", function(){
+                        RatingView._viewReply(_baseUrl + "/" + $(this).data("rowId"));
+                    });
+                }
+            });
+
+            if($(".grid-search").length > 0){
+                var $search = $(".grid-search");
+                $search.keyup(function(event){
+                    if(event.keyCode === 13){
+                        History.replaceState({}, 0, buildListUrl());
+                        reloadGird();
+                    }
+                });
+            }
+
+            $(".view-nav").on("click", function(){
+                var curViewType = $("#viewType").val();
+                var viewType = $(this).data("viewType");
+                if(curViewType == viewType)
+                    return;
+
+                $("#viewType").val(viewType);
+                $(this).closest(".nav-tabs").find("li").each(function(){
+                    $(this).removeClass("active");
+                });
+                $(this).closest("li").addClass("active");
+
+                History.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            // 搜索
+            $("#btnSearch").on("click", function(){
+                History.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            $(".rating-rating").on('click',function () {
+                $(".rating-rating").each(function () {
+                    $(this).attr("class","rating-rating");
+                });
+                $(this).attr("class","rating-rating active");
+                $("i.glyphicon-heart").attr("class","glyphicon glyphicon-heart-empty");
+                $(this).find("i").attr("class","glyphicon glyphicon-heart");
+                var rating = $(this).data("rating");
+                var viewType = $(this).data("viewType")
+                $("#viewType").val(viewType);
+                $("#rating").val(rating);
+                if(rating == 0){
+                    History.replaceState({}, 0, buildListUrl());
+                    reloadGird();
+                }else{
+                    History.replaceState({}, 0, buildListUrl());
+                    _bootgrid.search({
+                        viewType: "30",
+                        searchPhrase: $("#searchPhrase").val(),
+                        rating:rating
+                    });
+                }
+
+            })
+
+
+        });
+
+        function buildListUrl() {
+            var url = _baseUrl;
+            url += "?viewType=" + $("#viewType").val();
+            url += "&rating=" + $("#rating").val();
+            url += "&searchPhrase=" + $("#searchPhrase").val();
+            return url;
+        }
+
+        function reloadGird() {
+            _bootgrid.search({
+                viewType: $("#viewType").val(),
+                searchPhrase: $("#searchPhrase").val(),
+                rating:$("#rating").val()
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

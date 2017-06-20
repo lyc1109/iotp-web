@@ -1,0 +1,114 @@
+/* -------------------------------------------------------
+ * 组件 -- 图标色块
+ * ------------------------------------------------------- */
+
+.iconbox{
+  @include border-radius();
+  width: 20px;
+  height: 20px;
+  line-height: 1.5;
+  text-align: center;
+  background-color: $red-1;
+  display: inline-block;
+
+  i{
+    color: $white-1;
+    @include font-size(14px);
+  }
+
+  img{
+    width: 14px;
+    height: 14px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.iconbox30{
+  @extend .iconbox;
+
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+  line-height: normal;
+
+  i{
+    @include font-size(16px);
+    margin-top: 6px;
+  }
+
+  img{
+    width: 16px;
+    height: 16px;
+    margin-top: 6px;
+  }
+}
+
+.iconbox40{
+  @extend .iconbox;
+
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+  line-height: normal;
+
+  i,img{ margin-top: 10px; }
+
+  i{ @include font-size(20px); }
+
+  img{
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.iconbox-circle{
+  border-radius: 50% !important;
+}
+
+.iconbox-default{
+  background-color: $white-1;
+  @include border(all, $border-gray);
+
+  i{
+    color: $text-second;
+  }
+}
+
+.iconbox-green{
+  background-color: $success;
+}
+
+.iconbox-cyan{
+  background-color: $cyan;
+}
+
+.iconbox-blue-dark{
+  background-color: $blue-1;
+}
+
+.iconbox-blue{
+  background-color: $blue-2;
+}
+
+.iconbox-orange{
+  background-color: $orange-3;
+}
+
+.iconbox-yellow{
+  background-color: $yellow-1;
+}
+
+.iconbox-purple{
+  background-color: $purple;
+}
+
+
+
+.iconbox.disable{
+  background-color: $border-gray;
+  i{
+    color: $text-second;
+  }
+}

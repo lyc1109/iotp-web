@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <title>会员服务订单列表</title>
+</head>
+<body>
+<th:block th:fragment="listBody">
+    <div style="border: 1px solid #DDD">
+        <table class="table table-striped" style="margin-bottom:0px;">
+            <thead>
+            <tr style="background-color: #F1F1F1;">
+                <th width="42px"></th>
+                <th class="text-s" width="100px" style="font-weight:normal;">服务类型</th>
+                <th class="text-s" width="160px" style="font-weight:normal;">服务单号</th>
+                <th class="text-s" style="font-weight:normal;">商品名称</th>
+                <th class="text-s" width="180px" style="font-weight:normal;">预约时间</th>
+                <th class="text-s" width="90px" style="font-weight:normal;">服务状态</th>
+                <th class="text-s" width="160px" style="font-weight:normal;">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="serviceOrder,iterStat : ${serviceOrders}" th:if="!${#lists.isEmpty(serviceOrders)}">
+                <td class="align-center text-s" th:text="${iterStat.count}">1</td>
+                <td class="text-s valign-middle" th:text="${serviceOrder.shopServiceName}">服务类型</td>
+                <td class="text-s valign-middle" th:text="${serviceOrder.orderId}">服务单号</td>
+                <td class="text-s valign-middle" th:text="${serviceOrder.productName}">商品名称</td>
+                <td class="text-s valign-middle" th:text="${#calendars.format(serviceOrder.serviceDate, 'yyyy-MM-dd')} + ${serviceOrder.serviceTime}">预约时间</td>
+                <td class="text-s valign-middle" th:text="${serviceOrder.statusDesc}">服务状态</td>
+                <td class="text-s valign-middle">
+                    <button type="button" title="查看详情" class="btn btn-xs btn-default cmd-view-form" data:service-order-id="${serviceOrder.id}">查看</button>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(serviceOrders)}">
+                <td colspan="7" class="align-center" style="height: 64px;">暂无服务订单</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

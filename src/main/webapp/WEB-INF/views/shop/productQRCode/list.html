@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>产品二维码</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/product/listTpl::headerTitle('产品二维码')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:replace="shop/product/listTpl::nav('qrcode')"></div>
+
+    <div class="data-grid-container">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="30%" data-column-id="productName">商品名称</th>
+                <th data-width="20%" data-column-id="itemCode" data-order="asc">商品货号</th>
+                <th data-width="10%" data-column-id="snStart" data-formatter="formatSn">流水号</th>
+                <th data-width="10%" data-column-id="countUsed" data-formatter="formatCount">已使用</th>
+                <th data-width="10%" data-column-id="size">打印尺寸</th>
+                <th data-width="20%" data-column-id="command" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/product/qrcode.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            new BootGrid({
+                url: "/shop/productQRCode",
+                formatters:{
+                    formatSn: function (column, rows) {
+                        return rows[column.id] + "~" + rows.snEnd;
+                    },
+                    formatCount: function (column, rows) {
+                        return rows[column.id] + "/" + (rows.snEnd-rows.snStart+1);
+                    },
+                    commands: function (column, rows) {
+                        var btns = '<button type="button" class="btn btn-xs btn-default cmd-reprint" ';
+                        btns += 'data-row-id="'+ rows.id +'"';
+                        btns += 'data-product-id="'+ rows.productId +'"';
+                        btns += 'data-item-code="'+ rows.itemCode +'"';
+                        btns += 'data-size="'+ rows.sizeVal +'"';
+                        btns += 'data-sn-start="'+ rows.snStart +'"';
+                        btns += 'data-sn-end="'+ rows.snEnd +'"';
+                        btns += '>重新打印</button> ';
+
+                        btns += ' <button type="button" class="btn btn-xs btn-default cmd-used" data-row-id="'+ rows.id +'">使用记录</button>';
+                        return btns;
+                    }
+                },
+                onLoaded: function () {
+                    $(".cmd-reprint").off("click").on("click", function () {
+                        var data = $(this).data();
+                        data.count = data.snEnd - data.snStart + 1;
+                        QRCode.rePrint(data);
+                    });
+
+                    $(".cmd-used").off("click").on("click", function () {
+                        QRCode.viewUsed($(this).data("rowId"));
+                    });
+                }
+            })
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

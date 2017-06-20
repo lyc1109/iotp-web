@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <meta charset="UTF-8"/>
+    <title>图片列表</title>
+</head>
+<body>
+
+<th:block th:fragment="pageContent">
+    <div th:object="${page}">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3 col-zero"
+                     th:each="item : *{content}">
+
+                    <div class="images-item"
+                         data:id="${item.id}"
+                         data:url="${item.path}"
+                         data:name="${item.name}"
+                         data:fileSize="${item.fileSize}">
+
+                        <div class="border align-center">
+                            <img class="img-rounded margin-s" src="#" th:src="|${item.path}!wh100|" />
+
+                            <div class="padding-left-s padding-top text-s text-second text-wrapper border-dashed-top" th:text="${item.name}"></div>
+                        </div>
+
+                        <div class="mask">
+                            <i class="iconfont icon-check check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfx align-center text-second padding-l" th:if="*{totalElements == 0}">
+            该分组暂时没有图片素材
+        </div>
+
+        <!-- 分页条信息[必须] -->
+        <div class="spage-data"
+             data:totalpages="*{totalPages}"
+             data:totalelements="*{totalElements}"
+             data:pagenumber="*{number}"
+             data:islast="*{last}">
+        </div>
+    </div>
+</th:block>
+
+</body>
+</html>

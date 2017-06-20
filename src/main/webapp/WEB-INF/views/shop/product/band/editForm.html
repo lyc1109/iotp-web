@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>商品品牌管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${_sbsNew} ? '新增品牌' : '修改品牌信息'">品牌详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post" th:object="${entity}" th:action="@{|/shop/product/band/*{id}|}">
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>品牌名称</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" id="name" th:value="*{name}" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>品牌图片</span>
+            </label>
+            <div class="col-sm-8">
+                <div class="inline" style="vertical-align:bottom;">
+                    <img src="" class="img-rounded" id="logoImagePrev" style="max-width: 200px;" th:src="*{#strings.isEmpty(logoImage)} ? '' : |*{logoImage}!q70|" th:hidden="*{#strings.isEmpty(logoImage)}"/>
+                </div>
+                <div class="inline" style="vertical-align:bottom;">
+                    <button type="button" class="btn btn-primary btn-sm" id="btnLogoImagePicker">请选择一张图片</button>
+                </div>
+                <div id="logoNullError"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>品牌介绍</span>
+            </label>
+            <div class="col-sm-8">
+                <textarea class="form-control" name="description" rows="3" th:text="*{description}" style="height: 64px;"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>显示序号</span>
+            </label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" name="orderNo" th:value="*{orderNo}"
+                       data-parsley-type="integer"
+                       data-parsley-required="true"
+                       data-parsley-min="0"/>
+                <span class="help-block">显示序号为一个大于0的数字, 数字越大显示时越靠前</span>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save" style="width:81px;" type="button" id="btnSave" value="保存"/>
+            </div>
+        </div>
+
+        <input type="hidden" id="id" name="id" th:value="*{id}"/>
+        <input type="hidden" id="isNew" name="isNew" th:value="${isNew}"/>
+        <input type="hidden" id="logoImageId" name="logoImageId" th:value="*{logoImageId}"
+               data-parsley-required="true"
+               data-parsley-errors-container="#logoNullError"/>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/media/media-image-picker.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            /*var sbsException = $("#_sbsException").val();
+            if(sbsException != null && sbsException.length > 0) {
+                toast(sbsException, "error");
+            }
+*/
+            new ImagePicker({
+                id: "btnLogoImagePicker",
+                onOk: function (resp) {
+                    $("#logoImagePrev").attr("src", resp[0].url);
+                    $("#logoImagePrev").show();
+                    $("#logoImageId").val(resp[0].id);
+                    $("#logoNullError").text('');
+                }
+            });
+
+            $("#btnSave").on("click", function () {
+                if($("#isNew").val() === "true" || $("#isNew").val() === true){
+                    if(!$('#iotForm').parsley().validate()) {
+                        return false;
+                    }
+
+                    var name = $("#name").val();
+                    App.ajax.get({
+                        url: "/shop/product/band/isExist",
+                        data: {
+                            name: name
+                        },
+                        onSuccess: function (resp) {
+                            if(resp.isExist){
+                                Messenger.warning({
+                                    title: "重复提示",
+                                    message: name + "的品牌信息已存在，不可重复创建。"
+                                });
+                            }else{
+                                $("#iotForm").submit();
+                            }
+                        }
+                    })
+                }else{
+                    $("#iotForm").submit();
+                }
+            })
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

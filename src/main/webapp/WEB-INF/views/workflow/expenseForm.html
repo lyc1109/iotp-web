@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='shopCfg_WorkFlow'">
+<head>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/rent/expenseForm.css}" />
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+    <div id="expenseForm" v-cloak="true">
+        <div class="expenseForm">
+            <h1>
+                <span class="title">{{expenseTitle}}</span>
+            </h1>
+            <div class="expenseFormMain">
+                <el-table :data="expenseFormData" style="width: 100%;" class="expenseTab">
+                    <el-table-column prop="step" label="步骤" type="index" width="100"></el-table-column>
+                    <el-table-column prop="transactor" label="办理人">
+                        <template scope="scope">
+                            <el-select v-model="selectArr[scope.$index].name" :filterable="filterable" placeholder="请选择办理人" size="small" v-on:change="selectActor(scope.$index)">
+                                <el-option v-for="item in transactorOption" :label="item.userDto.name" :value="item.userDto.id"></el-option>
+                            </el-select>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="operation" label="可用操作">
+                        <template scope="scope">
+                                <el-checkbox :label="disagree" class="checkBox" :true-label="falseLabels[scope.$index].trueLabel" v-model="falseModel[scope.$index].model" v-on:change="falseChange(scope.$index)"></el-checkbox>
+                                <el-checkbox :label="agree" class="checkBox" :true-label="trueLabels[scope.$index].falseLabel" v-model="trueModel[scope.$index].model" v-on:change="trueChange(scope.$index)"></el-checkbox>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="del" label="">
+                        <template scope="scope">
+                            <el-button type="danger" size="small" class="del" v-on:click="deleteStep(scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="addBtn">
+                    <el-col :span="16">
+                    <el-button size="small" v-on:click="addStep()">添加步骤</el-button>
+                    </el-col>
+                    <el-button type="success" size="small" class="saveBtn" v-on:click="saveExpense()">保存</el-button>
+                    <el-dialog size="tiny" top="30%" title="" v-model="saveDialog" class="saveDialog">
+                        <i class="el-icon-information saveDialogIcon"></i>
+                        <p>至少要保留一个步骤哦...</p>
+                        <el-button type="primary" size="tiny" v-on:click="saveDialog = false">确定</el-button>
+                    </el-dialog>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/fundManage/expenseForm.js}"></script>
+</section>
+</body>
+</html>

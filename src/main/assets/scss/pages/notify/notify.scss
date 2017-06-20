@@ -1,0 +1,29 @@
+@import "../../imports";
+
+.spage .spage-toolbar{
+  @extend %align-center;
+  @extend %margin-top;
+  @include border(top);
+}
+
+.row-notify{
+  @extend %padding-top-m;
+  @extend %padding-bottom-m;
+  @include border-dashed(bottom);
+  color: $text_second;
+  cursor: pointer;
+  font-size: 12px;
+
+  &:last-child{
+    border-color: transparent;
+  }
+
+  &:hover{
+    background: $light-1;
+  }
+}
+
+.row-notify.unread{
+  color: $text_primary;
+  font-weight: bold;
+}

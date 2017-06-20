@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>问题库管理</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/summernote/summernote.css}"/>
+    <style>
+        .alert-info{
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${entity.isNew()} ? '新增产品问题' : '修改产品问题'">问题库管理详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post" th:object="${entity}" th:action="@{|/shop/product/productFaq/*{id}|}">
+        <div class="form-group" id="productMap">
+            <label class="col-sm-2 control-label">关联产品</label>
+            <div class="col-sm-8">
+                <div class="col-left-zero">
+                    <ul id="products" class="list-inline" style="display: inline-block">
+                        <li class="alert" th:id="${productMap['id']}" th:each="productMap : *{productList}">
+                            <a href="" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <th:block th:text="${productMap['productName']}"></th:block>
+                        </li>
+                    </ul>
+                    <button class="btn btn-sm btn-default " style="display: inline-block" type="button" id="btnSelectProduct">选择企业产品</button>
+                    <!--<button class="btn btn-sm btn-default" type="button" id="btnSelectLeaseProduct">选择租赁产品</button>-->
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label  required-label">
+                <span>是否通用</span>
+            </label>
+            <div class="col-sm-8">
+                <label class="radio-inline">
+                    <input class="icheck"  th:checked="*{is_common_quest}==1?'checked'"  type="radio"  name="is_common_quest" value="1" data-parsley-required="true"/> 是
+                </label>
+                <label class="radio-inline">
+                    <input class="icheck"   th:checked="*{is_common_quest}!=1?'checked'" type="radio" name="is_common_quest" value="0" data-parsley-required="true"/> 否
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label  required-label">
+                <span>问题标题</span>
+            </label>
+            <div class="col-sm-6">
+                <input th:value="*{question}"  data-parsley-required="true" class="form-control" type="text" name="question"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label  required-label">
+                <span>问题描述</span>
+            </label>
+            <div class="col-sm-8">
+                <textarea  th:text="*{question_content}" data-parsley-required="true" class="form-control summernote" name="question_content" rows="10" cols="30" maxlength="2000">
+                    The cat was playing in the garden.
+                </textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label  required-label">
+                <span>解决方案</span>
+            </label>
+            <div class="col-sm-8">
+                <textarea th:text="*{solution}" data-parsley-required="true" class="form-control summernote" name="solution" maxlength="2000" rows="10" cols="30">
+                    The cat was playing in the garden.
+                </textarea>
+                <div class="font-s text-second">注意：禁止直接复制粘贴图片，请上传到素材中心再点击 <i class="fa fa-picture-o"></i> 进行选取。</div>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-default" type="button" style="width:81px;" onclick="javascript:history.back()" value="返回"/>
+                <input class="btn btn-sm btn-success" style="width:81px;" type="button" id="btnSave" value="保存"/>
+            </div>
+        </div>
+        <div class="unhidden">
+            <input type="hidden" name="productId" th:each="productMap:*{productList}" th:id="${productMap.id}" th:value="${productMap.id}"/>
+        </div>
+        <input type="hidden" id="is_common_quest" th:value="*{is_common_quest}"/>
+    </form>
+</section>
+
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/summernote/summernote.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/3rd/summernote/lang/summernote-zh-CN.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/media/media-image-picker.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/components/summernote-init.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/product/product-selector.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var ProductFaqForm = (function (MDU) {
+            var _productGrid = null;
+            var selectedProduct = [];
+
+            MDU = {
+                init: function () {
+                    var that = this;
+                    if($("#is_common_quest").val() == '1'){
+                        $("#productMap").hide();
+                    }
+                    $("#btnSelectProduct").on("click", function () {
+                        that.selectProduct();
+                    });
+                },
+
+                selectProduct: function () {
+                    ProductSelector.selectProducts(function (selectedProduct) {
+                        if(null === selectedProduct){
+                            toast("请选择产品", "error");
+                            return;
+                        }
+                        MDU._initProductList(selectedProduct);
+                        $("input[name='is_common_quest'][value='0']").iCheck("check")
+                        this.close();
+                    })
+                },
+                _initProductList:function (selectedProductList) {
+                    for(var i=0;i<selectedProductList.length;i++){
+                        var selectedProduct = selectedProductList[i];
+                        var id = selectedProduct.id;
+                        var flag = false;
+                        $("li.alert").each(function (i,item) {
+                            var oid = $(this).attr("id")
+                            if(id == oid){
+                                flag = true;
+                            }
+                        });
+                        if(!flag){
+                            $("#products").append("<li id=\""+id+"\" class=\"alert \"><i class='glyphicon glyphicon-check margin-right'></i> <a href=\"\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>"+selectedProduct.name+"</li>");
+                            $("div.unhidden").append($("<input type=\"hidden\" name=\"productId\" id=\""+selectedProduct.id+"\" value=\""+selectedProduct.id+"\"/>"));
+                        }
+
+                    }
+                }
+            };
+
+            return MDU;
+        }(window.ProductFaqForm || {}));
+        $(function () {
+            ProductFaqForm.init()
+            $('#btnSave').on('click',function () {
+                $('#iotForm').submit();
+            });
+            $("input[name='is_common_quest'][value='1']").on("ifChecked",function () {
+                $("#products").children().hide();
+                $("#productMap").hide();
+            });
+            $("input[name='is_common_quest'][value='0']").on("ifChecked",function () {
+                $("#products").children().show();
+                $("#productMap").show();
+            })
+            $("a.close").on("click",function () {
+                var delId = $(this).parent().attr("id");
+                $("input[id='"+delId+"']").remove();
+            })
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

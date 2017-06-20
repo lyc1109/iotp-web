@@ -1,0 +1,184 @@
+/** ======================================================================= **/
+/** 对bootstrap中的样式进行复写                                               **/
+/** @author CD826                                                           **/
+/** @version 1.0.0                                                          **/
+/** ======================================================================= **/
+
+@import "variables";
+
+.sbs {
+  h1, h2, h3, h4, h5, h6 {
+    color: #333333;
+  }
+
+  .btn {
+    border-radius: 0 !important;
+  }
+
+  .btn-primary {
+    border-color: #0c60ee;
+    background-color: #387ef5;
+    color: #fff;
+  }
+
+  .btn-sm {
+    height: 32px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .btn-default{
+    border-color: $border;
+  }
+
+  .btn-save {
+    color: #fff;
+    background-color: #27c24c;
+    border-color: #27c24c;
+    width: 81px;
+  }
+
+  .btn-save:hover,.btn-save:focus,.btn-save.focus,.btn-save:active,.btn-save.active,.open>.dropdown-toggle.btn-save {
+    color: #fff;
+    background-color: #449d44;
+    border-color: #398439
+  }
+
+  .btn-save:active,.btn-save.active,.open>.dropdown-toggle.btn-save {
+    background-image: none
+  }
+
+  .btn-save.disabled {
+    background-color: #5cb85c;
+    border-color: #4cae4c
+  }
+
+  .btn-success .badge {
+    color: #5cb85c;
+    background-color: #fff
+  }
+
+  .nav-tabs {
+    li {
+      a {
+        font-size: 12px;
+        border-radius: 0;
+        line-height: 1.25;
+        border: 1px solid #DDD;
+        margin-right: -1px;
+        background-color: #F5F5F5;
+        min-width: 96px;
+        text-align: center;
+        padding-left: 6px;
+        padding-right: 6px;
+        color: #333333;
+        border-bottom-color: transparent;
+      }
+    }
+
+    li.active {
+      a, a:hover, a:focus {
+        color: #555;
+        cursor: default;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+        border-top: 2px solid #00a2ca;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .form-control {
+    border-radius:0;
+    font-size:12px;
+    height:32px;
+  }
+
+  .form-group {
+    .control-label, .control-label>span {
+      font-weight: normal;
+      font-size: 12px;
+      color: #666;
+    }
+
+    label.required:before {
+      content: "*";
+      color: #ef473a;
+      font-weight: 600;
+    }
+
+    .help-block {
+      margin: 4px 0px;
+      font-size: 12px;
+      color: #737373;
+    }
+  }
+
+  .control-label-sm {
+    font-weight: 600;
+    color: #333333;
+    font-size: 12px;
+  }
+
+  .modal {
+    .modal-dialog {
+      margin-top: 80px;
+
+      .modal-content {
+        border-radius:0;
+      }
+    }
+
+
+    .modal-footer {
+      .btn-sm {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+    }
+  }
+
+  .select2-selection{
+    border-radius: 0;
+    font-size: 12px;
+    height: 32px;
+  }
+  .select2-container .select2-selection--single .select2-selection__rendered{
+    padding-top: 2px;
+  }
+  .select2-selection__placeholder{
+    color: $text_light;
+  }
+}
+
+/** 复写select2 **/
+.select2-container--default .select2-selection--multiple, .select2-container--default .select2-selection--single {
+  border: 1px solid #eaeaea;
+  border-radius: 0;
+  font-size: 12px;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--single {
+  border: 1px solid #eaeaea;
+  border-radius: 0;
+  font-size: 12px;
+  outline: 0;
+}
+
+.select2-container--default .select2-search--inline .select2-search__field {
+  margin-top: 8px;
+}
+
+
+/** 复写summernote **/
+.modal.link-dialog .modal-body{
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+/** 复写消息对话框 **/
+.sweet-alert .sa-input-error{
+  top: 24px !important;
+  right: 10px !important;
+}

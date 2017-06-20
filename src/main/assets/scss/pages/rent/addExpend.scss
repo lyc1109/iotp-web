@@ -1,0 +1,133 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+[v-cloak]{
+  display: none;
+}
+.addExpend {
+  position: absolute;
+  background: #fff;
+  margin-bottom:20px;
+  width: 97%;
+  top:0;
+
+  h1 {
+    border-bottom: 1px solid #ececec;
+    line-height: 40px;
+
+    .title {
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight: normal;
+      height: 40px;
+    }
+  }
+  .addExpendMain{
+    margin-top:20px;
+    .expendLabel{
+      float: left;
+      width: 20%;
+      text-align: right;
+      margin-right:10px;
+    }
+  }
+  .el-form{
+    border-bottom:1px solid #eee;
+    padding:15px 0;
+
+    .el-form-item{
+      margin-left:20%;
+
+      .el-form-item__label{
+        font-weight:normal;
+      }
+    .expendImg{
+      #uploadImg{
+        margin-bottom:5px;
+
+        .filePath{
+          position: relative;
+          cursor: pointer;
+          transition: all .3s ease-in-out;
+
+          &:hover{
+            background: #f0f0f0;
+
+            b{
+              display: block;
+            }
+            i{
+              display: none;
+            }
+          }
+          span{
+            color: #555;
+            position: relative;
+            padding-left:5px;
+          }
+          i,b{
+            position: absolute;
+            right:5px;
+            color: #31d331;
+            bottom: 35%;
+          }
+          b{
+            color: #ccc;
+            display: none;
+          }
+        }
+      }
+      .uploadImg{
+        width: 100px;
+        height: 100px;
+        margin: 0 10px 10px 0;
+      }
+      .uploadAudio{
+        width:100px;
+        margin: 0 10px 10px 0;
+      }
+      .uploadVideo{
+        width:100px;
+        margin: 0 10px 10px 0;
+      }
+      .el-upload__input{
+        display: none!important;
+      }
+      .el-upload--picture-card{
+        width: 88px;
+        height: 88px;
+
+        .el-icon-plus{
+          position: relative;
+          bottom:25px;
+        }
+      }
+      .el-upload-list--picture-card{
+        .el-upload-list__item{
+          width: 88px;
+          height: 88px;
+        }
+      }
+    }
+    }
+    .cashInput{
+      .el-input{
+        margin-top: 20px;
+      }
+      .el-input:first-child{
+        margin-top:0;
+      }
+    }
+  }
+  .expendSave{
+    float: right;
+    margin-top:20px;
+  }
+}

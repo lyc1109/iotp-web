@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='memberMgm'">
+<head>
+    <title>会员详情</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">会员详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div class="row margin-right-zero margin-left-zero">
+        <ul class="nav nav-tabs margin-bottom" role="tablist">
+            <li role="presentation" class="active"><a th:href="@{|/shop/member/${entity.id}|}" class="view-nav">会员信息</a></li>
+            <li role="presentation"><a href="#listContainer" class="view-nav" data-toggle="tab" data:view-type="dd">服务订单</a></li>
+            <li role="presentation"><a href="#listContainer" class="view-nav" data-toggle="tab" data:view-type="sp">已购商品</a></li>
+            <!--<li role="presentation"><a href="#listContainer" class="view-nav" data-toggle="tab" data:view-type="pj">Ta的评价</a></li>-->
+        </ul>
+    </div>
+
+    <form id="sbsForm" class="form-horizontal margin-top-m" method="post" th:object="${entity}">
+        <div class="row margin-right-zero margin-left-zero">
+            <div class="col-sm-8 padding padding-top-m padding-bottom-l border-right">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span>昵称:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:text="*{nickname}">会员昵称</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span>性别:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:if="*{user.sex == 'M'}">男</span>
+                        <span th:if="*{user.sex == 'F'}">女</span>
+                        <span class="text-light" th:if="*{user.sex == 'N' || user.sex == ''}">(未知)</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span>生日:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:text="${#calendars.format(entity.birthday, 'yyyy-MM-dd')}" th:if="*{birthday}">生日</span>
+                        <span class="text-light" th:if="!*{birthday}">(未知)</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span>手机号码:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:text="*{mobileNo}">手机号码</span>
+                        <span th:text="'/ ' + *{telephoneNo}" th:if="*{telephoneNo}">联系电话</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span>联系地址:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:text="*{address.fullAddress}" th:if="*{address}">联系地址</span>
+                        <span class="text-light" th:if="!*{address}">(暂未录入)</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span>来源:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:text="*{sourceChannel}" th:if="*{sourceChannel}">来源方式</span>
+                        <span class="text-light" th:if="!*{sourceChannel}">(未知)</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <span>备注:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:text="*{sourceChannel}" th:if="*{sourceChannel}">来源方式</span>
+                        <span class="text-light" th:if="!*{sourceChannel}">-</span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4 align-center padding-m">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">
+                        <span>会员等级:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span>普通会员</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">
+                        <span>会员积分:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span class="color-orange-1 font-bold" th:text="*{points}">会员积分</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">
+                        <span>成交记录:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span class="color-orange-1 font-bold" th:text="*{tradedCount}">成交记录</span>
+                    </label>
+                </div>
+                <!--<div class="form-group">
+                    <label class="col-sm-4 control-label">
+                        <span>最后服务时间:</span>
+                    </label>
+                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                        <span th:text="${#calendars.format(entity.lastTradedAt, 'yyyy-MM-dd HH:mm:ss')}" th:if="*{lastTradedAt}">最后服务时间</span>
+                        <span class="text-light" th:if="!*{lastTradedAt}">(无)</span>
+                    </label>
+                </div>-->
+            </div>
+        </div>
+        <input type="hidden" th:value="*{id}" id="entityId"/>
+    </form>
+
+    <div id="listContainer" class="container margin-zero padding-zero" style="width:100%;">
+
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        function renderServiceOrderList() {
+            $("#listContainer").load("/shop/member/" + $("#entityId").val() + "/serviceOrder", function() {
+                $(".cmd-view-form").on("click", function() {
+                    window.open("/shop/serviceOrder/" + $(this).data("serviceOrderId"), "_self");
+                });
+            });
+        }
+
+        function renderPurchasedProductList() {
+            $("#listContainer").load("/shop/member/" + $("#entityId").val() + "/devices", function() {
+                $(".cmd-view-form").on("click", function() {
+
+                    window.open("/shop/member/devices/" + $(this).data("ppId") + "/view","_blank")
+                });
+            });
+        }
+
+        function renderRatingList() {
+            $("#listContainer").load("/shop/member/" + $("#entityId").val() + "/rating", function() {
+
+            });
+        }
+        $(function () {
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $("#sbsForm").hide();
+
+                var viewType = $(this).data("viewType");
+                if ("dd" == viewType) {
+                    renderServiceOrderList();
+                } else if ("sp" == viewType) {
+                    renderPurchasedProductList();
+                } else {
+                    renderRatingList();
+                }
+            });
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

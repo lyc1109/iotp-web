@@ -1,0 +1,33 @@
+.helpbar{
+  @extend .sidebar;
+  @include border(left);
+  @extend %padding;
+  left: auto;
+  right: 0;
+  background-color: $white-1;
+  width: $helpbar_width;
+
+  @include responsive-mobile(){
+    display: none;
+  }
+}
+
+.helpbar .helpbar-content{
+  @extend .sidebar-inner;
+}
+
+// -----------------
+// 左侧菜单收起
+.sidebar-collapsed{
+  .helpbar{
+    display: none;
+  }
+}
+
+
+// -----------------
+// 帮助内容
+.help-title{
+  padding: 0 10px;
+  border-left: 2px solid $blue-1;
+}

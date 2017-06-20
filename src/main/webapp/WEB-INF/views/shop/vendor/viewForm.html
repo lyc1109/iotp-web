@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='serviceMgm'">
+<head>
+    <title th:text="${entity.shop != null} ? ${entity.shop.name} : ${entity.name}"></title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/fancybox/jquery.fancybox.css}"/>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" ></div>
+    <div class="title pull-left" th:text="${entity.shop != null} ? ${entity.shop.name} : ${entity.name}"></div>
+
+    <div class="pull-right">
+        <div class="inline" th:if="${entity.status == 0}">
+            <button type="button" class="btn btn-default btn-sm" role="button" id="btnTermination" th:if="${entity.status == 0}">解除合作关系</button>
+            <button type="button" class="btn btn-primary btn-sm" role="button" id="btnAuthService">服务授权</button>
+        </div>
+
+        <div class="inline" th:if="${entity.status == 90}">
+            <button type="button" class="btn btn-default btn-sm" role="button" id="btnUnTermination" th:if="${entity.status == 90}">恢复合作关系</button>
+        </div>
+
+        <div class="inline" th:if="${entity.status == 10}">
+            <button type="button" class="btn btn-default btn-sm" role="button" id="btnReject">拒绝</button>
+            <button type="button" class="btn btn-success btn-sm" role="button" id="btnProcess">审核通过</button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <!-- 服务商信息 -->
+    <div th:if="${entity.status ==0} or ${entity.status == 90}" th:object="${entity.shop}">
+        <div class="form-horizontal form-horizontal-static">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">授权状态</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static color-green-1" th:if="${entity.status==0}">正常</p>
+                            <p class="form-control-static color-red-1" th:if="${entity.status==10}">审核中</p>
+                            <p class="form-control-static color-red-1" th:if="${entity.status==11}">审核不通过</p>
+                            <p class="form-control-static text-second" th:if="${entity.status==90}">已解约</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">企业名称</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{name}"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">简介</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{shopProfile}"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">联系人</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactName}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">手机号码</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactMobile}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">联系电话</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactTelephone}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">微信号</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactWechat}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">QQ</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactQq}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">联系地址</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">
+                                <span th:text="*{fullAddress}"></span>
+                                <span th:text="|(*{zipCode})|" th:if="!*{#strings.isEmpty(zipCode)}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr/>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">创建时间</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">
+                                <span th:text="*{#dates.format(createdAt, 'yyyy-MM-dd HH:mm')}" th:if="*{createdAt != null}"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div th:if="${entity.processAt != null}">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">审核人</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">
+                                    <span th:text="${entity.processorName}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">审核时间</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">
+                                    <span th:text="${#dates.format(entity.processAt, 'yyyy-MM-dd HH:mm')}" th:if="${entity.processAt != null}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group" th:if="!${#strings.isEmpty(entity.processMemos)}">
+                            <label class="col-sm-4 control-label">审核说明</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">
+                                    <span th:text="${entity.processMemos}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" th:if="!${#strings.isEmpty(entity.terminationMemos)}">
+                        <label class="col-sm-4 control-label">解约说明</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">
+                                <span th:text="${entity.terminationMemos}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr/>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">已授权服务</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">
+                                <span th:text="${entity.shopServiceNames}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 align-center padding-top-l">
+
+                    <a class="fancybox" rel="group" th:href="*{logoImagePath}">
+                        <img src="#" class="img-thumbnail" th:src="|*{logoImagePath}!wh100|"/>
+                    </a>
+                    <div class="padding text-second">企业Logo</div>
+
+                    <div class="margin-top-l padding-top-l">
+                        <a class="fancybox" rel="group" th:href="*{businessLicenseImg}">
+                            <img src="#" class="img-thumbnail" th:src="|*{businessLicenseImg}!w100|"/>
+                        </a>
+                        <div class="padding text-second">资质文件</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- 审核信息 -->
+    <div th:if="${entity.status == 10} or ${entity.status == 11}" th:object="${entity}">
+        <div class="form-horizontal form-horizontal-static">
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">授权状态</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static color-green-1" th:if="*{status==0}">正常</p>
+                            <p class="form-control-static color-red-1" th:if="*{status==10}">审核中</p>
+                            <p class="form-control-static color-red-1" th:if="*{status==11}">审核不通过</p>
+                            <p class="form-control-static text-second" th:if="*{status==90}">已解约</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">企业名称</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{name}"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">简介</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{shopProfile}"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">联系人</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactName}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">手机号码</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactMobile}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">联系电话</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactTelephone}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">微信号</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactWechat}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">QQ</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static" th:text="*{contactQq}"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">联系地址</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">
+                                <span th:text="*{fullAddress}"></span>
+                                <span th:text="|(*{zipCode})|" th:if="!*{#strings.isEmpty(zipCode)}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr/>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">申请时间</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static">
+                                <span th:text="*{#dates.format(createdAt, 'yyyy-MM-dd HH:mm')}" th:if="*{createdAt != null}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div th:if="*{processAt != null}">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">审核人</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">
+                                    <span th:text="*{processorName}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">审核时间</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">
+                                    <span th:text="*{#dates.format(processAt, 'yyyy-MM-dd HH:mm')}" th:if="*{processAt != null}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group" th:if="!*{#strings.isEmpty(processMemos)}">
+                            <label class="col-sm-4 control-label">审核说明</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">
+                                    <span th:text="*{processMemos}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 align-center padding-top-l">
+
+                    <a class="fancybox" rel="group" th:href="*{logoImage}">
+                        <img src="#" class="img-thumbnail" th:src="|*{logoImage}!wh100|"/>
+                    </a>
+                    <div class="padding text-second">企业Logo</div>
+
+                    <div class="margin-top-l padding-top-l">
+                        <a class="fancybox" rel="group" th:href="*{businessLicenseImg}">
+                            <img src="#" class="img-thumbnail" th:src="|*{businessLicenseImg}!w100|"/>
+                        </a>
+                        <div class="padding text-second">资质文件</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <input type="hidden" id="entityId" th:value="${entity.id}"/>
+    <input type="hidden" id="shopFactoryId" th:value="${entity.shopFactory.id}"/>
+    <input type="hidden" id="shopServiceIds" th:value="${entity.shopServiceIds}"/>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/fancybox/jquery.fancybox.pack.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var ShopVendorActions = (function () {
+            var baseUrl = "/shop/vendor/";
+
+           return {
+                process: function () {
+                    Messenger.confirm("是否审核通过该服务商申请？", function () {
+                        App.ajax.post({
+                            url: baseUrl+ $("#entityId").val() + "/process",
+                            onSuccess: function () {
+                                toast("已成功审核通过");
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 1000);
+                            }
+                        })
+                    });
+                },
+
+                reject: function () {
+                   Messenger.propup("请填写拒绝理由", function (memos) {
+                       App.ajax.post({
+                           url: baseUrl + $("#entityId").val() + "/reject",
+                           data:{
+                               memos: memos
+                           },
+                           onSuccess: function () {
+                               toast("已成功拒绝该申请");
+                               setTimeout(function () {
+                                   window.location.reload();
+                               }, 1000);
+                           }
+                       })
+                   });
+               },
+
+               termination: function () {
+                   Messenger.propup("请填写解约说明", function (memos) {
+                       App.ajax.post({
+                           url: baseUrl + $("#entityId").val() + "/termination",
+                           data:{
+                               memos: memos
+                           },
+                           onSuccess: function () {
+                               toast("已成功解约服务商");
+                               setTimeout(function () {
+                                   window.location.reload();
+                               }, 1000);
+                           }
+                       })
+                   });
+               },
+
+               untermination: function () {
+                   Messenger.confirm("是否确定恢复与该服务商的合作关系", function (memos) {
+                       App.ajax.post({
+                           url: baseUrl + $("#entityId").val() + "/untermination",
+                           data:{
+                               memos: memos
+                           },
+                           onSuccess: function () {
+                               toast("已成功恢复与该服务商的合作关系");
+                               setTimeout(function () {
+                                   window.location.reload();
+                               }, 1000);
+                           }
+                       })
+                   });
+               },
+
+               selectShopService: function (callback) {
+                   new Dlg({
+                       id: "selectShopServiceDlg",
+                       title: "选择授权服务",
+                       url: '/shop/service/select',
+                       data: {
+                           selectedServiceIds: $("#shopServiceIds").val()
+                       },
+                       width: 500,
+                       height: 300,
+                       onLoaded: function () {
+                           // 初始化Jquery通用插件
+                           this.$smodal.find('.icheck').iCheck({
+                               checkboxClass: 'icheckbox_square-blue',
+                               radioClass: 'iradio_square-blue'
+                           });
+                       },
+                       onOk: function () {
+                           var shopServiceIds = "";
+                           this.$smodal.find(":checkbox:checked").each(function () {
+                               if(shopServiceIds !== "")
+                                   shopServiceIds += ",";
+                               shopServiceIds += $(this).data("id");
+                           });
+
+                           this.close();
+
+                           callback.call(this, shopServiceIds);
+                       }
+                   })
+               },
+
+               authShopService: function (shopServiceIds) {
+                   var msg = "是否确定授权已选择服务给服务商？";
+                   if(shopServiceIds === "" || shopServiceIds.length === 0) {
+                       msg = "是否确定授权所有服务给服务商？";
+                   }
+                   Messenger.confirm(msg, function () {
+                       App.ajax.post({
+                           url: baseUrl + $("#entityId").val() + "/authService",
+                           data:{
+                               shopServiceIds: shopServiceIds
+                           },
+                           onSuccess: function () {
+                               toast("已成功授权服务");
+                               setTimeout(function () {
+                                   window.location.reload();
+                               }, 1000);
+                           }
+                       })
+                   });
+               }
+           }
+        }());
+
+        $(function () {
+            $("#btnProcess").on("click", function () {
+                ShopVendorActions.process();
+            });
+            $("#btnReject").on("click", function () {
+                ShopVendorActions.reject();
+            });
+            $("#btnTermination").on("click", function () {
+                ShopVendorActions.termination();
+            });
+            $("#btnUnTermination").on("click", function () {
+                ShopVendorActions.untermination();
+            });
+
+            $("#btnAuthService").on("click", function () {
+                ShopVendorActions.selectShopService(function (shopServiceIds) {
+                    ShopVendorActions.authShopService(shopServiceIds);
+                });
+            });
+
+            $(".fancybox").fancybox({
+                prevEffect: 'fade',
+                nextEffect: 'fade',
+                maxWidth: '800',
+                autoCenter: true
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <title>商品规格信息</title>
+</head>
+<body>
+<th:block th:fragment="specBody">
+    <div style="border: 1px solid #DDD">
+        <table class="table table-striped" style="margin-bottom:0px;">
+            <thead>
+            <tr style="background-color: #F1F1F1;">
+                <th class="text-s" width="90px" style="font-weight:normal;">规格图片</th>
+                <th class="text-s" width="80px" style="font-weight:normal;" th:each="specName : ${produceSpecs.specNames}" th:text="${specName}">颜色</th>
+                <th class="text-s" style="font-weight:normal;">货号</th>
+                <th class="text-s" width="120px" style="font-weight:normal;">价格(元)</th>
+                <th class="text-s" width="56px" style="font-weight:normal;"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="spec-row" th:each="specRow : ${produceSpecs.rows}"  data:specId="${specRow.productSpecId}" th:if="${specRow.canShow}">
+                <th class="text-s" style="font-weight:normal;">
+                    <div class="select-image" th:id="${specRow.rowId}" style="padding: 2px 3px;width:64px;border: 1px dashed rgba(0,0,0,.12);background-color: #F7F7F7;text-align: center;cursor: pointer;">
+                        <img src="" th:src="@{${specRow.coverImage}}" class="img-rounded" width="58px" height="58px" th:id="'specCoverImage_' + ${specRow.rowId}"/>
+                        <input type="hidden" class="spec-item-cover" th:id="'specCoverImageId_' + ${specRow.rowId}" th:value="${specRow.coverImageConfuseId}"/>
+                        <input type="hidden" class="spec-item-id" th:value="${specRow.rowId}"/>
+                    </div>
+                </th>
+                <th class="text-s spec-item-def" style="font-weight:normal;vertical-align: middle;"
+                    th:each="specName, iterStat : ${produceSpecs.specNames}"
+                    th:text="${specRow.getItemVal(iterStat.index)}"
+                    data:spec-name="${specRow.getItemName(iterStat.index)}" data:spec-val="${specRow.getItemVal(iterStat.index)}" data:spec-index="${iterStat.count}">红色</th>
+                <th class="text-s" style="font-weight:normal;vertical-align: middle;">
+                    <input type="text" class="form-control spec-item-code" th:value="${specRow.itemCode}"/>
+                </th>
+                <th class="text-s" style="font-weight:normal;vertical-align: middle;">
+                    <input type="number" step="0.01" min="0" class="form-control align-right currency-input spec-item-price" th:value="${specRow.formatPrice}"/>
+                </th>
+                <th class="text-s" style="font-weight:normal;vertical-align: middle;">
+                    <button type="button" class="btn btn-xs btn-danger cmd-spec-delete">删除</button>
+                </th>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

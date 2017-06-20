@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>智能产品配置</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/product/listTpl::headerTitle('智能产品配置')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+
+    <div th:replace="shop/product/listTpl::nav('iotDeviceModel')"></div>
+
+    <div class="data-grid-container">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <!--<th data-width="80px" data-column-id="status" data-formatter="statusFormatter">状态</th>-->
+                <th data-width="120px" data-column-id="iotDeviceType" data-formatter="iotDeviceTypeFormatter">模板类型</th>
+                <th data-column-id="modelName" data-formatter="link">模板名称</th>
+                <th data-width="200px" data-column-id="modelCode">模板代码</th>
+                <th data-width="200px" data-column-id="modified" data-formatter="dataTime">最后编辑时间</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/iot/deviceModel";
+        var _bootgrid = null;
+
+        $(function () {
+            _bootgrid = new BootGrid({
+                url: _baseUrl,
+                formatters: {
+                    iotDeviceTypeFormatter: function (column, row) {
+                        if(row.iotDeviceType === "iWater"){
+                            return "净水机";
+                        } else if(row.iotDeviceType === "iAirCleaner"){
+                            return "空气净化器";
+                        } else {
+                            return "未知";
+                        }
+                    }
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

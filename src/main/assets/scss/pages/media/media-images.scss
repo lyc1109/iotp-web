@@ -1,0 +1,120 @@
+@import "../../imports";
+
+$header-height: 50px;
+
+.media-wrapper {
+  @include border();
+  @include fadeIn();
+  margin-top: 15px;
+  position: relative;
+}
+
+.medias-container {
+  margin-right: $sidebar_width;
+  height: 630px;
+  overflow: hidden;
+
+  .medias-heading {
+    height: $header-height;
+    line-height: $header-height;
+    @extend %padding-left-m;
+    @extend %padding-right-m;
+    @include border(bottom);
+
+    #groupName {
+      display: inline-block;
+      margin-top: 2px;
+    }
+  }
+
+  .media-actions {
+    @extend .medias-heading;
+    background-color: $page_bg;
+    padding-left: 0 !important;
+  }
+}
+
+.medias-group-container {
+  width: $sidebar_width;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  overflow: hidden;
+  @include border(left);
+
+  .group-title {
+    text-align: left;
+    background-color: $page_bg;
+    height: $header-height;
+    line-height: 47px;
+    @extend %padding-left-m;
+    @extend %padding-right-m;
+    padding-top: 0;
+    @include border(bottom);
+  }
+
+  .medias-group-box{
+    position: relative;
+    height: 92%;
+    min-height: 92%;
+    overflow: auto;
+    padding-bottom: 0px;
+
+    ul.media-groups {
+      list-style: none;
+      margin: 0 0 10px -1px;
+      padding: 0;
+      @include border(left);
+
+      li {
+        cursor: pointer;
+
+        .group-name{
+          @extend %padding-m;
+        }
+
+        .group-actions{
+          display: none;
+          @extend %padding-top-m;
+          @extend %padding-right-s;
+        }
+
+        &:hover {
+          background-color: $light-1;
+
+          .group-actions{
+            display: block;
+          }
+        }
+
+        &.active {
+          background-color: $light-1;
+        }
+      }
+    }
+  }
+}
+
+
+#spage4images .spage-body{
+  height: 460px;
+}
+
+.media-actions{
+  .check-all{
+    padding-left: 10px;
+
+    .icheckbox_square-blue{
+      margin-top: -3px;
+      margin-right: 5px;
+    }
+  }
+
+  #mediaActions{
+    .btn{
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+}

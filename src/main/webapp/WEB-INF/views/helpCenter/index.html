@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <title>品智云</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <th:block th:include="helpCenter/centerTpl::head"></th:block>
+    <link href="/dist/css/pages/helpCenter/index.css" rel="stylesheet"/>
+
+</head>
+<body>
+<th:block th:replace="helpCenter/centerTpl::center-header"></th:block>
+<div class="container">
+
+    <div class="main">
+        <span th:text="${#strings.equalsIgnoreCase(pageCode,'help')} ? '帮助手册':'常见问题'">帮助手册</span>
+    </div>
+
+    <div class="content" th:each="category:${entity}">
+        <div class="header">
+            <span class="title" th:text="*{category.name}">账号管理</span>
+        </div>
+        <div class="cont">
+            <ul class="row">
+                <li class="col-sm-3" th:each="help:${helps.get(category.id)}">
+                    <a th:href="@{|/helpCenter/${category.id}/${help.id}?pageCode=${pageCode}&amp;role=${role}|}" th:text="${help.name}" th:title="${help.name}">你皮任你皮把你当瓜皮</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

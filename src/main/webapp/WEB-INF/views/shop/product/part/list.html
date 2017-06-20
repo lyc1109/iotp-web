@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>配件管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/product/listTpl::headerTitle('配件管理')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:replace="shop/product/listTpl::nav('part')"></div>
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="input-group pull-left" style="width:280px;">
+            <input type="text" class="form-control" id="searchPhrase" placeholder="输入配件名称或货号"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" id="btnSearch" type="button" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="data-grid-container">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-column-id="name" style="font-size:12px;">配件名称</th>
+                <th data-width="160px" data-column-id="mobile">配件货号</th>
+                <th data-width="120px" data-column-id="status">配件状态</th>
+                <th data-width="160px" data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+<section layout:fragment="footer" th:remove="tag">
+<div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h5 class="modal-title" id="myModalLabel">新增员工</h5>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal as-form" id="ozForm" data-validate="parsley" method="post" th:action="@{/crm/opportunities}">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">
+                                <span>员工姓名</span>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="name"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">
+                                <span>手机号码</span>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="mobile"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">
+                                <span>员工角色</span>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="role"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">
+                                <span>员工工号</span>
+                            </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="employeeId"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                <span>备注说明</span>
+                            </label>
+                            <div class="col-sm-8">
+                                <textarea name="demand" rows="3" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm">保存</button>
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            new BootGrid({
+                url: "/shop/product/part",
+                formatters: {
+                    serviceAddressFormatter: function (column, row) {
+                        return row.serviceAddress.province + " - " + row.serviceAddress.city;
+                    },
+                    serviceTimeFormatter: function (column, row) {
+                        return moment(row.serviceDate).format("MM月DD日") + " " + row.serviceTime;
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" title=\"查看详情\" class=\"btn btn-xs btn-default cmd-view\" data-row-id=\"" + row.id + "\">查看</button> ";
+                        cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-edit\" data-row-id=\"" + row.id + "\">编辑</button>";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+                    $(".command-view-form").on("click", function(){
+                        window.open("/shop/trade/serviceOrder/" + $(this).data("rowId"), "_self");
+                    });
+                    $(".command-reject").on("click", function(){
+                        Messenger.alert("功能完善中...");
+                    });
+                    $(".command-assign").on("click", function(){
+                        var serviceOrderId = $(this).data("rowId");
+                        new Dlg({
+                            title: "派单 - 请选择一个服务商",
+                            width: 800,
+                            height: 400,
+                            url: "/shop/shop/selectServiceVendor",
+                            onOk: function (result) {
+                                var selectServiceVendorId = result.selectServiceVendorId;
+                                $.post("/shop/trade/serviceOrder/" + serviceOrderId + "/assignToVendor",
+                                    {"serviceVendorId": selectServiceVendorId},
+                                    function(result){
+                                        if(result.returnCode == 0) {
+                                            Messenger.alert("派单成功!");
+                                            BootGrid.reload(null, "dataGrid");
+                                        } else {
+                                            Messenger.alert("派单失败, 原因:" + result.returnMsg);
+                                        }
+                                    },
+                                "json");
+                            }
+                        });
+                    });
+                }
+            });
+        })
+        /*]]>*/
+    </script>
+</section>
+</html>

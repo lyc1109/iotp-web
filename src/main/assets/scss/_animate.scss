@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+/* -------------------------------------------------------
+ * 动画样式
+ * ------------------------------------------------------- */
+
+// --------------------------------
+// 淡入
+.fadeIn{ @include fadeIn(); }
+.fadeInUp{ @include fadeInUp(); }
+
+// 淡出
+.fadeOut{ @include fadeOut(); }
+.fadeOutDown{ @include fadeOutDown(); }
+
+// 翻转
+.flipInX{ @include flipInX(); }
+

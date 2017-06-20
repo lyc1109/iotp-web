@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<th:block th:fragment="changelog">
+    <div id="changelog">
+    <textarea style="display:none;"  th:text="${content}">
+    </textarea>
+    </div>
+</th:block>
+<script th:inline="javascript" type="text/javascript">
+    $(function () {
+        editormd.markdownToHTML("changelog", {
+            htmlDecode      : "style,script,iframe",  // you can filter tags decode
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+        });
+    });
+</script>
+</html>

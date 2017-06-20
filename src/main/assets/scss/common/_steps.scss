@@ -1,0 +1,45 @@
+.steps{
+  @extend %padding;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  background-color: $white-1;
+}
+
+.steps .steps-item,
+.steps .steps-process{
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+
+  position: relative;
+  text-align: center;
+  padding: 5px 0;
+  z-index: 10;
+}
+
+.steps .steps-item .number{
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid $border;
+  border-radius: 50%;
+  font-size: 12px;
+  margin: 0 auto;
+}
+
+.steps .steps-item .title{
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.steps .steps-process{
+  &:before{
+    display: block;
+    content: "";
+    height: 3px;
+    border-top: 3px solid $border;
+    margin-top: 10px;
+  }
+}

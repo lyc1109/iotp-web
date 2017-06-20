@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">数据表格使用</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <div class="data-grid-container">
+        <div class="data-grid-header">
+            <div class="input-group grid-search-group">
+                <input type="text" class="form-control grid-search" placeholder="输入产品货号"/>
+                <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm grid-search-go" type="button">搜索</button>
+            </span>
+            </div>
+        </div>
+
+        <table id="dataGrid2">
+            <thead>
+            <tr>
+                <th data-column-id="id" data-identifier="true" data-visible="false"></th>
+                <th data-column-id="name" data-formatter="link">姓名</th>
+                <th data-column-id="nickname">昵称</th>
+                <th data-column-id="mobile">手机</th>
+                <th data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            var bootgrid = new BootGrid({
+                id: "dataGrid2",
+                url: "/demo/users"
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

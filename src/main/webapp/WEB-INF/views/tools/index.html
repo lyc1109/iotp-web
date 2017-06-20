@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='home'">
+<head>
+    <title>管理工具箱</title>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="content-heading">
+        <div class="title">管理工具箱</div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3 class="page-header">1. 用户设备相关</h3>
+                <ul>
+                    <li><h4><a target="_blank" th:href="@{/tools/registerIotDevicePage}">注册设备</a></h4></li>
+                    <li><h4><a target="_blank" th:href="@{/tools/registerLeaseDevicePage}">注册租赁设备</a></h4></li>
+                    <li><h4><a target="_blank" th:href="@{/tools/execuInstructionPage}">执行指令</a></h4></li>
+                    <li><h4><a target="_blank" th:href="@{/tools/resetIotDeviceDataPage}">重置设备数据</a></h4></li>
+                    <li><h4><a target="_blank" th:href="@{/tools/resetFilterPage}">重置滤芯</a></h4></li>
+                    <li><h4><a target="_blank" th:href="@{/tools/unregisterIotDevicePage}" style="color:red">删除设备</a></h4></li>
+                </ul>
+            </div>
+            <div class="col-sm-4">
+                <h3 class="page-header">2. 系统服务相关</h3>
+                <ul>
+                    <li><h4><a target="_blank" th:href="@{/tools/sms}">短信发送记录</a></h4></li>
+                </ul>
+            </div>
+            <div class="col-sm-4">
+                <h3 class="page-header">3. Iot设备相关</h3>
+                <ul>
+                    <li><h4><a target="_blank" th:href="@{/tools/reloadIotDevices}">重新加载Iot设备到Redis中</a></h4></li>
+                    <li><h4><a target="_blank" th:href="@{/tools/IotDeviceDetail}">查看Iot设备详情</a></h4></li>
+                    <li><h4><a target="_blank" th:href="@{/tools/IotDeviceLog}">Iot设备日志查看器</a></h4></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

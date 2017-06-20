@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='shopCfg_WorkFlow'">
+<head>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/rent/workflow.css}" />
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+    <div id="workflow" v-cloak="true">
+        <div class="workflow">
+            <h1>
+                <span class="title">审批配置</span>
+            </h1>
+            <el-row class="workflowMain">
+                <el-col :span="5" v-for="(item,index) in workflowBox">
+                    <div class="workflowBox">
+                        <div class="workflowImg"><i :class="[item.iconfont,'icon-'+item.icon_expense]" :style="{backgroundColor: item.imgBgcolor}"></i></div>
+                        <div class="workflowInfo">
+                            <el-col :span="18" class="workInfoWz">
+                                <b>{{item.name}}</b><span v-show="item.times">{{item.time}} 更新</span>
+                            </el-col>
+                            <!--<a th:href="@{/workflow/expenseForm}">-->
+                                <el-button size="small" class="editBtn" v-on:click="getKey(index)">编辑</el-button>
+                            <!--</a>-->
+                        </div>
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/fundManage/workflow.js}"></script>
+</section>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <title></title>
+    <style>
+        td span{
+            overflow: hidden;
+            text-overflow : ellipsis;
+        }
+
+    </style>
+</head>
+<body>
+<div style="position: relative;right: 0px;top: 0px">
+</div>
+<table class="table table-hover table-striped">
+    <thead>
+    <tr>
+        <th>问题名称</th>
+        <th width="80px">操作</th>
+        <!--<th>问题描述</th>-->
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="part-tr" th:each="faq : ${faqs}" data:faq-id="${faq.id}">
+        <td><span th:text="${#strings.length(faq.question)>10}?${#strings.substring(faq.question,0,10)}+'...':${faq.question}" th:title="${faq.question}"></span></td>
+        <td><input id="look" data:product-id="${faq.id}" type="button" value="查看"/></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    /**
+     * 对话框确定函数
+     */
+    function onOkFn() {
+
+    }
+    /**
+     * 对话框内容加载完毕回调函数
+     */
+    function onLoaded() {
+
+        $("#look").on("click",function () {
+            window.open("/shop/product/productFaq/"+$(this).data("productId"),"_blank")
+        })
+
+
+    }
+    /*]]>*/
+</script>
+</html>

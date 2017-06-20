@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<th:block th:fragment="device4selectGrid">
+    <div class="data-grid-container">
+        <table id="device4selectGrid">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-width="100px" data-column-id="deviceType" data-formatter="deviceTypeFormatter">产品类型</th>
+                <th data-width="300px" data-column-id="productName">产品名称</th>
+                <th data-width="140px" data-column-id="itemCode">产品货号</th>
+                <th data-column-id="address.fullAddress">安装地址</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

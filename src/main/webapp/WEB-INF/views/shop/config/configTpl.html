@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>企业设置</title>
+</head>
+<body>
+<th:block th:fragment="headerTitle(title)">
+    <div>
+        <div class="pull-left title" th:text="${title}">企业设置</div>
+        <div class="pull-right"></div>
+    </div>
+    <div class="clearfix"></div>
+</th:block>
+<th:block th:fragment="nav(nav_code)">
+    <ul class="nav nav-tabs margin-bottom-s" role="tablist">
+        <li role="presentation" class="active" th:if="${#strings.equalsIgnoreCase('basic', nav_code)}">
+            <a href="#">基本配置</a>
+        </li>
+        <li role="presentation" th:if="!${#strings.equalsIgnoreCase('basic', nav_code)}">
+            <a href="#" th:href="@{/shop/config/basic}">基本配置</a>
+        </li>
+        <li role="presentation" class="active" th:if="false and ${#strings.equalsIgnoreCase('location', nav_code)}">
+            <a href="#">地图定位</a>
+        </li>
+        <li role="presentation" th:if="false and !${#strings.equalsIgnoreCase('location', nav_code)}">
+            <a href="#" th:href="@{/shop/config/location}">地图定位</a>
+        </li>
+        <li role="presentation" class="active" th:if="${#strings.equalsIgnoreCase('wechat', nav_code)}">
+            <a href="#">微信设置</a>
+        </li>
+        <li role="presentation" th:if="!${#strings.equalsIgnoreCase('wechat', nav_code)}">
+            <a href="#" th:href="@{/shop/config/wechat}">微信设置</a>
+        </li>
+    </ul>
+</th:block>
+</body>
+</html>

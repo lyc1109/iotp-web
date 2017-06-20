@@ -1,0 +1,13 @@
+.wrapper{
+  width: 100%;
+  position: relative;
+  height: auto;
+  min-height: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.wrapper.wrapper-mobile{
+  min-width: 320px;
+  max-width: 768px;
+}

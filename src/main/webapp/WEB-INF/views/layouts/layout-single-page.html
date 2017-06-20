@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE">品智云</title>
+    <th:block th:include="layouts/head::default"/>
+</head>
+<body>
+<div class="wrapper">
+    <section layout:fragment="content">page main content</section>
+</div>
+</body>
+<th:block th:include="layouts/scripts::scripts"/>
+<section layout:fragment="scripts">
+    <!-- Javascript -->
+</section>
+</html>

@@ -1,0 +1,75 @@
+/* -------------------------------------------------------
+ * 组件 -- 按钮
+ * ------------------------------------------------------- */
+
+.btn{
+  @include transition(all .1s);
+  @include border-radius();
+  -webkit-appearance: none;
+  outline: none!important;
+}
+
+.btn-xs{
+  @include font-size(12px);
+}
+
+.btn-primary{
+  background-color: $primary;
+  border-color: $primary;
+}
+.btn-success{
+  background-color: $success;
+  border-color: $success;
+}
+.btn-dark{
+  background-color: rgba(52, 72, 94, .4);
+  color: $white-1;
+
+  &:hover{
+    color: darken($white-1, 10%);
+  }
+}
+
+.btn-icon{
+  border: none;
+  background: $transparent;
+  @include box-shadow(0,0,0,0);
+}
+
+.btn-link{
+  color: $primary;
+}
+
+.btn-link:focus, .btn-link:hover {
+  text-decoration: none;
+}
+
+
+.btn-primary-outline{
+  @extend .btn-primary;
+  background-color: $white-1;
+  color: $primary;
+}
+.btn-success-outline{
+  @extend .btn-success;
+  background-color: $white-1;
+  color: $success;
+}
+.btn-danger-outline{
+  @extend .btn-primary;
+  background-color: $white-1;
+  color: $red-1;
+  border-color: $red-1;
+}
+.btn-info-outline{
+  @extend .btn-primary;
+  background-color: $white-1;
+  color: $cyan;
+  border-color: $cyan;
+}
+.btn-warning-outline{
+  @extend .btn-primary;
+  background-color: $white-1;
+  color: $yellow-1;
+  border-color: $yellow-1;
+}

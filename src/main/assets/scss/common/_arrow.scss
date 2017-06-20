@@ -1,0 +1,39 @@
+/* -------------------------------------------------------
+ * 组件 -- 箭头
+ * ------------------------------------------------------- */
+
+%arrow{
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border: 15px solid transparent;
+
+  &:after{
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border: 15px solid transparent;
+    position: absolute;
+  }
+}
+
+.arrow-down{
+  @extend %arrow;
+  bottom: -15px;
+  left: 41%;
+
+  &:after{
+    border-bottom-width: 0;
+    border-top-color: $light-1;
+    
+  }
+}
+
+.arrow-down-white{
+  @extend .arrow-down;
+  &:after{
+    border-top-color: $white-1;
+  }
+}

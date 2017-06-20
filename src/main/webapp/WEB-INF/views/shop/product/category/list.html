@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>产品分类管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/product/listTpl::headerTitle('分类管理')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:replace="shop/product/listTpl::nav('category')"></div>
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="input-group pull-left" style="width:280px;">
+            <input type="text" class="form-control grid-search" id="searchPhrase" placeholder="输入分类名称" th:value="${searchPhrase}"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" id="btnSearch" type="button" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="data-grid-container">
+        <table id="dataGrid" data:currentPage="${currentPage}">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-column-id="name" style="font-size:12px;" data-formatter="nameFormatter">分类名称</th>
+                <th data-width="160px" data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/shop/product/category/";
+        var _bootgrid = null;
+        $(function () {
+            var preAction = $("#_preAction").val();
+            if("save" == preAction) {
+                toast("信息保存成功");
+            }
+
+            $("#btnSearch").on("click", function(){
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            if($(".grid-search").length > 0){
+                var $search = $(".grid-search");
+                $search.keyup(function(event){
+                    if(event.keyCode === 13){
+                        window.history.replaceState({}, 0, buildListUrl());
+                        reloadGird();
+                    }
+                });
+            }
+
+            _bootgrid = new BootGrid({
+                url: _baseUrl,
+                rowCount: 10,
+                data: {
+                    searchPhrase: $("#searchPhrase").val()
+                },
+                formatters: {
+                    idFormatter: function(column, row) {
+                        return "";
+                    },
+                    nameFormatter: function (column, row) {
+                        return row.fullName;
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" class=\"btn btn-xs btn-default cmd-edit\" data-row-id=\"" + row.id + "\">修改</button> ";
+                        cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-add\" data-row-id=\"" + row.id + "\">添加子类</button> ";
+                        cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-delete\" data-row-id=\"" + row.id + "\">删除</button> ";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+                    $(".cmd-view").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId"), "_self");
+                    });
+                    $(".cmd-edit").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId") + "/edit", "_self");
+                    });
+                    $(".cmd-add").on("click", function(){
+                        window.open(_baseUrl + "/create?parentId=" + $(this).data("rowId"), "_self");
+                    });
+                    $(".cmd-delete").on("click", function(){
+                        var _rowId = $(this).data("rowId");
+                        Messenger.confirm("是否确定删除该分类配置?", function () {
+                            $.ajax({
+                                url: _baseUrl + _rowId + "/delete",
+                                type: 'DELETE',
+                                success: function(data){
+                                    if (data.returnCode == 0) {
+                                        toast("操作执行成功");
+                                        _bootgrid.reload();
+                                    } else {
+                                        toast("抱歉, 操作执行失败");
+                                    }
+                                },
+                                dataType: "json"
+                            });
+                        });
+                    });
+                }
+            });
+        });
+
+        function buildListUrl() {
+            var url = _baseUrl;
+            url += "?searchPhrase=" + $("#searchPhrase").val();
+            return url;
+        }
+
+        function reloadGird() {
+            _bootgrid.search({
+                searchPhrase: $("#searchPhrase").val()
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

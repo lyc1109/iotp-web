@@ -1,0 +1,283 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+[v-cloak]{
+  display: none;
+}
+.content-wrapper{
+  padding-top:0!important;
+  z-index: inherit;
+}
+.addExpendsDia{
+  text-align: center;
+
+  .el-icon-information{
+    font-size: 70px;
+    color: #d9b120;
+  }
+  p{
+    font-size: 24px;
+    position: relative;
+    top:10px;
+  }
+
+  .el-dialog__footer{
+    text-align: center!important;
+
+    .el-button{
+      padding: 9px 20px;
+    }
+  }
+  .el-dialog__content{
+    display: block;
+  }
+}
+.fundManage {
+  /*position: absolute;
+  background: #fff;
+  width: 97%;
+  top: 0;
+  margin-bottom: 20px;*/
+
+  h1 {
+    border-bottom: 1px solid #ececec;
+//    padding-bottom: 10px;
+    line-height: 40px;
+    position: relative;
+
+    .title {
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight: normal;
+      height: 40px;
+    }
+  }
+
+  .addBtn {
+    position: absolute;
+    right: 0;
+    top: -5px;
+    display: inline-block;
+
+    .addExpend{
+      display: inline-block;
+
+      .item{
+        vertical-align: inherit;
+
+        .el-badge__content{
+          border-radius: 0;
+          right: 15px;
+          top: 12px;
+        }
+      }
+    }
+  }
+  .fundManagebox {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+
+    .fundManageMain {
+      flex: 1;
+      margin-right: 25px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      i {
+        position: absolute;
+        right: -20px;
+        height: 90%;
+        top: -8px;
+        font-size: 5.4vw;
+        opacity:.1;
+        filter:alpha(opacity=10);
+        //filter: opacity(10%);
+      }
+      .greenBox {
+        background: #66dd60;
+      }
+      .yellowBox {
+        background: #ffc64b;
+      }
+      .purpleBox {
+        background: #d27ae2;
+      }
+      .CambridgeBlueBox {
+        background: #5ac8fa;
+      }
+      .blueBox {
+        background: #32a8ee;
+      }
+    }
+    .fundManageboxMain{
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      -webkit-border-radius:5px;
+      -moz-border-radius:5px;
+      border-radius:5px;
+      height: 0;
+      padding-bottom: 40%;
+
+      li{
+        width: 100%;
+        text-align: center;
+        padding:3% 0;
+
+        &:first-child{
+          border-bottom:1px solid #fff;
+          padding: 2.8% 0;
+        }
+        &:nth-child(2){
+
+          span{
+            font-size: 1.8vw;
+          }
+        }
+
+        span{
+          font-size: 1.3vw;
+          color: #fff;
+        }
+      }
+    }
+  }
+  .fundManageRecord{
+    margin-top:20px;
+
+    h2{
+      width: 100%;
+      line-height: 40px;
+      position: relative;
+
+      b{
+        font-size: 18px;
+        padding-left:10px;
+        border-left:5px solid orange;
+        font-weight: normal;
+      }
+      span{
+        font-size: 13px;
+        color: #555;
+        font-weight:normal;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+    }
+    .fundManageTab{
+      margin-bottom: 10px;
+
+      .el-tabs--border-card{
+        box-shadow: none;
+        border-bottom: 0 none;
+        border-top: 0 none;
+        border-right: 0 none;
+
+        .el-tabs__header{
+          //      border-bottom: 0 none!important;
+          background: 0 none;
+
+          .el-tabs__nav{
+            background: #f5f5f5;
+            border-bottom: 1px solid #d1dbe5;
+            border-top: 1px solid #d1dbe5;
+            border-right: 1px solid #d1dbe5;
+          }
+        }
+        .el-tabs__content{
+          display: none;
+        }
+      }
+    }
+    .fundManageRecordTable{
+      .el-table__body-wrapper{
+        .cell{
+          height:30px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space:nowrap;
+        }
+      }
+    }
+  }
+  .fundManageForm{
+    .el-form-item{
+      float: left;
+      margin-right: 18px;
+      margin-bottom: 10px;
+      .el-form-item__content{
+        float: left;
+      }
+
+      .el-select,.el-date-picker{
+        width: 100%;
+      }
+      .fundManageSearch{
+        width: 60%;
+      }
+
+      label{
+        display: inline-block;
+        float: left;
+        margin:0 10px;
+      }
+      .el-button{
+        margin-left: 10px;
+      }
+    }
+    .searchs{
+      .searchBtn{
+        margin-left:0;
+        padding:8px 12px;
+      }
+    }
+  }
+  .page{
+    margin-top:20px;
+    float: right;
+
+    .showPage{
+      display: inline-block;
+      position: relative;
+      top: 5px;
+      font-size: 13px;
+
+      span{
+        color: #333;
+      }
+      b{
+        font-weight:normal;
+        color: #1a93e9;
+      }
+    }
+    .el-pagination{
+      display: inline-block;
+    }
+  }
+  .approvalTab{
+    .el-table{
+      tr{
+        cursor: pointer;
+      }
+      .el-table__body-wrapper{
+        .cell{
+          height:30px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space:nowrap;
+        }
+      }
+    }
+  }
+}

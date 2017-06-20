@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title>图片选择对话框</title>
+</head>
+<body>
+
+<th:block th:fragment="pickerContent">
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/components/spage.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/pages/media/images-images-list4picker.css}"/>
+
+    <div class="images-picker">
+        <div class="images-container">
+            <div class="images-group">
+                <ul>
+                    <li class="group-item"
+                        th:each="group : ${groups}" th:classappend="${#strings.equalsIgnoreCase(group.name, '全部图片')} ? 'active' : ''"
+                        data:id="${group.id}" data:name="${group.name}">
+                        <span class="group-name" th:text="${group.name}">全部图片</span>
+                        <span class="text-second" th:text="|(${group.mediaCount})|">(0)</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="images-contents">
+                <div class="spage" id="imagesSpage"></div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="multiple" th:value="${multiple}"/>
+    <input type="hidden" id="shopId" th:value="${shopId}"/>
+    <input type="hidden" id="mediaGroupPrefix" th:value="${mediaGroupPrefix}"/>
+
+    <script type="text/javascript" th:src="@{/dist/scripts/components/spage.js}"></script>
+</th:block>
+
+</body>
+</html>

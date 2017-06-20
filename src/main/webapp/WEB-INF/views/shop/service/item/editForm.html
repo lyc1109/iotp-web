@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='serviceMgm'">
+<head>
+    <title>服务项目详情</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/editable-select/jquery-editable-select.min.css}"/>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${entity.isNew()} ? '新增服务项目' : '修改服务项目'">服务项目详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="sbsForm" class="form-horizontal margin-top-m parsley-form" data-validate="parsley" method="post" th:object="${entity}" th:action="@{|/shop/service/item/*{id}|}">
+        <div class="form-group" style="display:none;">
+            <label class="col-sm-2 control-label">
+                <span>所属类目</span>
+            </label>
+            <div class="col-sm-8">
+
+            </div>
+        </div>
+        <div class="form-group" style="display:none;">
+            <label class="col-sm-2 control-label">
+                <span>适用产品</span>
+            </label>
+            <div class="col-sm-8">
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>项目名称</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" th:value="*{name}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>项目编码</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="code" th:value="*{code}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>服务报价(保修期内)</span>
+            </label>
+            <div class="col-sm-3" id="dblPriceDiv">
+                <div class="input-group">
+                    <span class="input-group-addon">&yen;</span>
+                    <input type="number" step="0.01" min="0" class="form-control" id="dblPrice" th:value="*{formatPrice}" data-parsley-required="true" data-parsley-errors-container="#dblPriceDiv"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>服务报价(保修期外)</span>
+            </label>
+            <div class="col-sm-3" id="dblPriceAfterDiv">
+                <div class="input-group">
+                    <span class="input-group-addon">&yen;</span>
+                    <input type="number" step="0.01" min="0" class="form-control" id="dblPriceAfter" th:value="*{formatPriceAfter}" data-parsley-required="true" data-parsley-errors-container="#dblPriceAfterDiv"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>支持数量</span>
+            </label>
+            <div class="col-sm-8">
+                <label class="radio-inline">
+                    <input type="radio" class="icheck quantifiable-true-check" name="quantifiable" id="hostStatus0" value="true" th:checked="*{quantifiable}"/> 支持
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" class="icheck quantifiable-false-check" name="quantifiable" id="hostStatus1" value="false" th:checked="!*{quantifiable}"/> 不支持
+                </label>
+            </div>
+        </div>
+        <div class="form-group item-unit" th:hidden="!*{quantifiable}">
+            <label class="col-sm-2 control-label required">
+                <span>计量单位</span>
+            </label>
+            <div class="col-sm-3">
+                <select id="itemUnit" class="form-control" name="itemUnit" th:value="*{itemUnit}">
+                    <option value="次">次</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>项目描述</span>
+            </label>
+            <div class="col-sm-8">
+                <textarea class="form-control" name="itemDesc" rows="3" th:text="*{itemDesc}" style="height: 64px;"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>显示序号</span>
+            </label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" name="orderNo" th:value="*{orderNo}"/>
+                <span class="help-block">一个大于0的数字, 越小显示时越靠前</span>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save" style="width:81px;" type="submit" value="保存"/>
+            </div>
+        </div>
+        <div style="display:none;">
+            <input type="hidden" name="id" th:value="*{id}"/>
+            <input type="hidden" id="price" name="price"/>
+            <input type="hidden" id="priceAfter" name="priceAfter"/>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/editable-select/jquery-editable-select.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/3rd/maskmoney/jquery.maskMoney.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/media/media-image-picker.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $(".currency-input").maskMoney({allowZero:true});
+
+            $('#itemUnit').editableSelect({
+                effects: 'slide'
+            });
+
+            $('.quantifiable-true-check').on('ifChecked', function(event){
+                $(".item-unit").show();
+            });
+            $('.quantifiable-false-check').on('ifChecked', function(event){
+                $(".item-unit").hide();
+            });
+
+            $("#sbsForm").submit(function() {
+                if($(":radio[name=quantifiable]").val() === "true" || $(":radio[name=quantifiable]").val() === true) {
+                    if($("#itemUnit").val().trim() === "" || $("#itemUnit").val().trim().length === 0) {
+                        toast("请填写计量单位", "error");
+                        return false;
+                    }
+                }
+
+                // 转换价格
+                $("#price").val(Math.round(100 * $("#dblPrice").maskMoney('unmasked')[0]));
+                $("#priceAfter").val(Math.round(100 * $("#dblPriceAfter").maskMoney('unmasked')[0]));
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

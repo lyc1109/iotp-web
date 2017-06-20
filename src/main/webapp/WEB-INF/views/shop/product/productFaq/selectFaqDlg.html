@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div class="data-grid-container">
+    <div class="data-grid-header padding-left padding-top-s">
+        <div class="input-group grid-search-group">
+            <input type="text" class="form-control grid-search" placeholder="输入名称"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm grid-search-go" type="button">搜索</button>
+            </span>
+        </div>
+    </div>
+    <table id="faqSelectGrid">
+        <thead>
+        <tr>
+            <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+            <th data-column-id="question">问题名称</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+</body>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    /*/!**
+     * 对话框确定函数
+     *!/
+    function onOkFn() {
+        var selectFaqIds = "";
+        $('.part-tr').each(function () {
+            if($(this).hasClass("info")) {
+                if (selectFaqIds.length > 0)
+                    selectFaqIds += ",";
+                selectFaqIds += $(this).data("faqId");
+            }
+        });
+
+        if(selectFaqIds == "") {
+            Messenger.alert("请至少选择一个问题");
+            return false;
+        }
+        return {
+            selectFaqIds: selectFaqIds
+        };
+    }
+    /!**
+     * 对话框内容加载完毕回调函数
+     *!/
+    function onLoaded() {
+        $('.icheck').iCheck({
+            checkboxClass: 'icheckbox_square-blue'
+        });
+
+        $('.icheck').on('ifChecked', function(event){
+            $(this).closest(".part-tr").addClass("info");
+        });
+        $('.icheck').on('ifUnchecked', function(event){
+            $(this).closest(".part-tr").removeClass("info");
+        });
+
+        $('.part-tr').on('click', function(){
+            $(this).toggleClass("info");
+            $(this).find(".part-check").iCheck('toggle');
+        });
+
+    }*/
+    /*]]>*/
+</script>
+</html>

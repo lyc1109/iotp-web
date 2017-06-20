@@ -1,0 +1,128 @@
+@import "../../imports";
+
+$group-width: 150px;
+
+.images-picker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  .images-container {
+    position: relative;
+    height: 100%;
+    min-height: 100%;
+    overflow: auto;
+
+    .images-group {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: $group-width;
+      @include border(right);
+      overflow: auto;
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        margin-top: 5px;
+
+        li {
+          width: 100%;
+          @extend %padding-top-s;
+          @extend %padding-bottom-s;
+          @extend %padding-left;
+          @extend %padding-right;
+          @extend %text-wrapper;
+          cursor: pointer;
+
+          &:hover {
+            background-color: $light-1;
+          }
+        }
+
+        li.active {
+          background-color: $border-gray !important;
+        }
+      }
+    }
+  }
+
+  .images-container .images-contents {
+    height: 100%;
+    min-height: 100%;
+    margin-left: $group-width;
+  }
+
+  .images-contents .images-item {
+    @extend %padding-top;
+    @extend %padding-left-s;
+    @extend %padding-right-s;
+    position: relative;
+
+    .bg-box {
+      height: 110px
+    }
+
+    .mask {
+      display: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      @extend %margin-top;
+      @extend %margin-left-s;
+      @extend %margin-right-s;
+      @extend %align-center;
+      line-height: 150px;
+
+      .check {
+        display: none;
+        font-size: 34px;
+        color: $white-1;
+      }
+    }
+  }
+
+  .images-contents .images-item.checked {
+    .mask,
+    .mask .check {
+      display: block;
+    }
+  }
+
+  .images-contents .images-item:hover {
+    .mask {
+      display: block;
+    }
+  }
+}
+
+.spage {
+  height: 100%;
+  min-height: 100%;
+  position: relative;
+
+  .spage-body {
+    @extend %padding-left-s;
+    @extend %padding-right-s;
+  }
+
+  .spage-toolbar {
+    position: absolute !important;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    @extend %padding-right;
+    @include border(top, $light-1);
+
+    button#btnImagePickerUploader {
+      padding: 5px 8px;
+      margin-top: -3px;
+    }
+  }
+}

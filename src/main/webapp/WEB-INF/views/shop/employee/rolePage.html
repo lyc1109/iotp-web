@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='shopCfg_Employee'">
+<head>
+    <title>员工角色管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div>
+        <div class="title">员工角色管理</div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div class="container-fluid" style="width:800px">
+        <div>
+            <div class="row margin-top" style="font-weight:600; color:#333;">
+                <div class="col-sm-1">
+                </div>
+                <div class="col-sm-1 align-center">
+                    <span>序号</span>
+                </div>
+                <div class="col-sm-4">
+                    <span>角色名称</span>
+                </div>
+                <div class="col-sm-4">
+                    <span>角色编码</span>
+                </div>
+                <div class="col-sm-2">
+                    <span></span>
+                </div>
+            </div>
+            <div class="row margin-top">
+                <div class="col-sm-1">
+                </div>
+                <div class="col-md-1" style="text-align:center; padding-top:7px;">
+                    <label class="control-label role-index control-label-sm">1</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control as-optionitem-name" name="name" value="管理员" disabled="disabled"/>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control as-optionitem-code" name="code" value="ROLE_ADMIN" disabled="disabled"/>
+                </div>
+            </div>
+            <div class="row margin-top">
+                <div class="col-sm-1">
+                </div>
+                <div class="col-md-1" style="text-align:center; padding-top:7px;">
+                    <label class="control-label role-index control-label-sm">2</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control as-optionitem-name" name="name" value="服务人员" disabled="disabled"/>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control as-optionitem-code" name="code" value="ROLE_SERVIER" disabled="disabled"/>
+                </div>
+            </div>
+            <div class="row margin-top employee-role-row">
+                <div class="col-sm-1"></div>
+                <div class="col-md-1 align-center padding-top-s">
+                    <label class="control-label role-index control-label-sm">3</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control role-name" name="name"/>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control role-code" name="code"/>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-sm btn-danger cmd-delete" style="width:81px;">
+                        <span>删除</span>
+                    </button>
+                </div>
+            </div>
+            <div class="row border-top margin-top padding-top final-row">
+                <div class="col-sm-1">
+                </div>
+                <div class="col-md-1" style="text-align:center; padding-top:7px;"></div>
+                <div class="col-md-8">
+                    <button type="button" class="btn btn-sm btn-default cmd-add" style="width:81px;">
+                        <span><i class="fa fa-plus"></i></span>&nbsp;<span>添加</span>&nbsp;
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-sm btn-success cmd-save" style="width:81px;">
+                        <span>保存</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hidden">
+        <input type="hidden" id="shopId" th:value="${shopId}" />
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <!-- employeeRoleItemTpl -->
+    <script id="employeeRoleItemTpl" type="text/x-jquery-tmpl">
+        <div class="row margin-top employee-role-row">
+            <div class="col-sm-1"></div>
+            <div class="col-md-1 align-center padding-top-s">
+                <label class="control-label role-index control-label-sm"></label>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control role-name" name="name"/>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control role-code" name="code"/>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-sm btn-danger cmd-delete" style="width:81px;">
+                    <span>删除</span>
+                </button>
+            </div>
+        </div>
+    </script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $(".cmd-add").click(function(){
+                $($("#employeeRoleItemTpl").html()).insertBefore(".final-row");
+                reindex();
+            });
+
+            $(document).on("click", ".cmd-delete", function(){
+                $(this).closest(".row").slideUp("slow", function() {
+                    $(this).remove();
+                    reindex();
+                });
+            });
+
+            $(".cmd-save").click(function(){
+                var employeeRoles = [];
+                var shopId = $("#shopId").val();
+                var canContinue = true;
+
+                $(".employee-role-row").each(function(){
+                    var role = {};
+                    role.name = $(this).find(".role-name").val();
+                    role.code = $(this).find(".role-code").val();
+                    if (canContinue) {
+                        if (role.name == "" || role.name.length == 0 || role.code == "" || role.code.length == 0) {
+                            Messenger.alert("请填写完整的角色信息");
+                            canContinue = false;
+                        } else {
+                            employeeRoles.push(role);
+                        }
+                    }
+                });
+                if(!canContinue) {
+                    return;
+                }
+
+                $.post("/shop/shopMember/role",
+                        {
+                            'roles': JSON.stringify(employeeRoles),
+                            'shopId': shopId
+                        },
+                        function(json){
+                            Messenger.success("员工角色信息更新成功!");
+                        }, "json");
+            });
+        })
+
+        function reindex(){
+            var index = 1;
+            $(".role-index").each(function(){
+                $(this).text(index);
+                index++;
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      th:with="menuCode='ratingMgm'">
+<head>
+    <title></title>
+    <style>
+
+        textarea{
+            font-size:14px;
+            width: 100%;
+            resize: none;
+            border: 1px solid #ddd;
+        }
+        a{
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+            <div class="form-horizontal padding-top-m" th:object="${entity}" style="overflow: hidden">
+                <div class="form-group row" style="margin-bottom: 0px">
+                        <div class="col-sm-2 padding-top">
+                            <img class="pull-right"  style="width: 50px;height: 50px;" th:src="${#strings.length(entity.authorAvatar)}>0?*{authorAvatar}:'/dist/images/user_avatar.png'"/>
+                            <p  style="width: 50px;clear: both;float: right" th:text="*{authorMemberName}">客户</p>
+                        </div>
+                        <div class="form-control-static col-sm-8">
+                            <p>
+                                <span  th:classappend="*{rating}>=1 ? 'fa fa-star':'fa fa-star-o'"></span>
+                                <span  th:classappend="*{rating}>=2 ? 'fa fa-star':'fa fa-star-o'"></span>
+                                <span  th:classappend="*{rating}>=3 ? 'fa fa-star':'fa fa-star-o'"></span>
+                                <span  th:classappend="*{rating}>=4 ? 'fa fa-star':'fa fa-star-o'"></span>
+                                <span  th:classappend="*{rating}>=5 ? 'fa fa-star':'fa fa-star-o'"></span>
+                            </p>
+                            <p th:text="*{review}"></p>
+                            <p style="color: #999">
+                                <a th:text="*{tradeOrderCode}" th:href="@{|/shop/serviceOrder/*{tradeOrderId}|}" target="_blank"></a>
+                                <span class="margin-right margin-left"  th:text="${#calendars.format(entity.ratedAt,'yyyy-MM-dd HH:ss:MM')}">评价时间</span>
+                                <span class="pull-right"><a class="reply-a">回复</a></span>
+                            </p>
+                            <hr/>
+                        </div>
+                </div>
+                <div class="form-group row" th:each="reply:${replyList}">
+                    <div class="col-sm-2 padding-top">
+                    </div>
+                    <div class="form-control-static col-sm-8">
+                        <p>
+                            <span style="color: #005ea7" th:text="${reply.authorMemberName}"></span> 回复 <span th:text="${entity.authorMemberName}" style="color: #005ea7"></span> : <span th:text="${reply.replyContent}"></span>
+                        </p>
+                        <p><span style="color: #999" th:text="${#calendars.format(reply.repliedAt,'yyyy-MM-dd HH:ss:MM')}">回复时间</span></p>
+                        <hr/>
+                    </div>
+                </div>
+
+                <div class="form-group row reply-textarea">
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-8 margin-top-l" style="padding: 10px;
+    border: 1px solid #eee;
+    background-color: #f7f7f7;">
+                        <form id="replyFrom">
+                        <textarea rows="4" id="replyContent" name="replyContent"  maxlength="200" data-parsley-required="true">感谢您的评价,我们会继续努力!</textarea>
+                        </form>
+                        <div class="font-s text-second pull-left">最多可输入200个字符</div>
+                        <div style="text-align: right;">
+                            <a class="btn btn-success reply-submit" style="padding-top: 2px;padding-bottom: 2px" href="javascript:;" target="_self">提交</a>
+                        </div>
+                    </div>
+                </div>
+    </div>
+<div>
+    <input type="hidden" id="ratingId" th:value="${entity.id}"/>
+    <input type="hidden" id="status"/>
+</div>
+</body>
+<script th:inline="javascript" type="text/javascript">
+
+    /*<![CDATA[*/
+    /**
+     * 对话框确定函数
+     */
+    function onOkFn() {
+        return {
+            status: $("#status").val()
+        };
+    }
+    $(function () {
+        $(".reply-a").on('click',function () {
+            $("#replyContent").focus();
+            $('.body').animate({ scrollTop: $(document).height() }, 1000);
+
+        });
+        $(".reply-submit").on('click',function () {
+            if(!$('#replyFrom').parsley().validate()){
+                return false
+            }
+            var content = $("#replyContent").val();
+            $.ajax({
+                url:"/shop/rating/reply/" + $("#ratingId").val(),
+                type:"post",
+                data:{
+                    replyContent : content
+                },
+                success:function () {
+                    $("#status").val("reply");
+                    $("#btnOk").click();
+                },
+                dataType:"json"
+                }
+            );
+
+        })
+    })
+    /*]]>*/
+</script>
+</html>

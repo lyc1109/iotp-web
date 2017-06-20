@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='shopCfg_Media'">
+<head>
+    <title>图片素材管理</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/components/spage.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/pages/media/media-images.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/pages/media/images-images-list.css}"/>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="content-heading">
+        <div class="title">素材管理</div>
+    </div>
+
+    <!--<ul class="nav nav-tabs nav-tabs-tb" role="tablist">
+        <li role="presentation" class="active"><a th:href="@{/media}">图片</a></li>
+        <li role="presentation"><a href="#tabAudios" role="tab" data-toggle="tab">语音</a></li>
+        <li role="presentation"><a href="#tabVideos" role="tab" data-toggle="tab">视频</a></li>
+    </ul>-->
+
+    <div class="media-wrapper">
+    <div class="medias-container">
+        <div class="medias-heading">
+            <div class="pull-right">
+                <span class="valign-middle text-second margin-right font-s">大小不得超过10M</span>
+                <button type="button" class="btn btn-success valign-middle" id="btnImageUploader">本地上传</button>
+            </div>
+
+            <div id="groupName">全部图片</div>
+        </div>
+
+        <div class="media-actions">
+            <label class="radio-inline check-all">
+                <input type="checkbox" class="icheck" id="checkAll" value="checkAll"/>
+                全选
+            </label>
+
+            <div class="inline margin-left-l border-left padding-left-l"  id="mediaActions" style="display: none">
+                <button type="button" class="btn btn-default btn-sm" id="btnMediaDelete">删除</button>
+            </div>
+        </div>
+
+        <div class="padding-left-s padding-right-s padding-top">
+            <div class="spage" id="spage4images"></div>
+        </div>
+    </div>
+
+    <div class="medias-group-container">
+        <div class="group-title">
+            <div class="pull-right">
+                <button type="button" class="btn btn-link padding-right-zero" id="btnAddGroup"><i class="fa fa-plus"></i> 添加分组</button>
+            </div>
+            <div style="padding-top: 2px;">分组管理</div>
+        </div>
+
+        <div class="medias-group-box">
+            <ul class="media-groups">
+                <li class="group-item"
+                    th:each="group : ${groups}"
+                    th:classappend="${#strings.containsIgnoreCase(group.name, '全部图片')} ? 'active' : ''"
+                    data:id="${group.id}" data:name="${group.name}" data:media-count="${group.mediaCount}">
+
+                    <div class="pull-right group-actions" style="padding-top: 1px;" th:if="!${#strings.containsIgnoreCase(group.name, '全部图片')}">
+                        <i class="fa fa-pencil-square-o group-edit" data:name="${group.name}" data:id="${group.id}"></i>
+                        &nbsp;
+                        <i class="fa fa-trash-o group-delete" data:name="${group.name}" data:id="${group.id}"></i>
+                    </div>
+
+                    <div class="group-name" data:id="${group.id}" data:name="${group.name}" data:media-count="${group.mediaCount}">
+                        <span th:text="${group.name}">全部图片</span>
+                        <span class="text-second" th:text="|(${group.mediaCount})|">(0)</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <input type="hidden" id="mediaGroupPrefix" th:value="${mediaGroupPrefix}"/>
+</div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/components/spage.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/media/media-images.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            window.MediaImg.init();
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

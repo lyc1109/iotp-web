@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='shopCfg_Employee'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/employee/listTpl::headerTitle('员工管理')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="btn-group pull-left view-filter-item" data-field-id="employeeRole" style="padding-right:6px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有员工</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="employeeRole" data-field-value="SUPER_ADMIN" data-field-text="超级管理员">超级管理员</a></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="employeeRole" data-field-value="ADMIN" data-field-text="管理员">管理员</a></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="employeeRole" data-field-value="SERVICE_MAN" data-field-text="服务人员">服务人员</a></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="employeeRole" data-field-value="CUSTOM_SERVICER" data-field-text="服务人员">客服人员</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="employeeRole" data-field-value="" data-field-text="所有员工">所有员工</a></li>
+            </ul>
+        </div>
+        <div class="input-group pull-left" style="width:280px;">
+            <input type="text" class="form-control grid-search" id="searchPhrase" placeholder="输入姓名或者手机号码进行搜索" th:value="${searchPhrase}"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" type="button" id="btnSearch" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="data-grid-container">
+        <table id="dataGrid">
+            <thead>
+                <tr>
+                    <th data-column-id="id" data-identifier="true" data-visible="false"></th>
+                    <th data-width="120px" data-column-id="status" data-formatter="statusFormatter">配置状态</th>
+                    <th data-column-id="name">姓名</th>
+                    <!--<th data-width="200px" data-column-id="userDto.loginName">登录名</th>-->
+                    <th data-width="200px" data-column-id="mobile">手机号码/登录名</th>
+                    <th data-width="160px" data-column-id="employeeRole" data-formatter="roleFormatter">员工角色</th>
+                    <th data-width="160px" data-column-id="commands" data-formatter="commands">操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div style="display:none">
+        <input class="view-filter-field" type="hidden" id="employeeRole" th:value="${employeeRole}"/>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/shop/employee/";
+        var _bootgrid = null;
+        $(function () {
+            var preAction = $("#_preAction").val();
+            if("save" == preAction) {
+                toast("信息保存成功");
+            }
+
+            _bootgrid = new BootGrid({
+                id: "dataGrid",
+                url: _baseUrl,
+                data: {
+                    employeeRole: $("#employeeRole").val(),
+                    searchPhrase: $("#searchPhrase").val()
+                },
+                formatters: {
+                    statusFormatter: function (column, row) {
+                        return row.statusText;
+                    },
+                    roleFormatter: function (column, row) {
+                        return row.employeeRoleName;
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" class=\"btn btn-xs btn-default cmd-edit\" data-row-id=\"" + row.id + "\">修改</button> ";
+                        if (row.status == 0)
+                            cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-disable\" data-row-id=\"" + row.id + "\">禁用</button> ";
+                        if (row.status == 1)
+                            cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-enable\" data-row-id=\"" + row.id + "\">启用</button> ";
+                        cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-delete\" data-row-id=\"" + row.id + "\">删除</button> ";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+                    $(".cmd-view").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId"), "_self");
+                    });
+                    $(".cmd-edit").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId") + "/edit", "_self");
+                    });
+                    $(".cmd-disable").on("click", function(){
+                        App.ajax.post({
+                            url: _baseUrl + $(this).data("rowId") + "/disable",
+                            onSuccess: function (resp) {
+                                if(resp.returnCode == 0){
+                                    toast("操作执行成功");
+                                    _bootgrid.reload({
+                                        current: _bootgrid.getCurrentPage()
+                                    });
+                                }else{
+                                    toast("抱歉, 操作执行失败");
+                                }
+                            }
+                        });
+                    });
+                    $(".cmd-enable").on("click", function(){
+                        App.ajax.post({
+                            url: _baseUrl + $(this).data("rowId") + "/enable",
+                            onSuccess: function (resp) {
+                                if(resp.returnCode == 0){
+                                    toast("操作执行成功");
+                                    _bootgrid.reload({
+                                        current: _bootgrid.getCurrentPage()
+                                    });
+                                }else{
+                                    toast("抱歉, 操作执行失败");
+                                }
+                            }
+                        });
+                    });
+                    $(".cmd-delete").on("click", function(){
+                        var _rowId = $(this).data("rowId");
+                        Messenger.confirm("是否确定删除该员工?", function () {
+                            $.ajax({
+                                url: _baseUrl + _rowId + "/delete/",
+                                type: 'DELETE',
+                                success: function(data){
+                                    if (data.returnCode == 0) {
+                                        toast("操作执行成功");
+                                        _bootgrid.reload();
+                                    } else {
+                                        toast("抱歉, 操作执行失败");
+                                    }
+                                },
+                                dataType: "json"
+                            });
+                        });
+                    });
+                }
+            });
+
+            $("#btnSearch").on("click", function(){
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            if($(".grid-search").length > 0){
+                var $search = $(".grid-search");
+                $search.keyup(function(event){
+                    if(event.keyCode === 13){
+                        window.history.replaceState({}, 0, buildListUrl());
+                        reloadGird();
+                    }
+                });
+            }
+
+            $(".view-filter").on("click", function(){
+                var fieldId = $(this).data("fieldId");
+                var fieldValue = $(this).data("fieldValue");
+                var fieldText = $(this).data("fieldText");
+                $("#" + fieldId).val(fieldValue);
+
+                $(this).closest(".btn-group").find(".field-text").text(fieldText);
+
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            // 同步已选中的值
+            $(".view-filter-field").each(function(){
+                var fieldId = $(this).attr("id");
+                var fieldVal = $(this).val();
+                $(".view-filter-item").each(function(){
+                    var itemFieldId = $(this).data("fieldId");
+                    if (itemFieldId == fieldId) {
+                        $(this).find(".view-filter").each(function(){
+                            if(fieldVal == $(this).data("fieldValue")) {
+                                $(this).closest(".btn-group").find(".field-text").text($(this).data("fieldText"));
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        function buildListUrl() {
+            var url = _baseUrl;
+            url += "?employeeRole=" + $("#employeeRole").val();
+            url += "&searchPhrase=" + $("#searchPhrase").val();
+            return url;
+        }
+
+        function reloadGird() {
+            _bootgrid.search({
+                employeeRole: $("#employeeRole").val(),
+                searchPhrase: $("#searchPhrase").val()
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

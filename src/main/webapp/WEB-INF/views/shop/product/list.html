@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>产品管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/product/listTpl::headerTitle('产品管理')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:replace="shop/product/listTpl::nav('product')"></div>
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="btn-group pull-left view-filter-item" data-field-id="productType" style="padding-right:6px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有类型</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" class="view-filter font-s" data-field-id="productType" data-field-value="CP" data-field-text="商品">商品</a></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="productType" data-field-value="PJ" data-field-text="配件">配件</a></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="productType" data-field-value="ZP" data-field-text="赠品">赠品</a></li>
+                <li class="divider"></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="productType" data-field-value="" data-field-text="所有类型">所有类型</a></li>
+            </ul>
+        </div>
+        <div class="btn-group pull-left view-filter-item" data-field-id="productCategory" style="padding-right:6px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="min-width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有分类</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li th:each="option : ${categoryOptions}">
+                    <a href="#" class="view-filter font-s" data-field-id="productCategory" data:field-value="${option.value}" data:field-text="${option.name}" th:text="${option.name}">分类名称</a>
+                </li>
+                <li class="divider"></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="productCategory" data-field-value="" data-field-text="所有分类">所有分类</a></li>
+            </ul>
+        </div>
+        <div class="btn-group pull-left view-filter-item" data-field-id="productBand" style="padding-right:6px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="min-width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有品牌</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li th:each="option : ${bandOptions}">
+                    <a href="#" class="view-filter font-s" data-field-id="productBand" data:field-value="${option.value}" data:field-text="${option.name}" th:text="${option.name}">品牌名称</a>
+                </li>
+                <li class="divider"></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="productBand" data-field-value="" data-field-text="所有品牌">所有品牌</a></li>
+            </ul>
+        </div>
+        <div class="btn-group pull-left view-filter-item" data-field-id="status" style="padding-right:6px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有状态</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" class="view-filter font-s" data-field-id="status" data-field-value="0" data-field-text="出售中">出售中</a></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="status" data-field-value="1" data-field-text="已下架">已下架</a></li>
+                <li class="divider"></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="status" data-field-value="" data-field-text="所有状态">所有状态</a></li>
+            </ul>
+        </div>
+        <div class="input-group pull-left" style="width:280px;">
+            <input type="text" class="form-control grid-search" id="searchPhrase" placeholder="输入产品名称或货号" th:value="${searchPhrase}"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" type="button" id="btnSearch" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="data-grid-container">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-width="80px" data-column-id="status" data-formatter="statusFormatter">状态</th>
+                <th data-width="80px" data-column-id="productType" data-formatter="productTypeFormatter">类型</th>
+                <th data-column-id="name" style="font-size:12px;" data-formatter="link">商品名称</th>
+                <th data-width="160px" data-column-id="itemCode">商品货号</th>
+                <th data-width="160px" data-column-id="bandName">商品品牌</th>
+                <th data-width="160px" data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div style="display:none">
+        <input class="view-filter-field" type="hidden" id="productType" th:value="${productType}"/>
+        <input class="view-filter-field" type="hidden" id="productBand" th:value="${productBand}"/>
+        <input class="view-filter-field" type="hidden" id="productCategory" th:value="${productCategory}"/>
+        <input class="view-filter-field" type="hidden" id="status" th:value="${status}"/>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/shop/product";
+        var _bootgrid = null;
+        $(function () {
+            var preAction = $("#_preAction").val();
+            if("save" == preAction) {
+                toast("信息保存成功");
+            }
+
+            _bootgrid = new BootGrid({
+                url: _baseUrl,
+                data: {
+                    productType: $("#productType").val(),
+                    productBand: $("#productBand").val(),
+                    productCategory: $("#productCategory").val(),
+                    status: $("#status").val(),
+                    searchPhrase: $("#searchPhrase").val()
+                },
+                formatters: {
+                    idFormatter: function(column, row) {
+                        return "";
+                    },
+                    statusFormatter: function (column, row) {
+                        return row.statusText;
+                    },
+                    productTypeFormatter: function (column, row) {
+                        if(row.productType === "CP"){
+                            if(row.deviceType === "I")
+                                return "智能设备";
+
+                            return "普通产品";
+                        }else{
+                            return row.productTypeTitle;
+                        }
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" class=\"btn btn-xs btn-default cmd-edit\" data-row-id=\"" + row.id + "\">修改</button> ";
+                        /*if (row.status == 0)
+                            cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-delisting\" data-row-id=\"" + row.id + "\">下架</button> ";
+                        if (row.status == 1)
+                            cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-listing\" data-row-id=\"" + row.id + "\">上架</button> ";*/
+                        cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-delete\" data-row-id=\"" + row.id + "\">删除</button> ";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+                    $(".cmd-view").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId"), "_self");
+                    });
+                    $(".cmd-edit").on("click", function(){
+                        window.open(_baseUrl + "/" + $(this).data("rowId") + "/edit", "_self");
+                    });
+                    /*$(".cmd-delisting").on("click", function(){
+                        $.post(_baseUrl +"/"+ $(this).data("rowId") + "/delisting/", function(data){
+                            if(data.returnCode == 0){
+                                toast("操作执行成功");
+                                _bootgrid.reload();
+                            }else{
+                                toast("抱歉, 操作执行失败");
+                            }
+                        },
+                        'json');
+                    });
+                    $(".cmd-listing").on("click", function(){
+                        $.post(_baseUrl +"/"+ $(this).data("rowId") + "/listing/", function(data){
+                            if(data.returnCode == 0){
+                                toast("操作执行成功");
+                                _bootgrid.reload();
+                            }else{
+                                toast("抱歉, 操作执行失败");
+                            }
+                        }, 'json');
+                    });*/
+                    $(".cmd-delete").on("click", function(){
+                        var _rowId = $(this).data("rowId");
+                        Messenger.confirm("是否确定删除该商品?", function () {
+                            App.ajax.del({
+                                url: _baseUrl + "/" + _rowId + "/delete",
+                                onSuccess: function () {
+                                    toast("商品已删除");
+                                    _bootgrid.reload();
+                                }
+                            })
+                        });
+                    });
+                }
+            });
+
+            $("#btnSearch").on("click", function(){
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            if($(".grid-search").length > 0){
+                var $search = $(".grid-search");
+                $search.keyup(function(event){
+                    if(event.keyCode === 13){
+                        window.history.replaceState({}, 0, buildListUrl());
+                        reloadGird();
+                    }
+                });
+            }
+
+            $(".view-filter").on("click", function(){
+                var fieldId = $(this).data("fieldId");
+                var fieldValue = $(this).data("fieldValue");
+                var fieldText = $(this).data("fieldText");
+                $("#" + fieldId).val(fieldValue);
+
+                $(this).closest(".btn-group").find(".field-text").text(fieldText);
+
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            // 同步已选中的值
+            $(".view-filter-field").each(function(){
+                var fieldId = $(this).attr("id");
+                var fieldVal = $(this).val();
+                $(".view-filter-item").each(function(){
+                    var itemFieldId = $(this).data("fieldId");
+                    if (itemFieldId == fieldId) {
+                        $(this).find(".view-filter").each(function(){
+                            if(fieldVal == $(this).data("fieldValue")) {
+                                $(this).closest(".btn-group").find(".field-text").text($(this).data("fieldText"));
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        function buildListUrl() {
+            var url = _baseUrl;
+            url += "?productType=" + $("#productType").val();
+            url += "&productBand=" + $("#productBand").val();
+            url += "&productCategory=" + $("#productCategory").val();
+            url += "&status=" + $("#status").val();
+            url += "&searchPhrase=" + $("#searchPhrase").val();
+            return url;
+        }
+        
+        function reloadGird() {
+            _bootgrid.search({
+                productType: $("#productType").val(),
+                productBand: $("#productBand").val(),
+                productCategory: $("#productCategory").val(),
+                status: $("#status").val(),
+                searchPhrase: $("#searchPhrase").val()
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

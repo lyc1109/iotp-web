@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='home'">
+<head>
+    <title>图片选择实例</title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">图片选择器</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+
+    <div class="margin-top-l">
+        <h3>单选图片</h3>
+
+        <div class="margin-bottom">
+            <img src="" th:src="@{/assets/images/test1.jpg}" class="img-rounded" style="max-width: 200px;" id="imagePrev"/>
+            <p class="margin-top" id="imageResult"></p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btnImagePicker">选择一张图片</button>
+
+        <div class="margin-top-l">实例代码：</div>
+<pre>
+    new ImagePicker({
+        id: "btnImagePicker",
+        onOk: function (resp) {
+            // 返回结果是数组：[{name:"", url:"", fileSize:}]
+            $("#imagePrev").attr("src", resp[0].url);
+            $("#imageResult").text("返回结果：" + JSON.stringify(resp));
+        }
+    });
+</pre>
+    </div>
+
+    <div class="margin-top-l">
+        <h3>多选图片</h3>
+
+        <div class="margin-bottom">
+            <p class="margin-top" id="imageMultipleResult"></p>
+        </div>
+        <button type="button" class="btn btn-success" id="btnImageMultiplePicker">选择多张图片</button>
+
+        <div class="margin-top-l">实例代码：</div>
+        <pre>
+    new ImagePicker({
+        id: "btnImagePicker",
+        multiple: true,
+        onOk: function (resp) {
+            // 返回结果是数组：[{name:"", url:"", fileSize:}]
+            $("#imageMultipleResult").text("返回结果：" + JSON.stringify(resp));
+
+            $.each(resp, function (idx, img) {
+                var imgHtml = ' &lt;img src="" src="'+ img.url +'" class="img-rounded margin-right" style="max-width: 200px;"/&gt;';
+                $("#imageMultipleResult").before(imgHtml);
+            })
+        }
+    });
+</pre>
+    </div>
+
+    <div class="margin-top-l">
+        <h3>支持参数</h3>
+        <p><code>new ImagePicker(options)</code></p>
+        <pre>
+id: "btnImagePicker",               // 目标元素id, 默认btnImagePicker
+title: "选择图片",                   //  标题
+width: 900,                         // 宽度
+height: 530,                        // 高度
+multiple: false,                    // 是否多选，默认false
+onOk: null                          // 确定函数，传递已选择的图片信息
+</pre>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+<script type="text/javascript" th:src="@{/assets/js/media/media-image-picker.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+$(function () {
+    new ImagePicker({
+        id: "btnImagePicker",
+        onOk: function (resp) {
+            // 返回结果是数组：[{name:"", url:"", fileSize:}]
+            $("#imagePrev").attr("src", resp[0].url);
+            $("#imageResult").text("返回结果：" + JSON.stringify(resp));
+        }
+    });
+
+    new ImagePicker({
+        id: "btnImageMultiplePicker",
+        multiple: true,
+        onOk: function (resp) {
+            // 返回结果是数组：[{name:"", url:"", fileSize:}]
+            $("#imageMultipleResult").text("返回结果：" + JSON.stringify(resp));
+
+            $.each(resp, function (idx, img) {
+                var imgHtml = ' <img src="'+ img.url +'" class="img-rounded margin-right" style="max-width: 200px;"/>';
+                $("#imageMultipleResult").before(imgHtml);
+            })
+        }
+    });
+});
+/*]]>*/
+</script>
+</section>
+</html>

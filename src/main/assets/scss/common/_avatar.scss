@@ -1,0 +1,56 @@
+/* -------------------------------------------------------
+ * 组件 -- 头像
+ * ------------------------------------------------------- */
+
+%avatar{
+  background: $avatar-img center no-repeat;
+  background-size: cover;
+  border-radius: 50%;
+  vertical-align: middle;
+  display: inline-block;
+  position: relative;
+}
+
+.avatar16{
+  @extend %avatar;
+  width: 16px;
+  height: 16px;
+}
+
+.avatar20{
+  @extend %avatar;
+  width: 20px;
+  height: 20px;
+}
+
+.avatar48{
+  @extend %avatar;
+  width: 48px;
+  height: 48px;
+}
+
+.avatar64{
+  @extend %avatar;
+  width: 64px;
+  height: 64px;
+}
+
+.avatar80{
+  @extend %avatar;
+  width: 80px;
+  height: 80px;
+}
+
+.avatar100{
+  @extend %avatar;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar-square{
+  @include border-radius();
+}
+
+.avatar-block{
+  display: block;
+}

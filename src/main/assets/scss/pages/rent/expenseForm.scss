@@ -1,0 +1,91 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+[v-cloak]{
+  display: none;
+}
+.content-wrapper{
+  z-index:inherit;
+}
+.expenseForm {
+  position: absolute;
+  background: #fff;
+  width: 97%;
+  top: 0;
+  margin-bottom: 20px;
+
+  h1 {
+    border-bottom: 1px solid #ececec;
+    line-height: 40px;
+    position: relative;
+
+    .title {
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight: normal;
+      height: 40px;
+    }
+  }
+  .expenseFormMain {
+    width: 100%;
+
+    .checkBox{
+        font-weight:normal;
+    }
+    .el-checkbox__inner{
+      width: 16px;
+      height: 16px;
+    }
+    .el-checkbox__label{
+      font-size: 12px!important;
+    }
+    .expenseTab{
+      .el-table__body{
+        padding: 5px 0;
+        td{
+          border: 0 none;
+
+          .del{
+            padding:7px 20px;
+          }
+        }
+      }
+    }
+    .addBtn{
+      margin-top:10px;
+      margin-left:120px;
+
+      .el-button{
+        padding:7px 20px;
+      }
+      .saveBtn{
+        margin-left: 13px;
+      }
+    }
+  }
+}
+.saveDialog{
+  .el-dialog__body{
+    text-align: center;
+
+    .saveDialogIcon{
+      font-size: 80px;
+      color: #ef5050;
+    }
+    p{
+      padding:20px 0;
+      font-size: 20px;
+    }
+    .el-button{
+      padding:10px 20px!important;
+      border-radius:5px;
+    }
+  }
+}

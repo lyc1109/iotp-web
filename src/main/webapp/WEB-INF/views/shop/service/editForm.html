@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='serviceMgm'">
+<head>
+    <title>服务类目详情</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${entity.isNew()} ? '新增服务类目' : '修改服务类目'">服务类目详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="sbsForm" class="form-horizontal margin-top-m parsley-form" data-validate="parsley" method="post" th:object="${entity}" th:action="@{|/shop/service/*{id}|}">
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>类目名称</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" th:value="*{name}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>类目编码</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="code" th:value="*{code}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>服务Logo</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="logo" th:value="*{logo}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>Logo背景颜色</span>
+            </label>
+            <div class="col-sm-8">
+                <div>
+                    <input type="text" class="form-control minicolors" name="logoBg" th:value="*{logoBg}" style="width:175px;"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>类目描述</span>
+            </label>
+            <div class="col-sm-8">
+                <textarea class="form-control" name="serviceDesc" rows="3" th:text="*{serviceDesc}" style="height: 64px;"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>显示序号</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="orderNo" th:value="*{orderNo}"/>
+                <span class="help-block">显示序号为一个大于0的数字, 越小显示时越靠前</span>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save" style="width:81px;" type="submit" value="保存"/>
+            </div>
+        </div>
+
+        <input type="hidden" name="id" th:value="*{id}"/>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

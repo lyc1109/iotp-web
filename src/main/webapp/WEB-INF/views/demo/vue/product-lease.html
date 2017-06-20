@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+      <link rel="stylesheet" th:href="@{/dist/css/common/element-ui.css}" />
+      <link rel="stylesheet" th:href="@{/dist/css/rent/product-lease.css}" />
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+      <div id="productLease" v-cloak="true">
+            <div class="productLease">
+                  <h1>
+                        <span class="title">租赁产品管理</span>
+                        <div class="addBtn">
+                              <el-button>刷新</el-button>
+                              <a th:href="@{/demo/productLease/addProductLease}"><el-button type="primary">新增</el-button></a>
+                        </div>
+                  </h1>
+                  <div class="productLeaseRecord">
+                        <div class="productLeaseForm">
+                              <el-form>
+                                    <el-form-item>
+                                          <el-select v-model="product" placeholder="所有产品">
+                                                <el-option v-for="item in productLeaseProduct" :value="item.text"></el-option>
+                                          </el-select>
+                                          <el-select v-model="state" placeholder="所有状态">
+                                                <el-option v-for="item in productLeaseState" :value="item.text"></el-option>
+                                          </el-select>
+                                    </el-form-item>
+                                    <el-form-item>
+                                          <el-col :span="16"><el-input placeholder="输入产品名称或型号"></el-input></el-col>
+                                          <el-button>搜索</el-button>
+                                    </el-form-item>
+                              </el-form>
+                        </div>
+                        <div class="productLeaseRecordTable">
+                              <el-table :data="productLeaseData" style="width: 100%; margin-top: 10px;">
+                                    <el-table-column :prop="item.pro" :width="item.width" :type="item.type" :label="item.label" v-for="item in dataTit"></el-table-column>
+                                    <el-table-column prop="operate" label="操作">
+                                          <template scope="scope">
+                                                <el-button size="small">修改</el-button>
+                                                <el-button size="small">上架/下架</el-button>
+                                                <el-button size="small">删除</el-button>
+                                          </template>
+                                    </el-table-column>
+                              </el-table>
+                              <div class="page">
+                                    <el-pagination v-on:current-change="currentChange" :current-change="currentPages" :page-size="100" layout="total,prev,next,jumper,pager" :total="400"></el-pagination>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+      </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+      <script th:inline="javascript" th:src="@{/dist/js/common/vue.2.2.js}"></script>
+      <script th:inline="javascript" th:src="@{/dist/js/common/element-ui.js}"></script>
+      <script>
+            new Vue({
+                  el: '#productLease',
+                  data () {
+                  return {
+                        activeName: '支出明细',
+                        state: '所有状态',
+                        product: '所有产品',
+                        productLease: [
+                              {
+                                    text: '共 326 台设备'
+                              },
+                              {
+                                    text: '12 台离线'
+                              },
+                              {
+                                    text: '6 台异常'
+                              },
+                              {
+                                    text: '24 台即将到期'
+                              },
+                              {
+                                    text: '4 台已逾期'
+                              }
+                        ],
+                        productLeaseTab: [
+                              {
+                                    label: '支出明细',
+                                    name: '支出明细'
+                              },{
+                                    label: '待审批支出',
+                                    name: '待审批支出'
+                              },
+                              {
+                                    label: '服务商提现申请',
+                                    name: '服务商提现申请'
+                              }
+                        ],
+                        productLeaseState: [
+                              {
+                                    text: '正常'
+                              },
+                              {
+                                    text: '已下架'
+                              }
+                        ],
+                        productLeaseProduct: [
+                              {
+                                    text: '产品1'
+                              },
+                              {
+                                    text: '产品2'
+                              }
+                        ],
+                        productLeaseCity: [
+                              {
+                                    text: '北京'
+                              },
+                              {
+                                    text: '广州'
+                              }
+                        ],
+                        dataTit: [
+                              {
+                                    pro: 'select',
+                                    width: '50',
+                                    label: '',
+                                    type: 'selection'
+                              },
+                              {
+                                    pro: 'state',
+                                    width: '100',
+                                    label: '状态',
+                                    type: ''
+                              },
+                              {
+                                    pro: 'proName',
+                                    width: '650',
+                                    label: '租赁产品名称',
+                                    type: ''
+                              },
+                              {
+                                    pro: 'num',
+                                    width: '150',
+                                    label: '产品型号',
+                                    type: ''
+                              },
+                              {
+                                    pro: 'time',
+                                    width: '150',
+                                    label: '上架时间',
+                                    type: ''
+                              },
+                              {
+                                    pro: 'rentOut',
+                                    width: '100',
+                                    label: '已出租',
+                                    type: ''
+                              }
+                        ],
+                        productLeaseData: [
+                              {
+                                    state: '在线',
+                                    proName: '净水机',
+                                    num: '2',
+                                    username: '小明',
+                                    time: '2017-04-15',
+                                    rentOut: '是'
+                              }
+                        ]
+                  }
+            }
+            })
+      </script>
+</section>
+</body>
+</html>

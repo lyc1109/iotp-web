@@ -1,0 +1,21 @@
+/* -------------------------------------------------------
+ * 组件 -- 页签覆写
+ * ------------------------------------------------------- */
+
+.nav-tabs.nav-tabs-tb{
+  border-bottom-color: $light-1;
+}
+
+.nav-tabs.nav-tabs-tb > li > a{
+  min-width: 100px;
+  text-align: center;
+  color: $text_second;
+}
+
+.nav-tabs.nav-tabs-tb > li.active > a{
+  font-weight: bold;
+  color: $text_primary;
+  border-color: $light-1;
+  border-bottom-color: transparent;
+  border-top: 2px solid $topbar_color;
+}

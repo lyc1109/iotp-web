@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='helpContent'">
+<head>
+    <title>帮助信息管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="help/listTpl::headerTitle('帮助信息管理')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:replace="help/listTpl::nav(${pageCode})"></div>
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="btn-group pull-left view-filter-item" data-field-id="helpCategory" style="padding-right:6px;"
+        th:if="${pageCode}=='help' or ${pageCode} == 'faq'">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="min-width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有分类</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li th:each="category:${categories}">
+                    <a href="#" class="view-filter font-s" data-field-id="helpCategory" data:field-value="${category.id}" data:field-text="${category.name}" th:text="${category.name}"></a>
+                </li>
+                <li class="divider"></li>
+                <li><a href="#" class="view-filter font-s" data-field-id="helpCategory" data-field-value="" data-field-text="所有分类">所有分类</a></li>
+            </ul>
+        </div>
+
+        <div class="input-group pull-left" style="width:280px;">
+            <input type="text" class="form-control grid-search" id="searchPhrase" placeholder="输入帮助信息标题" th:value="${searchPhrase}"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" id="btnSearch" type="button" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+    <div class="data-grid-container">
+        <table id="dataGrid" data:currentPage="${currentPage}">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-column-id="name" data-formatter="nameFormatter" th:text="${pageCode}=='page' ? '版面':'标题'">标题</th>
+                <th data-column-id="roles" data-formatter="rolesFormatter">所属角色</th>
+                <th data-column-id="lastModifyTime" data-formatter="formatterDate" data-order="desc">更新时间</th>
+                <th data-column-id="categoryFullName"  data-sortable="false" th:if="! ${pageCode == 'page'}">所属分类</th>
+                <th data-width="160px" data-column-id="commands" data-formatter="commands" data-sortable="false">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <input class="view-filter-field" type="hidden" id="helpCategory" value="" th:value="${helpCategory}"/>
+    <input type="hidden" id="pageCode" value="" th:value="${pageCode}"/>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/help/content/";
+        var _bootgrid = null;
+        $(function () {
+
+            $("#helpCode").on('change',function () {
+                var code = "help."+$(this).val();
+                $.get("/help/content/code",{
+                    code:code
+                },function (row) {
+                    if(row.returnCode == 0){
+                        $(".helpSelect").selectpicker("val",row.data.id);
+                    }else{
+                        $(".helpSelect").selectpicker("val","");
+                    }
+                })
+            });
+
+
+            $(".save").on("click",function () {
+                if(!$('#pageHelp').parsley().validate()){
+                    return false
+                }
+                $.post("/help/content/pageHelp",{
+                    code : "help." + $(".pageSelect").val(),
+                    helpId : $(".helpSelect").val()
+                },function (row) {
+                    if(row.returnCode == 0){
+                        toast("操作执行成功");
+                    }else{
+                        toast("操作执行失败");
+                    }
+                    $("[data-dismiss='modal']").click();
+                })
+            })
+
+            var preAction = $("#_preAction").val();
+            if("save" == preAction) {
+                toast("信息保存成功");
+            }
+            $(".view-filter").on("click", function(){
+                var fieldId = $(this).data("fieldId");
+                var fieldValue = $(this).data("fieldValue");
+                var fieldText = $(this).data("fieldText");
+                $("#" + fieldId).val(fieldValue);
+
+                $(this).closest(".btn-group").find(".field-text").text(fieldText);
+
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+            $("#btnSearch").on("click", function(){
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+            // 同步已选中的值
+            $(".view-filter-field").each(function(){
+                var fieldId = $(this).attr("id");
+                var fieldVal = $(this).val();
+                $(".view-filter-item").each(function(){
+                    var itemFieldId = $(this).data("fieldId");
+                    if (itemFieldId == fieldId) {
+                        $(this).find(".view-filter").each(function(){
+                            if(fieldVal == $(this).data("fieldValue")) {
+                                $(this).closest(".btn-group").find(".field-text").text($(this).data("fieldText"));
+                            }
+                        });
+                    }
+                });
+            });
+            if($(".grid-search").length > 0){
+                var $search = $(".grid-search");
+                $search.keyup(function(event){
+                    if(event.keyCode === 13){
+                        window.history.replaceState({}, 0, buildListUrl());
+                        reloadGird();
+                    }
+                });
+            }
+
+            _bootgrid = new BootGrid({
+                url: _baseUrl,
+                rowCount: 15,
+                data: {
+                    searchPhrase: $("#searchPhrase").val(),
+                    helpCategory:$("#helpCategory").val(),
+                    pageCode:$("#pageCode").val()
+                },
+                formatters: {
+                    formatterDate:function (column,row) {
+                        var date = row.lastModifyTime;
+                        return (date !== null && date !== "") ? moment(date).format("YYYY-MM-DD HH:mm:ss") : "";
+                    },
+                    nameFormatter: function (column, row) {
+                        if(row.type === 'page'){
+                            return "<a href='"+_baseUrl+row.id+"?pageCode=" + $("#pageCode").val() + "&helpCategory=" + $("#helpCategory").val()+"'>"+row.name+"</a>";;
+                        }else{
+                            return '<a target="_blank" href="/helpCenter/'+ row.categoryId + '/'+ row.id + '?pageCode='+$("#pageCode").val()+'&role='+row.roles.split(",")[0]+'">'+row.name+'</a>';
+                        }
+
+                    },
+                    rolesFormatter:function (column,row) {
+                        if(row.helpType == "版面帮助"){
+                            return "";
+                        }
+                        if(row.roles == undefined){
+                            return;
+                        }
+                        var roles = "";
+                        if((row.roles).indexOf('CS')>=0){
+                            roles +=  "厂商、";
+                        }
+                        if((row.roles).indexOf('FWS')>=0){
+                            roles +=  "服务商、"
+                        }
+                        if((row.roles).indexOf('SERVICE_MAN')>=0){
+                            roles +=  "服务人员、";
+                        }
+                        if((row.roles).indexOf('MEMBER')>=0){
+                            roles +=  "用户";
+                        }else{
+                            roles = roles.substr(0,roles.length-1);
+                        }
+                        return roles;
+                    },
+
+                    commands: function(column, row){
+//                        var cmdBtns = "<button type=\"button\" class=\"btn btn-xs btn-default cmd-view\" data-row-id=\"" + row.id + "\">查看</button> "
+                        var cmdBtns = "<button type=\"button\" class=\"btn btn-xs btn-default cmd-edit\" data-row-id=\"" + row.id + "\">修改</button> ";
+                        cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-delete\" data-row-id=\"" + row.id + "\">删除</button> ";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+//                    $(".cmd-view").on("click", function(){
+//                        window.open(_baseUrl + $(this).data("rowId") + "?pageCode=" + $("#pageCode").val() + "&helpCategory=" + $("#helpCategory").val(), "_self");
+//                    });
+                    $(".cmd-edit").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId") + "/edit?pageCode=" + $("#pageCode").val()+ "&helpCategory=" + $("#helpCategory").val(), "_self");
+                    });
+                    $(".cmd-delete").on("click", function(){
+                        var _rowId = $(this).data("rowId");
+                        Messenger.confirm("是否确定删除?", function () {
+
+                            $.ajax({
+                                url: _baseUrl + _rowId + "/delete",
+                                type: 'DELETE',
+                                success: function(data){
+                                    if (data.returnCode == 0) {
+                                        toast("操作执行成功");
+                                        _bootgrid.reload();
+                                    } else {
+                                        toast("抱歉, 操作执行失败");
+                                    }
+                                },
+                                dataType: "json"
+                            });
+
+                        });
+                    });
+                }
+            });
+        });
+        function buildListUrl() {
+            var url = _baseUrl;
+            url += "?searchPhrase=" + $("#searchPhrase").val();
+            url += "&helpCategory=" + $("#helpCategory").val();
+            url += "&pageCode=" + $("#pageCode").val();
+            return url;
+        }
+
+        function reloadGird() {
+            _bootgrid.search({
+                searchPhrase: $("#searchPhrase").val(),
+                helpCategory:$("#helpCategory").val(),
+                pageCode:$("#pageCode").val()
+            });
+        }
+
+        /*]]>*/
+    </script>
+</section>
+</html>

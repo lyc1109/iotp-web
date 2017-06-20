@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='home'">
+<head>
+    <title>详情视图</title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">详情视图</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <form id="appForm" class="form-horizontal margin-top-m" role="form" data-parsley-validate="true" method="post">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required-label">客户编号</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">1235dfds5234</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required-label">姓名</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">倪大红</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">昵称</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">倪倪</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required-label">手机号码</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">15817182175</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">身份证</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">45565668332356565</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">现居住地</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static">广州番禺区钟村街道33号</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-actions">
+                        <a href="javascript:history.back()" class="btn btn-default">返回</a>
+                        <a th:href="@{/demo/form}" class="btn btn-primary" id="btnEdit">编辑</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

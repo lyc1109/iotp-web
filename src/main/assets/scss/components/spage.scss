@@ -1,0 +1,50 @@
+@import "../variables";
+
+.spage .spage-toolbar{
+    width: 100%;
+    padding: 10px 5px 10px;
+    text-align: right;
+
+    .btn{
+        padding: 2px 10px;
+        margin-left: 10px;
+        text-align: center;
+        border-color: $border;
+        vertical-align: middle;
+    }
+
+    // -------------------------------
+    // 上页/下页
+    .btn-prev,
+    .btn-next{
+        margin-right: 10px;
+    }
+
+    .spage-prev,
+    .spage-next{
+        display: inline-block;
+        width: 0;
+        height: 0;
+    }
+    .spage-prev{
+        border-right: 5px solid $text_second;
+        border-bottom: 5px solid transparent;
+        border-top: 5px solid transparent;
+    }
+    .spage-next{
+        border-left: 5px solid $text_second;
+        border-bottom: 5px solid transparent;
+        border-top: 5px solid transparent;
+    }
+
+    // -------------------------------
+    // 页数输入框
+    #spagePageNumber{
+        width: 70px;
+        display: inline-block;
+        padding: 3px 10px;
+        height: auto;
+        vertical-align: middle;
+        margin-left: 20px;
+    }
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='home'">
+<head>
+    <title>我的消息</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/components/spage.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/css/pages/notify/notify.css}"/>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="content-heading" style="padding:16px 0;">
+        <div class="pull-left title">我的消息</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" id="btnReadAll">
+                <span class="fa fa-check-circle-o"></span> 标记全部已读
+            </button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="content-body">
+        <div class="spage" id="spage"></div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/components/spage.js}"></script>
+    <script type="application/javascript" th:src="@{/dist/scripts/pages/notify/notify.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $("#spage").spage({
+                url: "/notify/listPage",
+                onLoaded: function () {
+                    $(".row-notify.unread").off("click").on("click", function () {
+                        var $target = $(this);
+                        UserNotify.markRead($target.data("id"), function () {
+                            $target.off("click").removeClass("unread");
+                        });
+                    });
+
+                    $("#btnReadAll").off("click").on("click", function () {
+                        UserNotify.readAll(function () {
+                            $("#spage").spage("refresh");
+                        });
+                    })
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

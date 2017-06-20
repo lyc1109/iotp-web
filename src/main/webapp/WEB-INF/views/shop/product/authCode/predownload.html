@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-single-page">
+<head>
+    <title>下载二维码图片</title>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="padding-l align-center">
+        <h2>系统正在压缩处理二维码图片，请稍后...</h2>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

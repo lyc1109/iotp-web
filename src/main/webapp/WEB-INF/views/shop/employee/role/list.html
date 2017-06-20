@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='shopCfg_Employee'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/employee/listTpl::headerTitle('员工管理')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:replace="shop/employee/listTpl::nav('role')"></div>
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="input-group pull-left" style="width:280px;">
+            <input type="text" class="form-control"  id="searchPhrase" placeholder="输入角色名称或编码进行搜索"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" id="btnSearch" type="button" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="data-grid-container bootgrid-no-header">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-width="160px" data-column-id="code">角色编码</th>
+                <th data-column-id="name" style="font-size:12px;">角色名称</th>
+                <th data-width="320px" data-column-id="employeeId">包含员工</th>
+                <th data-width="160px" data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            var _baseUrl = "/shop/employee/role/";
+            var preAction = $("#_preAction").val();
+            if("save" == preAction) {
+                toast("信息保存成功");
+            }
+
+            new BootGrid({
+                url: _baseUrl,
+                formatters: {
+                    idFormatter: function(column, row) {
+                        return "";
+                    },
+                    serviceAddressFormatter: function (column, row) {
+                        return row.serviceAddress.province + " - " + row.serviceAddress.city;
+                    },
+                    serviceTimeFormatter: function (column, row) {
+                        return moment(row.serviceDate).format("MM月DD日") + " " + row.serviceTime;
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" class=\"btn btn-xs btn-default cmd-edit\" data-row-id=\"" + row.id + "\">修改</button> ";
+                        cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default cmd-delete\" data-row-id=\"" + row.id + "\">删除</button> ";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+                    $(".cmd-view").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId"), "_self");
+                    });
+                    $(".cmd-edit").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId") + "/edit", "_self");
+                    });
+                    $(".cmd-delete").on("click", function(){
+                        var _rowId = $(this).data("rowId");
+                        Messenger.confirm("是否确定删除该角色?", function () {
+                            $.ajax({
+                                url: _baseUrl + _rowId + "/delete/",
+                                type: 'DELETE',
+                                success: function(data){
+                                    if (data.returnCode == 0) {
+                                        toast("操作执行成功");
+                                        BootGrid.reload(null, "dataGrid");
+                                    } else {
+                                        toast("抱歉, 操作执行失败");
+                                    }
+                                },
+                                dataType: "json"
+                            });
+                        });
+                    });
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

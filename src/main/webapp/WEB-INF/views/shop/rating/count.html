@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='ratingMgm'">
+<head>
+    <title>评价管理</title>
+    <link href="//cdn.bootcss.com/raty/2.7.1/jquery.raty.min.css" rel="stylesheet"/>
+    <style>
+        .progress{
+            margin: 5px 0 5px 0;
+            /*width: 70%;*/
+        }
+        .count{
+            /*color: #23b7e5;*/
+            /*font-weight: 600;*/
+        }
+        .baifenbi{
+            display: none;
+            color: #D8D8D8;
+        }
+        .tractive{
+            background-color:#fcfcfc ;
+        }
+        /*table{*/
+            /*border: 1px solid #eaeaea;*/
+        /*}*/
+    </style>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div>
+        <div class="pull-left title">评价管理</div>
+        <div class="pull-right">
+            <!--<button type="button" class="btn btn-default btn-sm grid-refresh">
+                <span class="fa fa-refresh"></span> 刷新
+            </button>-->
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <ul class="nav nav-tabs margin-bottom" role="tablist">
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase(nav_code,'rating')} ? 'active' : ''">
+            <a href="/shop/rating/">用户评价</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase(nav_code,'count')} ? 'active' : ''">
+            <a href="/shop/rating/count">统计分析</a>
+        </li>
+    </ul>
+    <table class="table table-hover table-striped bootgrid-table" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+        <thead>
+        <tr class="active">
+            <th width="240px">服务商</th>
+            <th>非常满意</th>
+            <th>满意</th>
+            <th>一般</th>
+            <th>不满意</th>
+            <th>非常不满意</th>
+            <th width="240px">总体评分</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="shopVendor,iterStat :${shopVendorList}" th:classappend="${iterStat.odd}?'tractive'">
+            <td th:text="${shopVendor['shopVendorName']}" th:title="${shopVendor['shopVendorName']}"></td>
+            <td>
+                <span  class="count"     th:text="${shopVendor['rating5']}"></span><span class="baifenbi" th:text="' ('+${shopVendor['rating5p']}+')'"></span>
+            </td>
+            <td>
+                <span class="count"  th:text="${shopVendor['rating4']}"></span><span class="baifenbi" th:text="' ('+${shopVendor['rating4p']}+')'"></span>
+            </td>
+            <td>
+                <span  class="count"  th:text="${shopVendor['rating3']}"></span><span class="baifenbi" th:text="' ('+${shopVendor['rating3p']}+')'"></span>
+            </td>
+            <td>
+                <span class="count"   th:text="${shopVendor['rating2']}"></span><span class="baifenbi" th:text="' ('+${shopVendor['rating2p']}+')'"></span>
+            </td>
+            <td>
+                <span class="count"   th:text="${shopVendor['rating1']}"></span><span class="baifenbi" th:text="' ('+${shopVendor['rating1p']}+')'"></span>
+            </td>
+            <td><span class="rating"></span> <span style="color: #e43a3d;font-weight: bold;" th:text="${shopVendor['ratingAver']}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-hover table-striped bootgrid-table" th:if="${#authentication.getPrincipal().isServiceVendor()}">
+        <thead>
+        <tr class="active">
+            <th>服务人员</th>
+            <th>非常满意</th>
+            <th>满意</th>
+            <th>一般</th>
+            <th>不满意</th>
+            <th>非常不满意</th>
+            <th width="240px">总体评分</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="serviceMan,iterStat:${serviceManList}" th:classappend="${iterStat.odd}?'tractive'">
+            <td th:text="${serviceMan['serviceManName']}"  th:title="${serviceMan['serviceManName']}"></td>
+            <td>
+                <span  th:text="${serviceMan['rating5']}"></span><span class="baifenbi" th:text="' ('+${serviceMan['rating5p']}+')'"></span>
+            </td>
+            <td>
+                <span  th:text="${serviceMan['rating4']}"></span><span class="baifenbi" th:text="' ('+${serviceMan['rating4p']}+')'"></span>
+            </td>
+            <td>
+                <span  th:text="${serviceMan['rating3']}"></span><span class="baifenbi" th:text="' ('+${serviceMan['rating3p']}+')'"></span>
+            </td>
+            <td>
+                <span  th:text="${serviceMan['rating2']}"></span><span class="baifenbi" th:text="' ('+${serviceMan['rating2p']}+')'"></span>
+            </td>
+            <td>
+                <span  th:text="${serviceMan['rating1']}"></span><span class="baifenbi" th:text="' ('+${serviceMan['rating1p']}+')'"></span>
+            </td>
+            <td><span class="rating"></span> <span style="color: #e43a3d;font-weight: bold;" th:text="${serviceMan['ratingAver']}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script src="//cdn.bootcss.com/raty/2.7.1/jquery.raty.min.js"></script>
+    <script>
+        $(function () {
+            $(".rating").each(function () {
+                var span = $(this).next();
+                $(this).raty({
+                    number:5,
+                    score:span.text(),
+                    hints:['非常不满意','不满意','一般','满意','非常满意'],
+                    readOnly:true,
+                    starHalf:"//cdn.bootcss.com/raty/2.7.1/images/star-half.png",
+                    starOff: '//cdn.bootcss.com/raty/2.7.1/images/star-off.png',
+                    starOn: '//cdn.bootcss.com/raty/2.7.1/images/star-on.png',
+                })
+            });
+
+        })
+    </script>
+</section>
+</html>

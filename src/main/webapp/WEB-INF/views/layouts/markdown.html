@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<th:block th:fragment="link">
+    <!--<style>-->
+        <!--.updateLog{-->
+            <!--overflow: hidden;-->
+            <!--text-overflow:ellipsis;-->
+            <!--white-space: nowrap;-->
+        <!--}-->
+        <!--.markdown-body h6{-->
+            <!--color: #333;-->
+            <!--border-left: 2px solid #04a9f4;-->
+            <!--padding-left: 8px;-->
+            <!--padding-right: 10px;-->
+            <!--/*line-height: 12px;*/-->
+            <!--font-weight: 600;-->
+            <!--margin: 10px 0;-->
+        <!--}-->
+        <!--/*.markdown-body h6 a{-->
+            <!--font-size: 12px;-->
+            <!--color: #04a9f4;-->
+            <!--font-weight: 400;-->
+            <!--margin-left: 20px;-->
+            <!--margin-top: -2px;-->
+            <!--float: right;-->
+        <!--}*/-->
+        <!--.markdown-body h6 a{-->
+            <!--color: #333;-->
+            <!--font-weight: 600;-->
+        <!--}-->
+        <!--.markdown-body h6 a:hover{-->
+            <!--text-decoration: none;-->
+        <!--}-->
+        <!--.markdown-body h6 a.reference-link{-->
+            <!--margin-left: 0px;-->
+        <!--}-->
+        <!--.markdown-body p{-->
+            <!--font-size: 13px;-->
+            <!--line-height: 24px;-->
+            <!--padding-left: 8px;-->
+            <!--margin-bottom: 0;-->
+            <!--padding-right: 10px;-->
+        <!--}-->
+        <!--.markdown-body p a{-->
+            <!--color: #04a9f4;-->
+
+        <!--}-->
+        <!--.markdown-body p a:hover{-->
+
+            <!--color: #08c;-->
+            <!--text-decoration: none;-->
+        <!--}-->
+        <!--.markdown-body hr{-->
+            <!--/*margin: 20px 0;*/-->
+            <!--border: 0;-->
+            <!--margin-left: 6px;-->
+            <!--margin-right: 6px;-->
+            <!--border-top: 1px solid #eee;-->
+            <!--border-bottom: 1px solid #fff;-->
+        <!--}-->
+    <!--</style>-->
+
+</th:block>
+<th:block th:fragment="script">
+    <script src="/dist/3rd/editormd/editormd.min.js"></script>
+    <script src="/dist/3rd/editormd/lib/marked.min.js"></script>
+    <script src="/dist/3rd/editormd/lib/prettify.min.js"></script>
+    <script src="/dist/3rd/editormd/lib/raphael.min.js"></script>
+    <script src="/dist/3rd/editormd/lib/underscore.min.js"></script>
+    <script src="/dist/3rd/editormd/lib/sequence-diagram.min.js"></script>
+    <script src="/dist/3rd/editormd/lib/flowchart.min.js"></script>
+    <script src="/dist/3rd/editormd/lib/jquery.flowchart.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        $(function () {
+            var code = $("[data-help-code]").data("helpCode");
+            var id = $("[data-help-container]").data("helpContainer");
+            if(code !== undefined && id !== undefined){
+                mdView(id,code)
+            }
+        });
+        function mdView(id,code) {
+            if(id === undefined){
+                id = "editormd-view"
+            }
+            var _baseUrl = "/helpCenter/";
+            $.get(
+                _baseUrl + "code",
+                {"code":code},
+                function (res) {
+                    if(res.returnCode === 0){
+                        // 添加相关帮助和问题
+                        var content = res.help.content
+                        editormd.markdownToHTML(id, {
+                            markdown        : content ,
+                            htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                            emoji           : true,
+                            taskList        : true,
+                            tex             : true,  // 默认不解析
+                            flowChart       : true,  // 默认不解析
+                            sequenceDiagram : true,  // 默认不解析
+                        });
+
+
+                        $("[href='/help/content/pageHelp/UpdateLog']").attr("id","updateLogMore");
+                        $("[href='/help/content/pageHelp/UpdateLog']").attr("href","javascript:void(0)");
+
+                        $("hr").each(function () {
+                            if($(this).next().get("length")>0 && $(this).next().get(0).tagName == 'HR'){
+                                for(var i=0;i<res.faqList.length;i++){
+                                    $(this).after($("<p><a href='"+ _baseUrl +res.faqList[i].categoryId+"/"+res.faqList[i].id+"?pageCode=faq&role="+ res.shopType +"'>"+res.faqList[i].name+"</a></p>"));
+                                }
+                                if(res.faqList.length>0){
+                                    $(this).after($("<h6>常见问题</h6>"));
+
+                                }
+                                if(res.faqList.length>0 && res.helpList.length>0){
+                                    $(this).after($("<hr/>"));
+                                }
+
+                                for(var i=0;i<res.helpList.length;i++){
+                                    $(this).after($("<p><a href='"+ _baseUrl +res.helpList[i].categoryId+"/"+res.helpList[i].id+"?pageCode=help&role="+ res.shopType +"'>"+res.helpList[i].name+"</a></p>"));
+                                }
+                                if(res.helpList.length>0){
+                                    $(this).after($("<h6>相关帮助</h6>"));
+                                }
+
+                            }
+
+                        })
+                        $(".markdown-body a").attr("target","_blank");
+                        //获取最新的更新日志
+
+                        $.get(
+                            _baseUrl + "pageHelp/UpdateLog",
+                            {
+                                num:5
+                            },function (rs) {
+                                    if(rs.returnCode == 0){
+                                        for(var i=rs.rows.length-1;i>=0;i--){
+                                            $("#updateLogMore").parent().after("<p class='updateLog' title='"+rs.rows[i]+"'>"+rs.rows[i]+"</p>");
+                                        }
+                                    }
+                                }
+                        );
+
+                        //产品动态-更多 绑定事件
+                        $(document).on('click','#updateLogMore',function() {
+                            new Dlg({
+                                url: _baseUrl + "pageHelp/UpdateLog/list",
+                                title: "产品动态",
+                                width: 800,
+                                height: 400,
+                                onOk: function () {
+                                    this.close();
+                                }
+                            });
+                        })
+                    }
+                }
+            )
+        }
+        /*]]>*/
+    </script>
+
+</th:block>
+</body>
+</html>

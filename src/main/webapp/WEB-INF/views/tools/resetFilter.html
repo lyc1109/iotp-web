@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='home'">
+<head>
+    <title>管理工具箱</title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">重置设备滤芯</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post">
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>Iot设备型号</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="iotModel" id="iotModel"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>设备Mac地址</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="macs" id="macs"/>
+                <div style="font-size:12px;color:#999999">多个Mac地址直接使用逗号(,)分开。如果不输入将重置所有滤芯</div>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-8 align-right">
+                <input class="btn btn-sm btn-ok btn-success" style="width:81px;" type="button" value="确定"/>
+            </div>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $(".btn-ok").on("click", function(){
+                var instance = $('#iotForm').parsley();
+                if(instance.validate() !== true){
+                    return;
+                }
+
+                Messenger.confirm("你确定要重置这些设备的滤芯?", function () {
+                    $.post("/tools/resetFilter", {
+                        "iotModel" : $("#iotModel").val(),
+                        "macAddress" : $("#macs").val()
+                    }, function(data){
+                        if(data.returnCode == 0){
+                            toast("设备滤芯重置成功");
+                            $("#iotModel").val("");
+                            $("#macs").val("");
+                        }else{
+                            toast(data.returnMsg);
+                        }
+                    }, 'json');
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

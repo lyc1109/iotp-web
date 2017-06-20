@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='fundMgm'">
+<head>
+    <link rel="stylesheet" th:href="@{/dist/css/pages/rent/addExpend.css}" />
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+    <keep-alive>
+    <div id="addExpend" v-cloak="true">
+        <div class="addExpend">
+        <h1>
+            <span class="title">新增资金支出</span>
+        </h1>
+        <div class="addExpendMain">
+            <el-form :model="newExpenseForm" :rules="rules" ref="newExpenseForm" label-width="150px">
+                <el-form-item label="支出类型：" prop="expenseType">
+                    <el-col :span="15">
+                        <el-select v-model="newExpenseForm.expenseType" placeholder="请选择支出类型">
+                            <el-option v-for="item in expendPro" :value="item.label"></el-option>
+                        </el-select>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="支出事由：" prop="expenseReason">
+                    <el-col :span="15">
+                        <el-input v-model.trim="newExpenseForm.expenseReason" auto-complete="off"></el-input>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="支出金额：" prop="totalAmount">
+                    <el-col :span="5">
+                        <el-input type="number" value="500.00" v-model.number.trim="newExpenseForm.totalAmount" auto-complete="off">
+                            <template slot="prepend">￥</template>
+                        </el-input>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="附件：" prop="" v-if="accessory">
+                    <el-col :span="15" class="expendImg">
+                        <!--<el-upload action="http://shmedias.oss-cn-shenzhen.aliyuncs.com/post/" :drag="drag">-->
+                            <!--<i class="el-icon-upload"></i>-->
+                            <!--<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>-->
+                        <!--</el-upload>-->
+                        <div id="uploadImg">
+                            <div class="filePath" v-for="(list,index) in file" :data-src="list.path"><span>{{list.name}}</span><i class="el-icon-upload-success el-icon-circle-check" v-show="successIcon"></i><b class="el-icon-circle-close" v-on:click="delFile(index)"></b></div>
+                        </div>
+                        <el-button type="primary" id="btnImageUploader">上传附件</el-button>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="备注：" prop="expenseMemos">
+                    <el-col :span="15">
+                        <el-input type="textarea" :rows="4" v-model="newExpenseForm.expenseMemos"></el-input>
+                    </el-col>
+                </el-form-item>
+                <el-form-item label="下一步审批人：" prop="actorName">
+                    <el-select v-model="newExpenseForm.actorName" filterable="filterable" placeholder="请选择审批人" v-on:change="getNextActorId()" :disabled="disabled">
+                        <el-option v-for="item in expend" :label="item.userDto.name" :value="item.userDto.id"></el-option>
+                    </el-select>
+                    <!--<el-autocomplete v-model="actorName" :fetch-suggestions="querySearchAsync" v-on:select="actorNameSelect"></el-autocomplete>-->
+                </el-form-item>
+            </el-form>
+            <el-col :span="10" :offset="10">
+                <!--<a th:href="@{/fundManage/approval}">-->
+                    <el-button type="success" class="expendSave" v-on:click="saveApproval('newExpenseForm')" :disabled="disable">提交</el-button>
+                <!--<el-button v-on:click.native="back()">返回</el-button>-->
+                <!--</a>-->
+            </el-col>
+        </div>
+        </div>
+    </div>
+    </keep-alive>
+    </section>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/fundManage/addExpend.js}"></script>
+    </section>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <meta charset="UTF-8"/>
+    <title>选择分组</title>
+</head>
+<body>
+<th:block th:fragment="selectGroup">
+    <ul>
+        <li th:each="item : ${groups}">
+            <label class="radio-inline check-all">
+                <input type="radio" class="icheck" name="group" th:value="${item.id}"/>
+                <span th:text="${item.name}"></span>
+            </label>
+        </li>
+    </ul>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='serviceOrder'">
+<head>
+    <title>新增订单</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">新增订单</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <div th:object="${entity}">
+        <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post">
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label required">
+                    <span>订单类型</span>
+                </label>
+                <div class="col-sm-8">
+                    <label class="radio-inline">
+                        <input type="radio" class="icheck" name="orderType" value="common" checked="checked"/> 服务订单
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" class="icheck" name="orderType" value="lease"/> 租赁订单
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" id="shopServiceGroup">
+                <label class="col-sm-2 control-label required" for="shopServiceId">服务项目</label>
+                <div class="col-sm-4">
+                    <select class="form-control select2" name="shopServiceConfuseId" id="shopServiceId" style="width: 100%;">
+                        <option th:each="serviceDefs : ${serviceDefs}"
+                                th:value="${serviceDefs.id}"
+                                th:text="${serviceDefs.name}">服务类目</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label required">预约时间</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control date-picker" name="serviceDateTime" id="serviceDate" data-parsley-required="true"/>
+
+                </div>
+                <div class="col-sm-2 col-left-zero">
+                    <select class="form-control" name="serviceTime">
+                        <option value="09:00~15:00">09:00~15:00</option>
+                        <option value="15:00~19:00">15:00~19:00</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label required">客户手机</label>
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="contactMobile" id="contactMobile"
+                               pattern="/(^13\d{9}$)|(^14)[5,7]\d{8}$|(^15[0,1,2,3,5,6,7,8,9]\d{8}$)|(^17)[0,3,6,7,8]\d{8}$|(^18\d{9}$)|(^199\d{8}$)/g"
+                               data-parsley-required="true"
+                               data-parsley-error-message="请输入正确手机号码"/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-sm btn-default" type="button" id="btnRefresh"><i class="fa fa-refresh"></i></button>
+                        </span>
+                    </div>
+                </div>
+                <!--<div class="col-sm-2 col-left-zero">
+                    <button class="btn btn-sm btn-default" type="button" id="btnRefresh">刷新</button>
+                </div>-->
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label required">客户姓名</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="contactName" id="contactName" data-parsley-required="true"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label required">产品型号</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="productName" id="productName" data-parsley-required="true" disabled="disabled"/>
+                </div>
+                <div class="col-sm-6 col-left-zero">
+                    <button class="btn btn-sm btn-default" type="button" id="btnSelectProduct">选择企业产品</button>
+                    <button class="btn btn-sm btn-default" type="button" id="btnSelectLeaseProduct" style="display: none">选择租赁产品</button>
+                    <button class="btn btn-sm btn-primary" type="button" id="btnSelectUserDevice" style="display: none">选择用户设备</button>
+                </div>
+            </div>
+
+            <div class="form-group" id="productSpecsGroup" style="display: none;">
+                <label class="col-sm-2 control-label required">规格型号</label>
+                <div class="col-sm-4">
+                    <select class="form-control" id="productSpecs" style="width: 100%;"></select>
+                    <div class="alert alert-warning margin-top" role="alert" id="selectSpecWarn">请选择规格型号</div>
+                </div>
+            </div>
+
+            <div class="form-group" id="purchasedDateGroup">
+                <label class="col-sm-2 control-label required">购买日期</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control date-picker" name="devicePurchasedDate" id="purchasedDate" data-parsley-required="true"/>
+                </div>
+            </div>
+
+            <div class="form-group margin-bottom">
+                <label class="col-sm-2 control-label required">客户地址</label>
+                <div class="col-sm-8">
+                    <div id="distpicker">
+                        <select class="form-control inline" style="width:160px" id="province" name="province"></select>
+                        <select class="form-control inline" style="width:160px" id="city" name="city"></select>
+                        <select class="form-control inline" style="width:160px" id="area" name="area"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group margin-bottom">
+                <label class="col-sm-2 control-label">
+                </label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="address" name="address" data-parsley-required="true"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注</label>
+                <div class="col-sm-6">
+                    <textarea class="form-control" style="height: 100px;" name="customerMemo"></textarea>
+                </div>
+            </div>
+
+            <div class="row border-top margin-top padding-top final-row">
+                <div class="col-sm-8 align-right">
+                    <button class="btn btn-sm btn-save cmd-save" style="width:81px;" type="button">提交订单</button>
+                </div>
+            </div>
+
+            <input type="hidden" name="deviceConfuseId" id="deviceConfuseId"/>
+            <input type="hidden" name="productConfuseId" id="productConfuseId"/>
+            <input type="hidden" name="productSpecConfuseId" id="productSpecConfuseId"/>
+            <input type="hidden" name="leaseProductConfuseId" id="leaseProductConfuseId"/>
+            <input type="hidden" name="userId" id="userId"/>
+        </form>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/distpicker/distpicker.min.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var ServiceOrderForm = (function (MDU) {
+            var _productGrid = null;
+            var _leaseProductGrid = null;
+            var _deviceGrid = null;
+            var _loading = false;
+
+            var selectedProduct = null;
+            var selectedDevice = null;
+
+            var flashCount = 0;
+
+            MDU = {
+                init: function () {
+                    var that = this;
+
+                    $("#btnSelectProduct").on("click", function () {
+                        that.selectProduct();
+                    });
+
+                    $("#btnSelectLeaseProduct").on("click", function () {
+                        that.selectLeaseProduct();
+                    });
+
+                    $('#contactMobile').on('blur', function() {
+                        that.loadUser();
+                    });
+                    $("#btnRefresh").on("click", function () {
+                        that.loadUser();
+                    });
+
+                    $(':radio[name="orderType"]').on('ifChecked', function(event){
+                        if($(this).val() === "lease"){
+                            $("#btnSelectUserDevice").hide();
+                            $("#btnSelectProduct").hide();
+                            $("#purchasedDateGroup").hide();
+                            $("#shopServiceGroup").hide();
+                            $("#btnSelectLeaseProduct").show();
+
+                            // 清空数据
+                            $("#productName").val("");
+                            $("#productConfuseId").val("");
+                            $("#deviceConfuseId").val("");
+                            $("#productSpecConfuseId").val("");
+                            $("#productSpecsGroup").hide();
+                            $("#productSpecs").empty();
+                        }else{
+                            $("#btnSelectProduct").show();
+                            $("#purchasedDateGroup").show();
+                            $("#shopServiceGroup").show();
+                            $("#btnSelectLeaseProduct").hide();
+
+                            if( $("#userId").val() !== ""){
+                                $("#btnSelectUserDevice")
+                                    .show()
+                                    .off("click")
+                                    .on("click", function () {
+                                        MDU._initDeviceDlg();
+                                    });
+                            }
+
+                            // 清空数据
+                            $("#leaseProductConfuseId").val("");
+                            $("#productName").val("");
+                            $("#productConfuseId").val("");
+                            $("#deviceConfuseId").val("");
+                            $("#productSpecConfuseId").val("");
+                        }
+                    });
+
+                    $(".cmd-save").on("click", function () {
+                        var instance = $('#iotForm').parsley();
+                        if(instance.validate() !== true){
+                            return;
+                        }
+
+                        App.ajax.post({
+                            url: "/shop/serviceOrder/save",
+                            data: $("#iotForm").serializeObject(),
+                            onSuccess: function (resp) {
+                                Messenger.success("订单创建成功", function () {
+                                    window.open("/shop/serviceOrder/" + resp.orderId, "_self");
+                                });
+                            },
+                            onFail: function (resp) {
+                                var msg = "抱歉，订单创建失败。原因：";
+                                if(resp.returnMsg && resp.returnMsg !== null)
+                                    msg += resp.returnMsg;
+                                Messenger.error(msg);
+                            }
+                        })
+                    });
+                },
+
+                loadUser: function () {
+                    var mobile = $("#contactMobile").val();
+                    if(mobile === "" || mobile === null || mobile.length === "")
+                        return;
+
+                    if(_loading)
+                        return;
+
+                    _loading = true;
+                    App.ajax.get({
+                        url: "/user/load",
+                        data: { mobile: mobile },
+                        onSuccess: function (resp) {
+                            $("#contactName").val(resp.user.name);
+                            $("#userId").val(resp.user.id);
+
+                            // 去掉必填校验提示
+                            $("#iotForm").parsley().validate();
+
+                            if($(':radio[name="orderType"]:checked').val() === "common") {
+                                $("#btnSelectUserDevice")
+                                    .show()
+                                    .off("click")
+                                    .on("click", function () {
+                                        MDU._initDeviceDlg();
+                                    });
+                            }
+                        },
+                        onFail: function () {
+                            $("#contactName").val("");
+                            $("#userId").val("");
+                            $("#btnSelectUserDevice").hide();
+                        },
+                        onFinally: function () {
+                            _loading = false;
+                        }
+                    });
+                },
+
+                selectProduct: function () {
+                    selectedProduct = null;
+
+                    new Dlg({
+                        id: "selectProductDlg",
+                        title: "选择企业产品",
+                        url: '/shop/product/selectProducts',
+                        width: 800,
+                        height: 500,
+                        onLoaded: function () {
+                            MDU._initProductGrid();
+                        },
+                        onOk: function () {
+                            if(null === selectedProduct){
+                                toast("请选择产品", "error");
+                                return;
+                            }
+
+                            $("#productName").val(selectedProduct.name);
+                            $("#productConfuseId").val(selectedProduct.id);
+                            $("#deviceConfuseId").val("");
+                            $("#productSpecConfuseId").val("");
+
+                            // 去掉必填校验提示
+                            $("#iotForm").parsley().validate();
+
+                            // 多规格
+                            if(selectedProduct.multiSpec === true){
+                                $("#productSpecs").empty();
+                                $.each(selectedProduct.specs, function (idx, item) {
+                                    var option = '<option value="' + item.id + '">' + item.itemCode;
+
+                                    // 规格item
+                                    if(item.specItems !== null && item.specItems.length > 0){
+                                        option += "(";
+                                        $.each(item.specItems, function (itemIdx, spec) {
+                                            if(itemIdx > 0)
+                                                option += ",";
+                                            option += spec.name + ": " +spec.value;
+                                        });
+                                        option += ")";
+                                    }
+
+                                    option += '</option>';
+                                    $("#productSpecs").append(option);
+                                });
+                                $("#productSpecsGroup").show();
+
+                                $("#productSpecs")
+                                    .off("change")
+                                    .on("change", function () {
+                                        $("#productSpecConfuseId").val($(this).val());
+                                    })
+                                    .trigger("change");
+
+                                // 闪烁提示
+                                MDU._flashWarn();
+                            }else{
+                                $("#productSpecs").empty();
+                                $("#productSpecsGroup").hide();
+                            }
+
+                            this.close();
+                        }
+                    });
+                },
+
+                selectLeaseProduct: function () {
+                    selectedProduct = null;
+
+                    new Dlg({
+                        id: "selectLeaseProductDlg",
+                        title: "选择租赁产品",
+                        url: '/lease/product/select',
+                        width: 800,
+                        height: 500,
+                        onLoaded: function () {
+                            MDU._initLeaseProductGrid();
+                        },
+                        onOk: function () {
+                            if(null === selectedProduct){
+                                toast("请选择租赁产品", "error");
+                                return;
+                            }
+
+                            $("#leaseProductConfuseId").val(selectedProduct.id);
+                            $("#productName").val(selectedProduct.name);
+                            $("#productConfuseId").val(selectedProduct.productId);
+                            $("#deviceConfuseId").val("");
+                            $("#productSpecConfuseId").val("");
+
+                            // 去掉必填校验提示
+                            $("#iotForm").parsley().validate();
+
+                            this.close();
+                        }
+                    });
+                },
+
+                _initProductGrid: function () {
+                    _productGrid = new BootGrid({
+                        id: "product4selectGrid",
+                        url: "/shop/product",
+                        data:{
+                            productType: "CP",
+                            deviceType: "C"
+                        },
+                        selection: true,
+                        multiSelect: false,
+                        rowSelect: true,
+                        rowCount: 10,
+                        formatters: {
+                            productTypeFormatter: function (column, row) {
+                                if(row.productType === "CP"){
+                                    if(row.deviceType === "I")
+                                        return "智能设备";
+
+                                    return "普通产品";
+                                }else{
+                                    return row.productTypeTitle;
+                                }
+                            }
+                        },
+                        onSelected: function (rows) {
+                            selectedProduct = rows[0];
+                        }
+                    });
+                },
+
+                _initLeaseProductGrid: function () {
+                    _leaseProductGrid = new BootGrid({
+                        id: "leaseProduct4selectGrid",
+                        url: "/lease/product",
+                        data:{
+                            actionType: "select"
+                        },
+                        selection: true,
+                        multiSelect: false,
+                        rowSelect: true,
+                        rowCount: 10,
+                        onSelected: function (rows) {
+                            selectedProduct = rows[0];
+                        }
+                    });
+                },
+
+                _initDeviceDlg: function () {
+                    new Dlg({
+                        id: "selectUserDeviceDlg",
+                        title: "选择用户设备",
+                        url: '/shop/member/devices/select',
+                        width: 800,
+                        height: 500,
+                        onLoaded: function () {
+                            MDU._initDeviceGrid();
+                        },
+                        onOk: function () {
+                            if(null === selectedDevice){
+                                toast("请选择用户设备", "error");
+                                return;
+                            }
+
+                            $("#deviceConfuseId").val(selectedDevice.userDeviceId);
+                            $("#productName").val(selectedDevice.productName);
+                            $("#productConfuseId").val(selectedDevice.productId);
+                            if(selectedDevice.productSpecId !== "" && selectedDevice.productSpecId !== null)
+                                $("#productSpecConfuseId").val(selectedDevice.productSpecId);
+                            if(selectedDevice.purchasedDate !== "" && selectedDevice.purchasedDate !== null)
+                                $("#purchasedDate").val(moment(selectedDevice.purchasedDate).format("YYYY-MM-DD"));
+
+                            if(selectedDevice.address !== null){
+                                $("#province").val(selectedDevice.address.province).trigger("change");
+                                $("#city").val(selectedDevice.address.city).trigger("change");
+                                $("#area").val(selectedDevice.address.area);
+                                $("#address").val(selectedDevice.address.address);
+                            }
+
+                            // 隐藏规格型号
+                            $("#productSpecs").empty();
+                            $("#productSpecsGroup").hide();
+
+                            // 去掉必填校验提示
+                            $("#iotForm").parsley().validate();
+
+                            this.close();
+                        }
+                    });
+                },
+
+                _initDeviceGrid: function () {
+                    _deviceGrid = new BootGrid({
+                        id: "device4selectGrid",
+                        url: "/shop/member/devices",
+                        data: {
+                            userId: $("#userId").val()
+                        },
+                        selection: true,
+                        multiSelect: false,
+                        rowSelect: true,
+                        rowCount: 10,
+                        formatters: {
+                            deviceTypeFormatter: function (column, row) {
+                                if(row.deviceType === "I")
+                                    return "智能设备";
+                                if(row.deviceType === "L")
+                                    return "租赁设备";
+
+                                return "普通产品";
+                            }
+                        },
+                        onSelected: function (rows) {
+                            selectedDevice = rows[0];
+                        }
+                    });
+                },
+
+                _flashWarn: function () {
+                    if(flashCount < 5){
+                        $("#selectSpecWarn").fadeOut(600, function () {
+                            $(this).fadeIn(600, function () {
+                                flashCount ++;
+                                MDU._flashWarn();
+                            });
+                        })
+                    }else{
+                        $("#selectSpecWarn").hide();
+                    }
+                }
+            };
+
+            return MDU;
+        }(window.ServiceOrderForm || {}));
+
+        $(function () {
+            $("#distpicker").distpicker({
+                placeholder: false
+            });
+            $("#province,#city").on("change", function () {
+                if($("#area").find("option").length===0){
+                    $("#area").hide();
+                }else{
+                    $("#area").show();
+                }
+            }).trigger("change");
+
+            $("#serviceDate").val(moment().format("YYYY-MM-DD"));
+            $("#purchasedDate").val(moment().format("YYYY-MM-DD"));
+
+            ServiceOrderForm.init();
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

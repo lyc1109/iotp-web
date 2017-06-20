@@ -1,0 +1,273 @@
+/* ----------------------------------------------
+ * 移动优先页面框架布局 -- 头部topbar
+ * ---------------------------------------------- */
+%topbarbg {
+  background-color: $topbar_color;
+  @include transition( width .2s cubic-bezier(.35,0,.25,1));
+}
+
+.topbar{
+  position: relative;
+  margin-bottom: 0;
+  border-radius: 0;
+  z-index: 1050;
+  background-color: $page_bg;
+  @include border(bottom);
+
+  @include responsive-sm(){
+    border: none;
+    background-color: $topbar_color;
+    @include transition( width .2s cubic-bezier(.35,0,.25,1));
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+.navbar{
+  @include responsive-sm(){
+    border: none;
+
+    &:before,&:after{
+      display: none;
+    }
+  }
+}
+
+// -----------------
+// 底部收起展开切换按钮
+.sidebar-toggle{
+  position: absolute;
+  bottom: 0;
+  left: 235px;
+  right: 0;
+  text-align: center;
+  width: 18px;
+  height: 20px;
+  top: 10px;
+
+  a{
+    display: block;
+    padding: 5px 0;
+    //background: lighten($sidebar_bg,10%);
+    color: $sidebar_icon_color;
+    font-size: 20px;
+  }
+}
+
+
+// --------------------
+// 头部相关操作
+.navbar-wrapper{
+  padding: 0 15px;
+  background-color: transparent;
+
+  .nav.navbar-nav{
+    float: left;
+  }
+
+  .nav > li{
+    float: left;
+    @include border(right, darken($topbar_color, 5%));
+
+    @include responsive-mobile(){
+      position: static;
+        border: none;
+    }
+  }
+
+  .nav > li > a{
+    padding-left: 25px;
+    padding-right: 25px;
+
+    i,em{
+      font-size: 20px;
+      color: $blue-1;
+    }
+
+    &:hover,
+    &:active,
+    &:visited,
+    &:focus{
+      background-color: transparent !important;
+    }
+  }
+
+  @include responsive-sm{
+    .nav > li > a{
+        color: $white-1;
+    
+        i,em{
+            color: $white-1;
+        }
+    }
+  }
+
+  // 头部右侧操作
+  .nav.navbar-nav.navbar-right{
+    float: right;
+
+    &>li{
+      border-right: none;
+      //@include border(left, darken($topbar_color, 5%));
+    }
+
+    @include responsive-mobile(){
+      &>li{
+        border: none;
+      }
+    }
+  }
+
+  .nav.navbar-nav{
+    .dropdown-menu{
+      @include border-radius(3px);
+      padding: 0;
+      min-width: $sidebar_width;
+    }
+
+    .dropdown .dropdown-menu{
+      background-color: $white-1;
+      @include border(top);
+      @include border(bottom);
+      border-color: #e1e1e1;
+
+      @include responsive-mobile(){
+        position: absolute;
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+
+  .nav > li a .label{
+    position: absolute;
+    top: -2px;
+    right: 15px;
+    padding: 2px 4px;
+
+    @include responsive-sm(){
+      top: 10px;
+    }
+  }
+}
+
+.webui-popover
+.webui-popover-content{
+  padding: 10px;
+}
+
+
+// -----------------
+// 消息提醒
+.topbar-messages{
+  min-width: 300px;
+  overflow: hidden;
+
+  .messages-heading{
+    background: $light-1;
+    @extend %padding;
+  }
+
+  .topbar-messages-container{
+    max-height: 600px;
+    overflow: auto;
+  }
+
+  .messages-actions{
+    @include border(top, $light-1);
+
+    a.btn{
+      color: $text_primary;
+      border: none;
+      border-radius: 0;
+      padding: 12px 0;
+      text-align: center;
+    }
+
+    .btn.border-right{
+      @include border(right, $light-1);
+    }
+  }
+
+  .messages{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    clear: both;
+
+    li{
+      @extend %padding;
+      @include border(bottom, $light-1);
+
+      a{
+        color: $blue-1;
+        display: block;
+      }
+
+      .message-content{
+        /*span{
+          display: block;
+          max-width: 300px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }*/
+        @include font-size(12px);
+
+        .time{
+          color: $text_second;
+        }
+      }
+
+      .message-sender{
+        float: right;
+        color: $text_second;
+        background: $light-1;
+        padding: 2px 0;
+        margin-top: 8px;
+        width: 40px;
+        text-align: center;
+
+        @include font-size(12px);
+        @include border-radius(2px);
+      }
+    }
+
+    li:last-child{
+      border: none;
+    }
+  }
+}
+
+@media screen and (min-width: 768px){
+  .topbar{
+    background: #fff!important;
+    box-shadow: 0 3px 3px #eee;
+  }
+  .nav>li>a{
+    span{
+      color: #9a9a9a!important;
+    }
+    em{
+      color: #adb9c0!important;
+      margin-top:2px;
+    }
+  }
+  //.label{
+  //  background: #f1800d;
+  //  border-radius: 50%;
+  //}
+}
+.dropdown{
+  a{
+    img{
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      margin-right:5px;
+    }
+  }
+}

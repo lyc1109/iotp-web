@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='dashboard'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div>
+        <div class="pull-left title">数据看板</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm">
+                <span class="fa fa-refresh"></span> 刷新
+            </button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div class="alert alert-warning" role="alert" style="margin-bottom: 15px;">
+        <div class="padding-s align-center">
+            页面完善中, 敬请期待!
+        </div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        })
+        /*]]>*/
+    </script>
+</section>
+</html>

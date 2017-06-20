@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-single-page">
+<head>
+    <title th:text="服务商申请审核结果查询"></title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/shop-vendor/join-form.css}"/>
+</head>
+<body class="sbs bg">
+<section layout:fragment="content" th:remove="tag">
+    <div class="form-container" th:object="${parentShop}">
+
+        <div class="form-container-header">
+            <img class="pull-left" id="topShopLogo" src="#" width="48" height="48" th:src="${parentShop.logoImagePath} + '!wh100'" th:if="not ${#strings.isEmpty(parentShop.logoImagePath)}"/>
+
+            <div class="pull-left padding-left padding-right border-right">
+                <h3 th:text="${parentShop.name}"></h3>
+            </div>
+
+            <div class="pull-left padding-left text-second font-m" style="padding-top: 15px;">服务商注册审核查询</div>
+
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-container-body">
+            <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post">
+
+                <div class="alert alert-warning margin-bottom-m align-center font-m" role="alert" id="emptyTips" style="display: none;">您还未提交过服务商注册申请哦！</div>
+
+                <div class="container-fluid" id="shopsContainer" style="display: none;"></div>
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label required">手机号码</label>
+                    <div class="col-sm-5">
+                        <input type="number" class="form-control" name="userMobile" id="userMobile"
+                               placeholder="请输入提交申请时用户手机号码"
+                               pattern="/^1[3|4|5|7|8][0-9]{9}$/"
+                               data-parsley-required="true"
+                               data-parsley-error-message="请输入正确手机号码"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label required">短信验证码</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="smsCode" name="smsCode" data-parsley-required="true"/>
+                    </div>
+                    <div class="col-sm-2 col-left-zero">
+                        <button type="button" class="btn btn-block btn-sm" id="btnSentSmsCode" disabled="disabled">获取验证码</button>
+                    </div>
+                </div>
+
+                <div class="row margin-top-m final-row">
+                    <div class="col-sm-12 align-center">
+                        <hr class="hr-dashed"/>
+
+                        <button class="btn btn-success btn-sm btn-cmd cmd-query" type="button">立即查询</button>
+                    </div>
+                </div>
+
+                <input type="hidden" id="shopFactoryId" th:value="*{id}"/>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/x-jsrender" id="shopTpl">
+        <div class="row">
+            {{for shopVendors}}
+                <div class="col-sm-12">
+                    <div class="block-center" style='width: 400px;'>
+                        <img class="img-thumbnail pull-left" src="{{:logoImage}}!wh100" width="100" height="100"/>
+                        <div style="padding-left: 110px;">
+                            <div class="font-m margin-top-s  text-wrapper">
+                                {{if status==0}}
+                                    <span class='color-green-1'>【已审核通过】</span>
+                                {{else status==10}}
+                                    <span class='color-red-1'>【审核中】</span>
+                                {{else status==11}}
+                                    <span class='color-red-1'>【审核不通过】</span>
+                                {{else status==90}}
+                                    <span class='text-second'>【已解约】</span>
+                                {{/if}}
+
+                                {{:name}}
+                            </div>
+                            <div class="font-s text-second margin-top-s text-wrapper">{{:contactName}} | {{:contactMobile}}</div>
+                            <div class="font-s text-second text-wrapper">{{:province}}{{:city}}{{:area}}{{:address}}</div>
+
+                            {{if processMemos !== null}}
+                                <div class="font-s text-second text-wrapper">
+                                    审核备注：{{:processMemos}}
+                                </div>
+                            {{/if}}
+                            {{if processMemos == null}}
+                                <div class="font-s text-second text-wrapper">
+                                    提交时间：{{:createdAt}}
+                                </div>
+                            {{/if}}
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <hr/>
+                </div>
+            {{/for}}
+        </div>
+    </script>
+    <script type="text/javascript" th:src="@{/dist/3rd/distpicker/distpicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/3rd/JsRender/jsrender.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/sms/sms.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            // 短信验证
+            var smsInstance  = new Sms("#btnSentSmsCode", "#userMobile");
+
+            // 提交表单
+            $(".cmd-query").on("click", function () {
+                var instance = $('#iotForm').parsley();
+                if(instance.validate() !== true){
+                    return;
+                }
+
+                smsInstance.checkValidCode($("#smsCode").val(), function () {
+                    smsInstance.reset();
+
+                    App.ajax.post({
+                        url: "/shop/vendor/join/"+ $("#shopFactoryId").val() +"/query",
+                        data: {
+                            mobile: $("#userMobile").val()
+                        },
+                        onSuccess: function (resp) {
+                            if(resp.shopVendors && resp.shopVendors.length > 0) {
+                                var shopVendors = resp.shopVendors;
+
+                                $.each(shopVendors, function (idx, item) {
+                                    item.createdAt = moment(item.createdAt).format("YYYY-MM-DD HH:mm");
+                                });
+
+                                var tpl = $.templates("#shopTpl");
+                                $("#shopsContainer").html(tpl.render({
+                                    shopVendors: shopVendors
+                                })).show();
+                                $("#emptyTips").hide();
+                            } else {
+                                $("#emptyTips").show();
+                                $("#shopsContainer").hide();
+                            }
+                        }
+                    })
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

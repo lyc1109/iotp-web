@@ -1,0 +1,57 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+[v-cloak]{
+  display: none;
+}
+.rechargeorders {
+  position: absolute;
+  background: #fff;
+  width: 97%;
+  top: 0;
+  margin-bottom: 20px;
+
+  h1 {
+    border-bottom: 1px solid #ececec;
+    line-height: 40px;
+    position: relative;
+
+    .title {
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight: normal;
+      height: 40px;
+    }
+  }
+  .rechargeordersMain{
+    width: 100%;
+    margin-top:20px;
+
+    .rechargeordersTab{
+      line-height: 40px;
+      padding-left:10%;
+
+      b{
+        font-weight:normal;
+        color: #333;
+        width: 100%;
+        text-align: right;
+        display: inline-block;
+      }
+      span{
+        color: #757575;
+        margin-left:20px;
+      }
+      .blue{
+        color: #41a2e6;
+      }
+    }
+  }
+}

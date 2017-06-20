@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>产品管理</title>
+</head>
+<body>
+<th:block th:fragment="headerTitle(title)">
+    <div>
+        <div class="pull-left title" th:text="${title}">产品管理</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm grid-refresh">
+                <span class="fa fa-refresh"></span> 刷新
+            </button>
+            <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{/shop/product/specGroup/create}">
+                新增规格模板
+            </a>
+            <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{/shop/product/band/create}">
+                新增品牌
+            </a>
+            <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{/shop/product/category/create}">
+                新增分类
+            </a>
+            <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{/shop/product/create?productType=PJ}">
+                新增配件
+            </a>
+            <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{/shop/product/productFaq/create}">
+                新增产品问题
+            </a>
+            <a href="#" class="btn btn-primary btn-sm" role="button" th:href="@{/shop/product/create}">
+                发布产品
+            </a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</th:block>
+<th:block th:fragment="nav(nav_code)">
+    <ul class="nav nav-tabs margin-bottom-s" role="tablist">
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('product', nav_code)} ? 'active' : ''">
+            <a href="#" th:href="@{/shop/product}">产品管理</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('spec', nav_code)} ? 'active' : ''">
+            <a href="#" th:href="@{/shop/product/specGroup}">规格管理</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('band', nav_code)} ? 'active' : ''">
+            <a href="#" th:href="@{/shop/product/band}">品牌管理</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('category', nav_code)} ? 'active' : ''">
+            <a href="#" th:href="@{/shop/product/category}">分类管理</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('iotDeviceModel', nav_code)} ? 'active' : ''">
+            <a href="#" th:href="@{/iot/deviceModel}">智能模板配置</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('authCode', nav_code)} ? 'active' : ''">
+            <a href="javascript:;" th:href="@{/shop/product/authCode(type='product')}">产品授权管理</a>
+        </li>
+        <li role="presentation" th:classappend="${#strings.equalsIgnoreCase('faq', nav_code)} ? 'active' : ''">
+            <a href="javascript:;" th:href="@{/shop/product/productFaq}">产品问题库</a>
+        </li>
+    </ul>
+</th:block>
+</body>
+</html>

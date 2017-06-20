@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='home'">
+<head>
+    <title>管理工具箱</title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" style="color:red">重置Iot设备的数据</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post">
+
+        <div class="form-group">
+            <div class="alert alert-danger" role="alert" style="text-align: center">
+                <b>警告：</b> 一旦调用将重置该设备的所有历史数据，请慎重再慎重！！！P.S.没有后悔药！！！！
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>设备Mac地址</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="macs" id="macs" data-parsley-required="true"/>
+                <div style="font-size:12px;color:#999999">多个Mac地址直接使用逗号(,)分开</div>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-8 align-right">
+                <input class="btn btn-sm btn-delete btn-danger" style="width:81px;" type="button" value="重置"/>
+            </div>
+        </div>
+    </form>
+
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $(".btn-delete").on("click", function(){
+                var instance = $('#iotForm').parsley();
+                if(instance.validate() !== true){
+                    return;
+                }
+
+                var macs = $("#macs").val();
+                Messenger.propup({
+                    message: "请再次输入所要重置设备的Mac地址"
+                }, function (confirmTxt) {
+                    if(confirmTxt.trim() === ""){
+                        toast("请再次输入所要重置设备的Mac地址", "error");
+                        return ;
+                    }
+
+                    if (confirmTxt != macs) {
+                        toast("输入不匹配", "error");
+                        return ;
+                    }
+
+                    $.post("/tools/resetIotDeviceData", {
+                        "macAddress" : macs
+                    }, function(data){
+                        if(data.returnCode == 0){
+                            toast("数据重置成功");
+                            $("#macs").val("");
+                        }else{
+                            toast(data.returnMsg);
+                        }
+                    }, 'json');
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

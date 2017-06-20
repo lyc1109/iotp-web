@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>品智云Scripts模板</title>
+</head>
+<body>
+
+<th:block th:fragment="scripts">
+
+    <th:block th:remove="tag" th:if="${application.isProduct}">
+        <script type="application/javascript" src="//cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+        <script type="application/javascript" src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script type="application/javascript" src="//cdn.bootcss.com/moment.js/2.16.0/moment-with-locales.min.js"></script>
+        <script type="application/javascript" src="//cdn.bootcss.com/select2/4.0.3/js/select2.min.js"></script>
+        <script type="application/javascript" src="//cdn.bootcss.com/select2/4.0.3/js/i18n/zh-CN.js"></script>
+        <script type="application/javascript" src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+        <script type="application/javascript" src="//cdn.bootcss.com/plupload/2.2.0/plupload.full.min.js"></script>
+    </th:block>
+
+    <th:block th:remove="tag" th:if="not ${application.isProduct}">
+        <script type="application/javascript" th:src="@{/dist/3rd/jquery.min.js}"></script>
+        <script type="application/javascript" th:src="@{/dist/3rd/bootstrap/bootstrap.min.js}"></script>
+        <script type="application/javascript" th:src="@{/dist/3rd/moment/moment.min.js}"></script>
+        <script type="application/javascript" th:src="@{/dist/3rd/select2/select2.min.js}"></script>
+        <script type="application/javascript" th:src="@{/dist/3rd/select2/il8n/zh-CN.js}"></script>
+        <script type="application/javascript" th:src="@{/dist/3rd/icheck/icheck.js}"></script>
+        <script type="application/javascript" th:src="@{/dist/3rd/plupload/plupload.full.min.js}"></script>
+    </th:block>
+
+    <script type="application/javascript" th:src="@{/dist/scripts/vendor.min.js}"></script>
+    <script type="application/javascript" th:src="@{/dist/scripts/app.min.js}"></script>
+    <script type="application/javascript" th:src="@{/dist/3rd/history/jquery.history.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        window.App.ossUrl = [[${application.ossUrl}]];
+        window.App.isProduct = [[${application.isProduct}]];
+        /*]]>*/
+    </script>
+</th:block>
+
+</body>
+</html>

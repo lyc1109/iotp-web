@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='home'">
+<head>
+    <title>Iot设备日志查看器</title>
+    <link rel="stylesheet" th:href="@{/dist/css/pages/tools/IotDeviceLog.css}"/>
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+    <div id="IotDeviceLog" v-cloak="cloak">
+        <el-row>
+            <el-col class="title">
+                <span>Iot设备日志查看器</span>
+            </el-col>
+            <el-button type="small" v-on:click="refresh()">刷新</el-button>
+        </el-row>
+        <el-row justify="center" class="IotDeviceLogMain" v-loading="refreshLoading" element-loading-text="正在刷新中...">
+            <el-col v-for="item in IotDeviceLogDetail">
+                [ {{item.loggedAt}} ] -
+                {{item.type}} :
+                {{item.logContent}}
+            </el-col>
+        </el-row>
+    </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/tools/IotDeviceLog.js}"></script>
+</section>
+</body>
+</html>

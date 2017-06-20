@@ -1,0 +1,78 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+input[type=file]{
+  display: none;
+}
+[v-cloak]{
+  display: none;
+}
+.addProductLease{
+  position: absolute;
+  background: #fff;
+  height:100%;
+  width: 97%;
+
+  h1{
+    border-bottom:1px solid #ececec;
+    padding-bottom:10px;
+    line-height: 40px;
+
+    .title{
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight:normal;
+      height: 40px;
+    }
+  }
+  .addProLeaseMain{
+    margin-top:20px;
+    .proLabel{
+      float: left;
+      width: 20%;
+      text-align: right;
+      margin-right:10px;
+    }
+  }
+  .el-form{
+    border-bottom:1px solid #eee;
+    padding:15px 0;
+
+    .proImg{
+      .el-upload--picture-card{
+        width: 88px;
+        height: 88px;
+
+        .el-icon-plus{
+          position: relative;
+          bottom:25px;
+        }
+      }
+      .el-upload-list--picture-card{
+        .el-upload-list__item{
+          width: 88px;
+          height: 88px;
+        }
+      }
+    }
+    .cashInput{
+      .el-input{
+        margin-top: 20px;
+      }
+      .el-input:first-child{
+        margin-top:0;
+      }
+    }
+  }
+  .proSave{
+    float: right;
+    margin-top:20px;
+  }
+}

@@ -1,0 +1,110 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+[v-cloak]{
+  display: none;
+}
+.workflow {
+  position: absolute;
+  background: #fff;
+  width: 97%;
+  top: 0;
+  margin-bottom: 20px;
+
+  h1 {
+    border-bottom: 1px solid #ececec;
+    //    padding-bottom: 10px;
+    line-height: 40px;
+    position: relative;
+
+    .title {
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight: normal;
+      height: 40px;
+    }
+  }
+  .workflowMain {
+    width: 100%;
+
+    .workflowBox {
+      width: 80%;
+      height: 0;
+      padding-bottom: 60%;
+      border: 1px solid #ececec;
+      margin: 5px auto 10px;
+
+      .workflowImg {
+        width: 100%;
+        text-align: center;
+        padding: 5px 0;
+
+        i {
+          width: 8vw;
+          height: 7vw;
+          //border: 1px solid #eee;
+          display: inline-block;
+          font-size: 6vw;
+          color: #fff;
+
+          &:before{
+            position: relative;
+            top:-10%;
+          }
+        }
+      }
+      .workflowInfo {
+        padding: 10px 0;
+        margin:0 5px;
+        border-top: 1px solid #ececec;
+        position: relative;
+
+        .workInfoWz {
+          b {
+            font-size: .7vw;
+            color: #333;
+            width: 100%;
+            display: inline-block;
+            font-weight: 400;
+            margin-bottom:5px;
+          }
+          span {
+            font-size: .6vw;
+            color: #b0b0b0;
+            width: 100%;
+            display: inline-block;
+          }
+        }
+        .editBtn {
+          position: absolute;
+          right: 5px;
+          margin: 10px 0;
+          padding: 7px 15px;
+          border-radius: 5px!important;
+        }
+      }
+    }
+    @media (min-width: 1280px) and (max-width: 1700px) {
+      .workflowBox {
+        padding-bottom: 72%;
+        width:90%;
+
+        .workInfoWz {
+          b {
+            font-size: 1vw !important;
+          }
+          span {
+            font-size: .9vw !important;
+          }
+        }
+      }
+    }
+  }
+}

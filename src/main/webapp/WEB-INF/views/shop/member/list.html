@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='memberMgm'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div>
+        <div class="pull-left title">会员管理</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm grid-refresh">
+                <span class="fa fa-refresh"></span> 刷新
+            </button>
+            <a href="#" class="btn btn-primary btn-sm hidden" role="button" th:href="@{/shop/member/create}">
+                新增会员
+            </a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="btn-group pull-left" style="padding-right:6px;display: none;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="width:96px;" data-toggle="dropdown">
+                <span>所有会员</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" data-state="-1" style="font-size:12px;">VIP会员</a></li>
+                <li><a href="#" data-state="0" style="font-size:12px;">普通会员</a></li>
+                <li class="divider"></li>
+                <li><a href="#" data-state="20" style="font-size:12px;">所有会员</a></li>
+            </ul>
+        </div>
+        <div class="input-group pull-left" style="width:280px;">
+            <input type="text" class="form-control grid-search" id="searchPhrase" placeholder="会员昵称/手机号码" th:value="${searchPhrase}"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" type="button" id="btnSearch" style="min-width:61px;">搜索</button>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="data-grid-container">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-column-id="id" data-identifier="true" data-visible="false"></th>
+                <th data-width="15%" data-column-id="nickname" data-formatter="link">昵称</th>
+                <th data-width="15%" data-column-id="user.name">真实姓名</th>
+                <th data-width="15%" data-column-id="user.loginName" data-sortable="false">登录名</th>
+                <th data-width="15%" data-column-id="mobileNo">手机号码</th>
+                <th data-width="25%" data-column-id="address.fullAddress">所属地区</th>
+                <!--<th data-width="160px" data-column-id="points">会员积分</th>
+                <th data-width="120px" data-column-id="tradedCount">交易次数</th>-->
+                <th data-width="15%" data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/shop/member/";
+        var _bootgrid = null;
+
+        $(function () {
+            var preAction = $("#_preAction").val();
+            if("save" == preAction) {
+                toast("信息保存成功");
+            }
+
+            $("#btnSearch").on("click", function(){
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            if($(".grid-search").length > 0){
+                var $search = $(".grid-search");
+                $search.keyup(function(event){
+                    if(event.keyCode === 13){
+                        window.history.replaceState({}, 0, buildListUrl());
+                        reloadGird();
+                    }
+                });
+            }
+
+            _bootgrid = new BootGrid({
+                url: "/shop/member",
+                data: {
+                    searchPhrase: $("#searchPhrase").val()
+                },
+                formatters: {
+                    idFormatter: function(column, row) {
+                        return "";
+                    },
+                    areaFormatter: function (column, row) {
+                        if (null != row.address)
+                            return row.address.province + " - " + row.address.city + " - " + row.address.area;
+                        return "";
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" title=\"查看详情\" class=\"btn btn-xs btn-default cmd-view\" data-row-id=\"" + row.id + "\">查看</button>";
+                        return cmdBtns;
+                    }
+                },
+                onLoaded: function(){
+                    $(".cmd-view").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId"), "_self");
+                    });
+                    $(".cmd-edit").on("click", function(){
+                        window.open(_baseUrl + $(this).data("rowId") + "/edit", "_self");
+                    });
+                }
+            });
+        });
+
+        function buildListUrl() {
+            var url = _baseUrl;
+            url += "?searchPhrase=" + $("#searchPhrase").val();
+            return url;
+        }
+
+        function reloadGird() {
+            _bootgrid.search({
+                searchPhrase: $("#searchPhrase").val()
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

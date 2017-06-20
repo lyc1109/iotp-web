@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='fundMgm'">
+<head>
+    <link rel="stylesheet" th:href="@{/dist/css/pages/rent/fundManage.css}"/>
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+    <keep-alive>
+        <div id="fundManage" v-cloak="true">
+            <div class="fundManage">
+                <h1>
+                    <span class="title">资金管理</span>
+                    <div class="addBtn">
+                        <a href=""><el-button size="small" v-on:click="fundFresh()">刷新</el-button></a>
+                        <el-button type="success" size="small" v-on:click="addExpends()">新增支出审批</el-button>
+                    </div>
+                </h1>
+                <el-dialog top="35%" title="" size="tiny" v-model="addExpendsDia" class="addExpendsDia" :modal="modal" :modal-append-to-body="modalBody">
+                    <i class="el-icon-information"></i>
+                    <p>请先进行审批配置</p>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button type="primary" size="tiny" v-on:click="gotoWorkflow()">去配置</el-button>
+                            <el-button size="tiny" type="danger" v-on:click="addExpendsDia = false">取消</el-button>
+                        </span>
+                </el-dialog>
+                <div class="fundManagebox">
+                    <div class="fundManageMain" :span="6" :xs="24" v-for="item in fundManage">
+                        <ul class="fundManageboxMain" :class="item.style">
+                            <li><span>{{item.text}}</span></li>
+                            <li><span>{{item.money}}元</span></li>
+                            <i class="iconfont" :class="item.iconClass"></i>
+                        </ul>
+                    </div>
+                </div>
+                <div class="fundManageRecord">
+                    <h2><b>近期交易记录</b></h2>
+                    <div class="fundManageTab">
+                        <el-tabs v-model="activeName" type="border-card" v-on:tab-click="fundClick">
+                            <el-tab-pane label="交易记录" name="交易记录"></el-tab-pane>
+                            <el-tab-pane :label="'待审批支出(' + appPageArray.total + ')'" name="待审批支出"></el-tab-pane>
+                        </el-tabs>
+                    </div>
+                    <div class="tradingRecord" v-show="activeName === '交易记录'">
+                        <div class="fundManageForm">
+                            <el-form>
+                                <el-form-item>
+                                    <el-select v-model="type" placeholder="所有类型" v-on:change="searchValue()" size="small">
+                                        <el-option v-for="item in fundManageType" :label="item.name"
+                                                   :value="item.value"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="起止时间:">
+                                    <el-col :span="6">
+                                        <el-date-picker v-model="dateSelect" type="daterange"
+                                                        :picker-options="dateOption" placeholder="请选择时间范围"
+                                                        v-on:change="searchValue()" size="small"></el-date-picker>
+                                    </el-col>
+                                </el-form-item>
+                                <el-form-item class="searchs">
+                                    <el-col :span="18">
+                                        <el-input placeholder="输入交易信息进行搜索" v-model="fundManageSearch"
+                                                  v-on:keyup.native.enter="searchValue()" size="small"></el-input>
+                                    </el-col>
+                                    <el-button type="primary" size="small" v-on:click="searchValue()" class="searchBtn">搜索</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div class="fundManageRecordTable">
+                            <el-table :data="fundManageData" style="table-layout:fixed;width: 100%;" :default-sort="defaultSort">
+                                <el-table-column :prop="item.pro" :width="item.width" :type="item.type"
+                                                 :label="item.label" v-for="item in dataTit"
+                                                 :sortable="item.sortable"></el-table-column>
+                                <el-table-column prop="operation" label="操作">
+                                    <template scope="scope">
+                                        <el-button size="small" v-on:click.native="detail(scope.$index)">查看详情
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                            <div class="page">
+                                <div class="showPage"><span>显示第</span><b> {{pageArray.fisrtPage}} </b><span>到</span><b> {{pageArray.lastPage}} </b><span>条数据</span></div>
+                                <el-pagination v-on:current-change="currentChange" v-on:size-change="sizeChange"
+                                               :current-page="pageArray.current" :page-size="pageArray.size"
+                                               layout="total,prev,pager,next,jumper"
+                                               :total="pageArray.total"></el-pagination>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="approval" v-show="activeName === '待审批支出'">
+                        <div class="approvalTab">
+                            <el-table :data="approvalData" style="width: 100%" v-on:row-click="getID">
+                                <el-table-column :prop="item.pro" :width="item.width" :type="item.type"
+                                                 :label="item.label" v-for="item in approvalTit"></el-table-column>
+                            </el-table>
+                            <div class="page">
+                                <div class="showPage"><span>显示第</span><b> {{appPageArray.fisrtPage}} </b><span>到</span><b> {{appPageArray.lastPage}} </b><span>条数据</span></div>
+                                <el-pagination v-on:current-change="appCurrentChange" v-on:size-change="appSizeChange"
+                                               :current-page="appPageArray.current" :page-size="appPageArray.size"
+                                               layout="total,prev,pager,next,jumper"
+                                               :total="appPageArray.total"></el-pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </keep-alive>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+    <!--<script type="application/javascript" src="/dist/3rd/bootgrid/jquery.bootgrid.js"></script>-->
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/fundManage/fundManage.js}"></script>
+</section>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='leaseCfg_LeaseDevice'">
+<head>
+      <link rel="stylesheet" th:href="@{/dist/css/pages/lease/leaseDeviceDetail.css}" />
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+      <div id="equipDetail" v-cloak="true">
+            <div class="equipDetail">
+                  <h1>
+                        <span class="title">租赁设备详情</span>
+                        <div class="addBtn">
+                              <a href=""><el-button size="small">刷新</el-button></a>
+                        </div>
+                  </h1>
+                  <div class="equipState" v-show="equipStateToggle"><i :class="iotpStatuseImg"></i><span>{{iotpStatus}}</span></div>
+                  <div class="equipDetailMain" :style="[equipStateToggle ? '' : padding]">
+                        <el-col :span="12" :lg="12" :md="12" :sm="24" :xs="24">
+                              <div class="equipInfo">
+                                    <el-col :span="6" :lg="6" :md="6" :sm="24" :xs="24">
+                                          <div class="equipInfoImg">
+                                                <div class="equipInfoShade" v-show="equipInfoShade">
+                                                </div>
+                                                <i class="iconfont icon-nowifi" v-show="equipInfoShade"></i>
+                                                <span v-show="equipInfoShade">设备已离线</span>
+                                                <img :src="imgSrc" alt=""/>
+                                          </div>
+                                    </el-col>
+                                    <el-col :span="15" :lg="15" :md="15" :sm="24" :xs="24">
+                                          <div class="equipInfoDetail">
+                                                <ul>
+                                                      <li v-for="item in equipInfoDetail">
+                                                            <el-col :span="8"><span>{{item.title}}:</span></el-col>
+                                                            <el-col :span="16"><a :href="item.href"><b :class="item.style">{{item.name}}</b></a></el-col>
+                                                      </li>
+                                                </ul>
+                                          </div>
+                                          <el-button class="sendRemind" v-show="reminder">到期提醒</el-button>
+                                    </el-col>
+                              </div>
+                        </el-col>
+                        <el-col :span="12" :lg="12" :md="12" :sm="24" :xs="24" class="equipRight">
+                              <div class="equipDetailBox">
+                                    <div class="equipDetailBoxli" v-for="item in equipDetail">
+                                          <ul class="equipDetailBoxMain" :class="item.style">
+                                                <li><b>{{item.key}}<span>{{item.unit}}</span></b><i>{{item.text}}</i></li>
+                                          </ul>
+                                    </div>
+                              </div>
+                              <div class="detailState">
+                                    <p>滤芯状态：总共<i>{{filterTotal}}</i>根滤芯    其中 <span>{{filterReplace}}</span> 根需要更换</p>
+                              </div>
+                              <div class="detailBtn">
+                                    <!--<el-col :span="3" :offset="6"><el-button type="success" size="large" v-on:click="dialogVisible = true">锁机</el-button></el-col>-->
+                                    <el-col :span="24"><el-button type="primary" size="large" v-on:click="maintain = !maintain">远程维护</el-button></el-col>
+                                    <!--弹窗-->
+                                    <!--<el-dialog top="35%" title="此功能暂无开放" v-model="dialogVisible" size="tiny" class="dialogs1">-->
+                                          <!--<el-button type="primary" v-on:click="dialogVisible = false">确定</el-button>-->
+                                    <!--</el-dialog>-->
+                                    <!--远程维护弹窗-->
+                                    <el-dialog top="35%" :modal="modal" :modal-append-to-body="modalBody" title="远程维护"  v-model="maintain" size="tiny" class="dialogs">
+                                          <div class="maintain">
+                                                <!--<div class="maintainBtn">-->
+                                                      <el-button type="primary" v-on:click="openOnoff(index)" v-loading.fullscreen.lock="onoff" element-loading-text="正在执行中..." v-for="(item,index) in openoffBtn">{{item.name}}</el-button>
+                                                <!--</div>-->
+                                                <!--<el-button type="primary" v-on:click="">重新配网</el-button>-->
+                                          </div>
+                                    </el-dialog>
+                              </div>
+
+                        </el-col>
+
+                  </div>
+
+                  <div class="equipData">
+                        <el-tabs v-model="active"  type="border-card">
+                              <el-tab-pane v-for="item in equipData" :label="item.label" :name="item.name"></el-tab-pane>
+                        </el-tabs>
+                        <!--基本信息-->
+                        <el-col class="filterDetails" v-show="active === '基本信息'">
+                              <el-col :span="12" :lg="12" :md="12" :sm="24" :xs="24">
+                                    <h2><span class="title">滤芯详情</span></h2>
+                                    <el-col class="noFilterDetails" v-show="noFilterDetails">暂无数据</el-col>
+                                    <div v-for="(item,index) in filterData" class="equipBox" v-show="filterDetails">
+                                          <i>{{index+1}}</i>
+                                          <a :href="'/shop/product/' + item.partProductId"><img :src="item.partProductImage" v-on:click="getPartProductId(index)"/></a>
+                                          <!--<el-col :span="3" :lg="3" :md="3" :sm="24" :xs="24" class="equipTit" :offset="1">-->
+                                          <!--</el-col>-->
+                                          <el-col :span="14" :lg="14" :md="14" :sm="14" :xs="14" :offset="1" class="equipTit">
+                                                <span>{{item.name}}</span>
+                                                <el-progress :text-inside="true" :percentage="item.availablePercentage" :stroke-width="20" :status="item.status">
+                                                </el-progress>
+                                                <el-col>
+                                                      <el-col>
+                                                            <b class="sTitle">启用日期：</b><b>{{new Date(item.installedAt).Format("yyyy-MM-dd")}}</b>
+                                                      </el-col>
+                                                      <el-col>
+                                                            <span class="sTitle">可用天数：</span><span>{{item.estimatedDays}}</span>
+                                                      </el-col>
+                                                </el-col>
+                                          </el-col>
+                                          <el-col :span="3" :lg="3" :md="3" :sm="24" :xs="24" :offset="1" class="equipDetailBtn">
+                                                <!--<el-button type="text" v-on:click="dialogVisible = true">取消</el-button>-->
+                                                <!--<strong>|</strong>-->
+                                                <el-button type="text" v-on:click="restoration(index)">滤芯复位</el-button>
+                                          </el-col>
+                                    </div>
+                              </el-col>
+                              <el-col :span="11" :lg="11" :md="11" :sm="24" :xs="24" :offset="1" class="deviceLogs">
+                                    <h2><span class="title">设备日志</span></h2>
+                                    <el-row class="deviceLog">
+                                          <el-col v-for="item in deviceLog">
+                                                <span>{{item.createdAt}}</span>
+                                                <a :href="item.sourceUri">
+                                                      <b>{{item.logContext}}</b>
+                                                </a>
+                                          </el-col>
+                                          <el-col class="more" :class="{ 'deviceLogNum': isNull }"><el-button type="text" :class="{ 'moreBtn': isBlue }" v-on:click="loadMore()">{{moreText}}<i class="el-icon-arrow-right el-icon-d-arrow-left" v-show="moreIcon"></i></el-button></el-col>
+                                    </el-row>
+                              </el-col>
+                        </el-col>
+                  </div>
+                  <!--服务记录-->
+                  <div v-show="active === '服务记录'">
+                        <el-table :data="serviceData" style="width: 100%; margin-top: 10px;" :row-class-name="serviceDatas" class="serviceTabs">
+                              <!--<el-table-column prop="select" type="selection"></el-table-column>-->
+                              <el-table-column prop="status" label="进度状态"></el-table-column>
+                              <el-table-column prop="shopServiceName" label="服务类型"></el-table-column>
+                              <el-table-column prop="orderId" label="服务单号">
+                                    <template scope="scope">
+                                          <a :href="'/shop/serviceOrder/'+ serviceData[scope.$index].id">
+                                                <el-button type="text" size="small">{{serviceData[scope.$index].orderId}}</el-button>
+                                          </a>
+                                    </template>
+                              </el-table-column>
+                              <el-table-column prop="serviceVendor" label="服务商"></el-table-column>
+                              <el-table-column prop="contactName" label="客户姓名"></el-table-column>
+                              <el-table-column prop="serviceDate" label="预约时间"></el-table-column>
+                              <el-table-column prop="created" label="创建时间"></el-table-column>
+                        </el-table>
+                  </div>
+                  <!--充值记录-->
+                  <div v-show="active === '充值记录'">
+                        <el-table :data="rechargeData" style="width: 100%; margin-top: 10px;" v-on:row-click="getRechargeId" :row-class-name="rechargeDatas" class="rechargeTabs">
+                              <el-table-column :prop="item.prop"
+                                               :type="item.type"
+                                               :width="item.width"
+                                               :label="item.label"
+                                               v-for="item in rechargeTit">
+
+                              </el-table-column>
+                        </el-table>
+                  </div>
+                  <!--数据报表-->
+                  <div v-show="active === '数据报表'">
+                        <el-col :span="12" :lg="12" :md="12" :sm="24" :xs="24" class="waterStatistics">
+                        <h2>
+                              <b>用水统计</b>
+                              <el-radio-group v-model="waterRecordBtn" class="waterRecordbtnGroup" size="tiny" v-on:change="changeWater">
+                                    <el-radio-button :label="item.label" class="waterRecordbtn" :data-type="item.type" v-for="item in dataTypes"></el-radio-button>
+                              </el-radio-group>
+                              <el-date-picker v-model="waterDate" type="date" placeholder="选择日期" :size="dateSize" class="waterRecordBtn" id="waterRecordSel" v-on:change="changeWaterDate"></el-date-picker>
+                        </h2>
+                              <div id="container"></div>
+                        </el-col>
+                        <el-col :span="11" :lg="11" :md="11" :sm="24" :xs="24" :offset="1" class="waterRecord">
+                              <h2><b>净水记录</b></h2>
+                              <el-col :span="24">
+                                    <ul>
+                                          <li v-for="item in waterRecord">
+                                                <span>净水量{{item.outWaterFlow/1000}}升，用水时长{{(new Date(item.endTime).getTime() - new Date(item.startTime).getTime())/1000}}秒</span>
+                                                <i>{{item.startTime}}</i>
+                                          </li>
+                                          <div class="noData" v-show="noData"><b>暂无数据</b></div>
+                                    </ul>
+                              </el-col>
+                        </el-col>
+                        <div class="page">
+                              <div class="showPage">
+                                    <span>显示第</span>
+                                    <b> {{pageArray.fisrtPage}} </b>
+                                    <span>到</span>
+                                    <b> {{pageArray.lastPage}} </b>
+                                    <span>条数据</span>
+                              </div>
+                              <el-pagination v-on:size-change="handleSizeChange"
+                                             v-on:current-change="handleCurrentChange"
+                                             :current-page="pageArray.current"
+                                             :page-size="pageArray.size"
+                                             layout="total, prev, pager, next, jumper"
+                                             :total="pageArray.total"
+                                             small="true">
+                              </el-pagination>
+                        </div>
+                  </div>
+            </div>
+      </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+      <script th:inline="javascript" th:src="@{/dist/scripts-vue/leaseDevice/leaseDeviceDetail.js}"></script>
+      <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+      <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts-3d.js"></script>
+      <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/themes/dark-unica.js"></script>
+</section>
+</body>
+</html>

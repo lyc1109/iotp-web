@@ -1,0 +1,145 @@
+/* -------------------------------------------------------
+ * 组件 -- 数据表格
+ * ------------------------------------------------------- */
+.data-grid-container {
+    background-color: $white-1;
+    max-width: 100%;
+    display: none;
+
+    .left-actions,
+    .right-actions {
+        display: none;
+    }
+
+    // -----------------
+    // 自定义Header
+    .data-grid-header{
+      margin-bottom: 8px;
+      margin-top: 3px;
+
+      .grid-search-group{
+        width: 280px;
+
+        .input-group-btn .btn{
+          padding: 0 15px;
+        }
+      }
+    }
+
+    // -----------------
+    // header
+    .bootgrid-header {
+        padding-left: 0;
+        padding-right: 0;
+
+        .def-actions {
+            display: inline-block;
+            float: left;
+            vertical-align: middle;
+
+            .btn {
+                margin-right: 10px;
+            }
+        }
+
+        .dropdown {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .search {
+            margin: 0;
+        }
+
+        .actions {
+            background-color: $page_bg;
+            margin-left: 10px;
+
+            .dropdown {
+                margin-right: 0;
+            }
+        }
+    }
+
+    // -----------------
+    // footer
+    .bootgrid-footer {
+        padding-left: 0;
+        padding-right: 0;
+
+        .infoBar {
+            height: 30px;
+            line-height: 30px;
+            margin-right: 12px;
+        }
+
+        .infos {
+            color: #333 !important;
+            font-size: 12px;
+        }
+
+        .pagination{
+            li > a{
+                padding: 2px 8px;
+            }
+
+            li.active > a{
+                background-color: $primary;
+                border-color: $primary;
+            }
+        }
+    }
+}
+
+table.bootgrid-table {
+    @include border();
+
+    td, th {
+        border-color: $light-1 !important;
+        color: #333 !important;
+        font-size: 12px;
+        padding-top: 12px;
+        vertical-align: baseline;
+    }
+
+    thead > tr > th{
+        border-top: 1px solid $light-1 !important;
+
+        a {
+            color: #333 !important;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+
+    tbody > tr:hover{
+        background-color: $page_bg !important;
+    }
+
+    tbody > tr:nth-of-type(even) {
+        background-color: lighten($light-1, 4%);
+    }
+
+    tbody > tr:nth-of-type(odd) {
+        background-color: $white-1;
+    }
+
+    tbody > tr:last-child > td {
+        border-bottom: 1px solid #dee5e7;
+    }
+
+    tbody > tr:last-child > td.no-results {
+        @extend %padding-l;
+        @include font-color($text_second);
+        @include font-size(16px);
+        border-bottom: none;
+    }
+
+    thead {
+        background-color: $light-1;
+    }
+
+    .btn {
+        padding: 1px 5px;
+    }
+}

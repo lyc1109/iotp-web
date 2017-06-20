@@ -1,0 +1,57 @@
+@import "../../imports";
+
+.navbar-inverse {
+  background-image: -webkit-linear-gradient(top,#23b7e5 0,#23b7e5 100%);
+  background-image: -o-linear-gradient(top,#23b7e5 0,#23b7e5 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#23b7e5),to(#23b7e5));
+  background-image: linear-gradient(to bottom,#23b7e5 0,#23b7e5 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3c3c3c', endColorstr='#ff222222', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  background-repeat: repeat-x;
+  border-radius: 0;
+}
+.navbar-inverse .navbar-brand {
+  color: white;
+}
+.navbar-inverse .navbar-nav>li>a {
+  color: white;
+}
+.navbar-fixed-top {
+  top: 0;
+  border-width: 0;
+}
+.jumbotron {
+  background-color: #293038;
+  background-image: url("/dist/images/helpCenter_head.png");
+  color: #fff;
+  font-family: Montserrat, sans-serif;
+  padding-top: 100px;
+  background-position: center;
+  background-size: cover;
+}
+.title {
+  width: 160px;
+  font-size: 32px;
+  color: #fff;
+  margin-right: 28px;
+  line-height: initial;
+  position: absolute;
+  height: 46px;
+}
+.nav-pills.visible-xs {
+  margin-top: 18px;
+}
+.nav-pills.visible-xs a {
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+
+.opacity {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.search {
+  @include transition(1s)
+}

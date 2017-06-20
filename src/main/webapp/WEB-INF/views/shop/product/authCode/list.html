@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode=${#strings.equalsIgnoreCase(type, 'leaseProduct')} ? 'leaseCfg_LeaseProducts' : 'productMgm'">
+<head>
+    <title>产品授权管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:if="not ${#strings.equalsIgnoreCase(type, 'leaseProduct')}">
+        <div th:replace="shop/product/listTpl::headerTitle('产品授权管理')"></div>
+    </div>
+    <div class="title" th:if="${#strings.equalsIgnoreCase(type, 'leaseProduct')}">产品授权管理</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:if="not ${#strings.equalsIgnoreCase(type, 'leaseProduct')}">
+        <div th:replace="shop/product/listTpl::nav('authCode')" ></div>
+    </div>
+    <div th:if="${#strings.equalsIgnoreCase(type, 'leaseProduct')}">
+        <div  th:replace="shop/product/authCode/tplTab::leaseProductNav('authCode')"></div>
+    </div>
+
+    <div class="data-grid-container">
+        <div class="data-grid-header">
+            <div class="input-group grid-search-group">
+                <input type="text" class="form-control grid-search" placeholder="输入产品货号"/>
+                <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm grid-search-go" type="button">搜索</button>
+            </span>
+            </div>
+        </div>
+
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="20%" data-column-id="product.name" data-formatter="productNameFormatter" data-sortable="false" th:text="${#strings.equalsIgnoreCase(type, 'leaseProduct')} ? '租赁产品' : '产品名称'">产品名称</th>
+                <th data-width="12%" data-column-id="itemCode" data-formatter="productCodeFormatter"  data-sortable="false" th:text="${#strings.equalsIgnoreCase(type, 'leaseProduct')} ? '产品代码' : '产品货号'">产品货号</th>
+                <th data-width="8%" data-column-id="codeCount">授权数量</th>
+                <th data-width="15%" data-column-id="authCodeStart" data-formatter="formatSn">授权流水号</th>
+                <th data-width="12%" data-column-id="codeSuffix">SN码后缀</th>
+                <th data-width="8%" data-column-id="countUsed"  data-sortable="false">已使用</th>
+                <th data-width="10%" data-column-id="createdAt" data-formatter="formatDate" data-order="desc">创建时间</th>
+                <th data-width="20%" data-column-id="command"  data-sortable="false" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <input type="hidden" th:value="${type}" id="type"/>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/product/authCode.js?ts=1}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            AuthCode.initGrid("dataGrid", {
+                type: $("#type").val()
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

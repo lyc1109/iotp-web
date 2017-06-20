@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+      <link rel="stylesheet" th:href="@{/dist/css/common/element-ui.css}" />
+      <link rel="stylesheet" th:href="@{/dist/css/rent/addProductLease.css}"/>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+      <div id="addProductLease" v-cloak="true">
+            <div class="addProductLease">
+                  <h1>
+                        <span class="title">新增租赁产品</span>
+                  </h1>
+                  <div class="addProLeaseMain">
+                        <el-form>
+                              <el-form-item>
+                                    <el-label name="label" class="proLabel">租赁产品名称：</el-label>
+                                    <el-col :span="15">
+                                          <el-input></el-input>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item>
+                                    <el-label name="label1" class="proLabel">相应产品：</el-label>
+                                    <el-select v-model="products" placeholder="请选择智能产品">
+                                          <el-option v-for="item in pro" :value="item.label"></el-option>
+                                    </el-select>
+                              </el-form-item>
+                              <el-form-item>
+                                    <el-label name="label2" class="proLabel">租赁产品简介：</el-label>
+                                    <el-col :span="15">
+                                          <el-input type="textarea" :rows="2"></el-input>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item>
+                                    <el-label name="label3" class="proLabel">租赁产品图片：</el-label>
+                                    <el-col :span="15" class="proImg">
+                                          <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card" :on-preview="showProImg"><i class="el-icon-plus"></i></el-upload>
+                                          <el-dialog v-model="dialogVisible" size="tiny"><img width="100%" :src="proImgUrl" alt=""/></el-dialog>
+                                    </el-col>
+                              </el-form-item>
+                        </el-form>
+                        <el-form>
+                              <el-form-item>
+                                    <el-label name="label4" class="proLabel">租赁产品押金：</el-label>
+                                    <el-col :span="3">
+                                          <el-input value="500.00">
+                                                <template slot="prepend">￥</template>
+                                          </el-input>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item>
+                                    <el-label name="label5" class="proLabel">租赁产品租金：</el-label>
+                                    <el-col :span="3" class="cashInput">
+                                          <el-input value="100.00">
+                                                <template slot="prepend">￥</template>
+                                                <template slot="append">/月</template>
+                                          </el-input>
+                                          <el-input value="270.00">
+                                                <template slot="prepend">￥</template>
+                                                <template slot="append">/季度</template>
+                                          </el-input>
+                                          <el-input value="520.00">
+                                                <template slot="prepend">￥</template>
+                                                <template slot="append">/半年</template>
+                                          </el-input>
+                                          <el-input value="1000.00">
+                                                <template slot="prepend">￥</template>
+                                                <template slot="append">/年</template>
+                                          </el-input>
+                                    </el-col>
+                              </el-form-item>
+                        </el-form>
+                        <el-form>
+                              <el-form-item>
+                                    <el-label name="label6" class="proLabel">租赁产品详情：</el-label>
+                                    <el-col :span="15">
+                                          <el-input type="textarea" :rows="4"></el-input>
+                                    </el-col>
+                              </el-form-item>
+                        </el-form>
+                        <el-col :span="10" :offset="10">
+                              <el-button type="success" class="proSave">保存</el-button>
+                        </el-col>
+                  </div>
+            </div>
+      </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+      <script th:inline="javascript" th:src="@{/dist/js/common/vue.2.2.js}"></script>
+      <script th:inline="javascript" th:src="@{/dist/js/common/element-ui.js}"></script>
+      <script>
+            new Vue({
+                  el: '#addProductLease',
+                  data () {
+                  return {
+                        proImgUrl: '',
+                        dialogVisible: false,
+                        products: '请选择智能产品',
+                        pro: [
+                              {
+                                    label: '加贝尔'
+                              },
+                              {
+                                    label: '净水机'
+                              }
+                        ]
+                  }
+            },
+            methods: {
+                  showProImg(file){
+                        this.proImgUrl = file.url
+                        this.dialogVisible = true
+                  }
+            }
+            })
+      </script>
+</section>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='helpCategory'">
+<head>
+    <title>帮助分类管理</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${entity.isNew()} ? '新增分类' : '修改分类信息'">分类详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post" th:object="${entity}" th:action="@{|/help/category/*{id}|}">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>父级名称</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="parent.name" id="parentName" disabled="disabled" th:value="*{parentFullName}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>分类名称</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" th:value="*{name}" id="name" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>分类说明</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="des" th:value="*{des}" id="des"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>显示序号</span>
+            </label>
+            <div class="col-sm-2">
+                <input type="number" class="form-control" name="orderNo" th:value="*{orderNo}" data-parsley-type="integer" data-parsley-required="true" data-parsley-min="0"/>
+                <small>显示序号为一个大于0的数字, 数字越大显示时越靠前</small>
+            </div>
+        </div>
+        <!--<div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>显示序号</span>
+            </label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" name="orderNo" th:value="*{orderNo}" data-parsley-type="integer" data-parsley-required="true" data-parsley-min="0"/>
+                <span class="help-block">显示序号为一个大于0的数字, 数字越大显示时越靠前</span>
+            </div>
+        </div>-->
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save" style="width:81px;" type="button" id="btnSave" value="保存"/>
+            </div>
+        </div>
+        <input type="hidden" id="parentId" name="parent.id" th:value="*{parent} ? *{parent.id}"/>
+        <input type="hidden" id="isNew" name="isNew" th:value="${isNew}"/>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $("#btnSave").on("click", function () {
+                var isNew = $("#isNew").val();
+                if(isNew === "true" || isNew === true){
+                    if(!$('#iotForm').parsley().validate()) {
+                        return false;
+                    }
+
+                    var name = $("#name").val();
+                    App.ajax.get({
+                        url: "/help/category/isExist",
+                        data: {
+                            parentId: $("#parentId").val(),
+                            name: name
+                        },
+                        onSuccess: function (resp) {
+                            if(resp.isExist){
+                                var msg = name + " 分类信息已存在，不可重复创建。";
+                                /*if($("#parentName").val().length > 0)
+                                    msg = $("#parentName").val() + "/" + msg;*/
+                                Messenger.warning({
+                                    title: "重复提示",
+                                    message: msg
+                                });
+                            }else{
+                                $("#iotForm").submit();
+                            }
+                        }
+                    })
+                }else{
+                    $("#iotForm").submit();
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

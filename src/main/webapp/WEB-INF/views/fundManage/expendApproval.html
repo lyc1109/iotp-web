@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='fundMgm'">
+<head>
+      <link rel="stylesheet" th:href="@{/dist/css/pages/rent/expendApproval.css}" />
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+      <div id="expendApproval" v-cloak="true">
+            <div class="expendApproval">
+                  <h1>
+                        <span class="title">资金支出审批</span>
+                        <div class="addBtn">
+                              <a href="/shop/expenseProcessForm"><el-button size="small">返回</el-button></a>
+                        </div>
+                  </h1>
+                  <div class="expendApprovalMain">
+                        <el-form label-width="150px" :model="expendList" :rules="rule" ref="expendList" id="expendList">
+                              <el-form-item label="支出类型：">
+                                    <el-col :span="15">
+                                          <el-select v-model="expendList.expenseType" placeholder="请选择智能产品" :disabled="disabled">
+                                                <el-option v-for="item in expend" :value="item.label"></el-option>
+                                          </el-select>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item label="支出事由：">
+                                    <el-col :span="15">
+                                          <el-input :disabled="disabled" v-model="expendList.expenseReason"></el-input>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item label="支出金额：">
+                                    <el-col :span="5">
+                                          <el-input value="500.00" :disabled="disabled" v-model="expendList.totalAmount">
+                                                <template slot="prepend">￥</template>
+                                          </el-input>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item label="申请人：">
+                                    <el-col :span="15">
+                                          <el-input value="配件购买员   2017-03-24 12:12:12" :disabled="disabled" v-model="expendList.creator"></el-input>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item label="附件：" v-show="uploadFile">
+                                    <el-col :span="15" class="expendImg">
+                                          <div class="uploaderFile" v-for="n in uploaderFile">
+                                                <a target="_blank" :href="n.path" title="点击查看">
+                                                      <span>{{n.name}}</span>
+                                                </a>
+                                                <!--<i class="el-icon-upload-success el-icon-circle-check"></i>-->
+                                          </div>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item label="备注：">
+                                    <el-col :span="15">
+                                          <el-input type="textarea" :rows="4" :disabled="disabled" v-model="expendList.expenseMemos"></el-input>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item class="adminInfo" v-for="i in adminInfo">
+                                    <img :src="i.authorAvatar" alt="" />
+                                    <el-col :span="15">
+                                          <p>
+                                                <span>{{i.author}}</span>
+                                                <time :datetime="i.created" class="datetime">{{i.created}}</time>
+                                          </p>
+                                          <p class="commentContent"><el-col :span="22"><el-input type="textarea" :rows="4" :disabled="disabled" v-model="i.commentContent"></el-input></el-col></p>
+                                    </el-col>
+                                    <!--<el-col class="commentContent"></el-col>-->
+                              </el-form-item>
+                              <el-form-item prop="comment" class="adminInfo state" v-show="comments">
+                                    <img :src="avatar" alt="" />
+                                    <el-col :span="15" style="position: relative;">
+                                          <el-input type="textarea" max="300" v-model.trim="expendList.comment" v-on:change="maxLen()" :rows="4" placeholder="请输入审批说明(300字以内)"></el-input>
+                                          <span class="num">{{remand}}/300</span>
+                                    </el-col>
+                              </el-form-item>
+                              <el-form-item label="下一步审批人：" prop="nextActor" v-show="nextActors">
+                                    <el-select v-model="expendList.nextActor" placeholder="请选择审批人" :disabled="nextActorDisabled">
+                                          <el-option v-for="item in expend" :label="item.userDto.name" :value="item.userDto.id"></el-option>
+                                    </el-select>
+                              </el-form-item>
+                        </el-form>
+                        <el-col :span="10" :offset="10">
+                              <el-button type="success" class="expendSave" v-on:click="saveExpenseList('expendList')" :disabled="disable" v-if="submit">提交</el-button>
+                              <el-button type="primary" class="expendSave" v-on:click="approve('expendList')" v-show="approveToggle" :disabled="appDisable">批准</el-button>
+                              <el-button type="primary" class="expendSave" v-on:click="reject('expendList')" v-show="rejectToggle" :disabled="rejectDisable">驳回</el-button>
+                        </el-col>
+                        <el-dialog v-model="approveDia" size="tiny" top="35%" class="expendSaveDia">
+                              <i class="iconfont icon-wenhao"></i>
+                              <p class="sures">确定批准吗?</p>
+                              <span slot="footer" class="dialog-footer">
+                                    <el-button type="primary" v-on:click="approveSure()">确定</el-button>
+                                    <el-button v-on:click="approveDia = false">取消</el-button>
+                              </span>
+                        </el-dialog>
+                        <el-dialog v-model="rejectDia" size="tiny" top="35%" class="expendSaveDia">
+                              <i class="iconfont icon-wenhao"></i>
+                              <p class="sures">确定驳回吗?</p>
+                              <span slot="footer" class="dialog-footer">
+                                    <el-button type="primary" v-on:click="rejectSure()">确定</el-button>
+                                    <el-button v-on:click="rejectDia = false">取消</el-button>
+                              </span>
+                        </el-dialog>
+                        <el-dialog v-model="submitDia" size="tiny" top="35%" class="expendSaveDia">
+                              <i class="iconfont icon-wenhao"></i>
+                              <p class="sures">确定提交吗?</p>
+                              <span slot="footer" class="dialog-footer">
+                                    <el-button type="primary" v-on:click="submitSure()">确定</el-button>
+                                    <el-button v-on:click="submitDia = false">取消</el-button>
+                              </span>
+                        </el-dialog>
+                  </div>
+            </div>
+      </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+      <script th:inline="javascript" th:src="@{/dist/scripts-vue/fundManage/expendApproval.js}"></script>
+</section>
+</body>
+</html>

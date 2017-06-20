@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-single-page">
+<head>
+    <title th:text="|申请注册成为${parentShop.name}的服务商|"></title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/shop-vendor/join-form.css}"/>
+</head>
+<body class="sbs">
+<section layout:fragment="content" th:remove="tag">
+    <div class="form-container" th:object="${parentShop}">
+
+        <div class="form-container-header">
+            <img class="pull-left" id="topShopLogo" src="#" width="48" height="48" th:src="${parentShop.logoImagePath} + '!wh100'" th:if="not ${#strings.isEmpty(parentShop.logoImagePath)}"/>
+
+            <div class="pull-left padding-left padding-right border-right">
+                <h3 th:text="${parentShop.name}"></h3>
+            </div>
+
+            <div class="pull-left padding-left text-second font-m" style="padding-top: 15px;">服务商注册</div>
+
+            <div class="pull-right" style="padding-top: 20px;">
+                <a class="font-m" th:href="@{|/shop/vendor/join/shop_*{id}/query|}" target="_blank">审核结果查询</a>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="form-container-body">
+            <div class="row step">
+                <div class="col-sm-4 step-item active" id="step1">1. 用户注册</div>
+                <div class="col-sm-4 step-item" id="step2">2. 填写企业信息</div>
+                <div class="col-sm-4 step-item" id="step3">3. 等待审核</div>
+            </div>
+
+            <form id="userRegisterForm" class="form-horizontal margin-top-m parsley-form" method="post">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label required">手机号码</label>
+                    <div class="col-sm-5">
+                        <input type="number" class="form-control" name="userMobile" id="userMobile"
+                               pattern="/^1[3|4|5|7|8][0-9]{9}$/"
+                               data-parsley-required="true"
+                               data-parsley-error-message="请输入正确手机号码"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label required">短信验证码</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="smsCode" name="smsCode" data-parsley-required="true"/>
+                    </div>
+                    <div class="col-sm-2 col-left-zero">
+                        <button type="button" class="btn btn-block btn-sm" id="btnSentSmsCode" disabled="disabled">获取验证码</button>
+                    </div>
+                </div>
+
+                <div id="userInfos">
+                    <div class="form-group">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-5">
+                            <hr class="hr-dashed"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">用户昵称</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" name="userNickname" data-parsley-required="true"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">登录口令</label>
+                        <div class="col-sm-5">
+                            <input type="password" class="form-control" name="userLoginPwd" id="userLoginPwd" data-parsley-required="true"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">确认口令</label>
+                        <div class="col-sm-5">
+                            <input type="password" class="form-control" name="confirmLoginPwd" id="confirmLoginPwd" data-parsley-required="true"/>
+                            <div id="confirmLoginPwdError" class="color-red-1" style="display: none;">2次密码输入不一致</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row margin-top-m padding-top final-row">
+                    <div class="col-sm-12 align-center">
+                        <hr class="hr-dashed"/>
+
+                        <button class="btn btn-success btn-sm btn-cmd cmd-next" type="button">下一步</button>
+                    </div>
+                </div>
+
+                <input type="hidden" id="userId" name="userId"/>
+            </form>
+
+            <form id="shopVendorForm" class="form-horizontal margin-top-m parsley-form" method="post" style="display: none">
+                <div class="container-fluid" id="shopsContainer" style="display: none;"></div>
+
+                <div class="row" id="shopInfos">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">名称</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="name" id="shopName" data-parsley-required="true"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">简介</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="shopProfile" name="shopProfile" rows="3" style="height: 100px;"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"></label>
+                            <div class="col-sm-9">
+                                <hr class="hr-dashed"/>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">联系人姓名</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="contactName" id="contactName" data-parsley-required="true" placeholder="请输入联系人真实姓名"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">手机号码</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="contactMobileText" readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">联系电话</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="contactTelephone" id="contactTelephone" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">联系人微信</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="contactWechat" id="contactWechat"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">联系人QQ</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="contactQq" id="contactQq"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">公司地址</label>
+                            <div class="col-sm-9">
+                                <div id="distpicker">
+                                    <select class="form-control inline" style="width:120px" id="province" name="province"></select>
+                                    <select class="form-control inline" style="width:120px" id="city" name="city"></select>
+                                    <select class="form-control inline" style="width:120px" id="area" name="area"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3"></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="address" name="address" data-parsley-required="true"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">邮政编码</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="zipCode" name="zipCode"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label required">资质文件</label>
+                            <div class="col-sm-5">
+                                <div class="align-center inline">
+                                    <div class="margin-bottom">
+                                        <img src="#" th:src="@{/dist/images/placeholder.png}" width="120px" id="businessLicenseImg" class="img-thumbnail"/>
+                                    </div>
+                                    <button type="button" class="btn btn-default btn-sm" id="btnSelectBusinessLicenseImg">选择营业执照</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4 align-center">
+                        <div class="margin-bottom"><img src="#" th:src="@{/dist/images/placeholder.png}" width="120px" height="120px" id="shopLogo" class="img-thumbnail"/></div>
+                        <button type="button" class="btn btn-default btn-sm" id="btnImageUploader" style="width: 80px;">选择Logo</button>
+
+                        <div class="margin-top" id="logoImgError"></div>
+                    </div>
+
+                    <div class="col-sm-12 align-center" style="display: none;">
+                        <hr/>
+
+                        <button class="btn btn-default btn-sm btn-cmd cmd-select-shop margin-right" type="button">选择已存在店铺信息</button>
+                    </div>
+                </div>
+
+                <div class="row margin-top-m final-row">
+                    <div class="col-sm-12 align-center">
+                        <hr class="hr-dashed"/>
+
+                        <div id="shopVendorActions">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <label class="radio-inline">
+                                        <input type="checkbox" class="form-control icheck" id="agreement" name="agreement" checked="checked"/>
+                                        同意并遵守<a href="javascript:;">《品智云服务平台用户服务协议》</a>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-default btn-sm btn-cmd cmd-prev margin-right" type="button">上一步</button>
+                            <button class="btn btn-success btn-sm btn-cmd cmd-save" type="button">提交申请</button>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="shopType" value="FWS"/>
+                <input type="hidden" name="manufacturerId" th:value="*{id}"/>
+                <input type="hidden" name="logoImageId" id="logoImageId"/>
+                <input type="hidden" name="businessLicenseImgConfuseId" id="businessLicenseImgId"/>
+                <input type="hidden" name="contactMobile" id="contactMobile"/>
+
+                <input type="hidden" id="shopId" th:value="|shop_*{id}|"/>
+                <input type="hidden" id="shopFactoryId" th:value="*{id}"/>
+            </form>
+
+            <div class="padding-l align-center" id="successTips"  style="display: none;">
+                <div><i class="fa fa-check-circle color-green-1 fa-5x"></i></div>
+                <h4>申请成功，请耐心等待<span th:text="${parentShop.name}"></span>审核通过。</h4>
+                <div class="padding">
+                    <a class="font-m" th:href="@{|/shop/vendor/join/shop_*{id}/query|}" target="_blank">审核结果查询</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/x-jsrender" id="shopTpl">
+        <div class="row">
+            {{for shops}}
+                <div class="col-sm-4 align-center">
+                    <label>
+                        <img class="img-rounded" src="{{:logoImagePath}}!wh100" />
+
+                        <div class="font-m margin-top-s  text-wrapper">{{:name}}</div>
+                        <div class="font-s text-second margin-top-s text-wrapper">{{:province}}{{:city}}{{:area}}{{:address}}</div>
+
+                        <div class="margin-top"><input type="radio" name="shopId" class="icheck" value="{{:id}}"/></div>
+                    </label>
+
+                </div>
+            {{/for}}
+        </div>
+        <div class="row">
+            <div class="col-sm-12 align-center">
+                <hr/>
+
+                <button class="btn btn-default btn-sm btn-cmd cmd-new-shop margin-right" type="button">新增企业信息</button>
+            </div>
+        </div>
+    </script>
+    <script type="text/javascript" th:src="@{/dist/3rd/JsRender/jsrender.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/3rd/distpicker/distpicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/sms/sms.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/shop-vendor/join-form.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            ShopVendorJoinForm.initForm();
+
+            $("#shopName").on('blur',function () {
+                var shopFactoryId = $('input[name="manufacturerId"]').val();
+                var name = $(this).val();
+                $.ajax({
+                    url: "/shop/vendor/join/"+ shopFactoryId +"/isExist",
+                    data: {
+                        name: name
+                    },
+                    dataType: "json",
+                    type: "GET"
+                }).done(function (resp) {
+                    if(resp.returnCode !== 0){
+                        toast("服务商名称已存在,请重新输入!","error");
+                        $("#shopName").focus();
+                    }
+                })
+
+            })
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

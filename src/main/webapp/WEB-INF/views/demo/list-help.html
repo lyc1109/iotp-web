@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid-help"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">列表页面（带帮助说明）</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <h3 class="margin-top-l">第1个DataGrid</h3>
+    <div class="bg margin-bottom-m padding">
+        <form class="form-inline" role="form">
+            <div class="form-group">
+                <label class="label-title" for="name">姓名</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="姓名" />
+            </div>
+
+            <div class="form-group">
+                <label class="label-title" for="nickname">昵称</label>
+                <input type="text" class="form-control" id="nickname" name="nickname" placeholder="昵称" />
+            </div>
+
+            <div class="form-group">
+                <label class="label-title" for="nickname">手机号码</label>
+                <input type="text" class="form-control" id="mobile" name="mobile" placeholder="手机号码" />
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-default" id="btnSearch">开始搜索</button>
+            </div>
+        </form>
+    </div>
+
+    <hr/>
+
+    <div class="data-grid-container">
+        <table id="dataGrid" class="data-grid" data-url="/demo/users">
+            <thead>
+            <tr>
+                <th data-column-id="name" data-formatter="link">姓名</th>
+                <th data-column-id="nickname">昵称</th>
+                <th data-column-id="mobile">手机</th>
+                <th data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+
+        <div class="left-actions">
+            <button type="button" class="btn btn-success command-add"><i class="fa fa-plus"></i> 新增</button>
+            <button type="button" class="btn btn-default command-refresh"><i class="fa fa-refresh"></i> 刷新</button>
+        </div>
+
+        <div class="right-actions">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                    性别：全部
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">男</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">女</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    状态：全部
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">正常</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">禁用</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <!--第2个DataGrid-->
+    <h3 class="margin-top-l">第2个DataGrid</h3>
+    <div class="bg mmargin-bottom-m padding">
+        <form class="form-inline" role="form">
+            <div class="form-group">
+                <label class="label-title" for="name">姓名2</label>
+                <input type="text" class="form-control" id="name2" name="name2" placeholder="姓名2" />
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-default" id="btnSearch2">开始搜索</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="data-grid-container">
+        <table id="dataGrid2" class="data-grid" data-url="/demo/users">
+            <thead>
+            <tr>
+                <th data-column-id="name" data-formatter="link">姓名</th>
+                <th data-column-id="nickname">昵称</th>
+                <th data-column-id="mobile">手机</th>
+                <th data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+
+<section layout:fragment="help" th:remove="tag">
+    <div class="help-title">
+        <h4>快速使用</h4>
+    </div>
+    <div class="padding">
+<pre>
+&lt;div class="data-grid-container"&gt;
+    &lt;table id="dataGrid2" class="data-grid" data-url="/demo/users"&gt;
+        ...
+    &lt;/table&gt;
+&lt;/div&gt;
+</pre>
+        <div class="text-s margin-top">主要是为table定义<code>class="data-grid"</code>标识以及请求路径<code>data-url="/demo/users"</code></div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <!-- 模块页面代码建议独立JS文件 -->
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $("#btnSearch").on("click", function () {
+                var params = {};
+
+                // 筛选条件
+                var name = $("#name").val();
+                if(name != ""){
+                    params.name = name;
+                }
+
+                var nickname = $("#nickname").val();
+                if(nickname != ""){
+                    params.nickname = nickname;
+                }
+
+                var mobile = $("#mobile").val();
+                if(mobile != ""){
+                    params.mobile = mobile;
+                }
+
+                BootGrid.reload(params);
+            });
+
+            $("#btnSearch2").on("click", function () {
+                var params = {};
+
+                // 筛选条件
+                var name = $("#name2").val();
+                if(name != ""){
+                    params.name2 = name;
+                }
+
+                BootGrid.reload(params, "dataGrid2");
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

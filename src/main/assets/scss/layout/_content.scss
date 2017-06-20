@@ -1,0 +1,114 @@
+/* ----------------------------------------------
+ * 移动优先页面框架布局 -- 内容页面
+ * ---------------------------------------------- */
+.content-wrapper {
+    position: relative;
+    height: 100%;
+    margin-left: 0;
+    z-index: 111;
+    overflow: auto;
+    padding: 25px;
+    @include transition(margin-left .2s cubic-bezier(.35, 0, .25, 1));
+    
+    @include responsive-mobile() {
+        padding: 15px 15px 300px;
+        margin-left: 0;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        @include transition(transform .3s ease);
+    }
+    
+    @include responsive-sm() {
+        position: absolute;
+        top: 50px;
+        bottom: 0;
+        left: $sidebar_width;
+        right: 0;
+        
+        height: auto;
+    }
+}
+
+.content-wrapper.has-help {
+    @include responsive-sm() {
+        right: $helpbar_width;
+    }
+}
+
+.content-wrapper .content-heading {
+    font-size: 20px;
+    line-height: 1.2;
+    margin: -15px 0 5px 0;
+    padding: 17px 0;
+    font-weight: 400;
+    @include border(bottom);
+    
+    .title {
+        padding-left: 10px;
+        border-left: 3px solid $topbar_color;
+    }
+    
+    small {
+        display: block;
+        font-size: 12px;
+        color: #909fa7;
+        margin-top: 5px;
+        padding-left: 13px;
+    }
+    
+    @include responsive-mobile() {
+        margin: -15px -10px 15px -10px;
+    }
+}
+
+.content-body {
+    background-color: $white-1;
+    @include border-radius();
+    @include fadeIn();
+    border-color: $border;
+}
+
+.sidebar-open {
+    .content-wrapper {
+        @include translate3d($sidebar_width, 0, 0);
+    }
+}
+
+// -----------------
+// 大屏幕菜单收起
+.sidebar-collapsed {
+    .content-wrapper {
+        @include responsive-mobile() {
+            margin-left: $sidebar_collapse_width;
+            margin-right: 0;
+        }
+        
+        @include responsive-sm() {
+            left: $sidebar_collapse_width;
+            right: 0;
+        }
+    }
+}
+
+// -----------------
+// 无左侧菜单
+.sidebar-none {
+    .content-wrapper {
+        @include responsive-mobile() {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        
+        @include responsive-sm() {
+            left: 0;
+            right: 0;
+        }
+    }
+}
+
+// -----------------
+// 单页面
+.wrapper.single-wrapper {
+    background-color: $white-1;
+    margin: 0 auto;
+}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='shopCfg_Basic'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/config/configTpl::headerTitle('企业设置')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:if="${entity.shopType == '厂商'}">
+        <div th:replace="shop/config/configTpl::nav('basic')"></div>
+    </div>
+    <form id="iotForm" class="form-horizontal margin-top-l" data-validate="parsley" th:object="${entity}">
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>企业类型:</span>
+            </label>
+            <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                <span th:text="*{shopType}">企业类型</span>
+            </label>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>创建日期:</span>
+            </label>
+            <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                <span th:text="${#calendars.format(entity.createdAt, 'yyyy-MM-dd')}">创建日期</span>
+            </label>
+        </div>
+
+        <div class="form-group" th:if="${entity.shopType == '厂商'}">
+            <label class="col-sm-2 control-label">服务商注册地址:</label>
+            <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                <a th:href="@{|/shop/vendor/join/shop_*{id}|}" target="_blank">http://www.xohaa.net/shop/vendor/join/shop_<span th:text="*{id}"></span></a>
+            </label>
+        </div>
+
+        <hr/>
+
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label required">
+                <span>企业名称:</span>
+            </label>
+            <div class="col-sm-3 padding-left-zero">
+                <input type="text" class="form-control" id="shopName" name="name" th:value="*{name}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>企业Logo:</span>
+            </label>
+            <div class="col-sm-8 padding-left-zero">
+                <div class="inline" style="vertical-align:bottom;">
+                    <img src="" th:src="*{#strings.isEmpty(logoImagePath)} ? '': *{logoImagePath} + '?x-oss-process=image/resize,h_80'" class="img-rounded" style="max-width: 200px;" id="logoImagePrev" th:hidden="*{#strings.isEmpty(logoImagePath)}"/>
+                </div>
+                <div class="inline" style="vertical-align:bottom;">
+                    <button type="button" class="btn btn-primary btn-sm" id="btnLogoImagePicker" style="width: 81px;">修改</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>企业简介:</span>
+            </label>
+            <div class="col-sm-8 padding-left-zero">
+                <textarea class="form-control" id="shopProfile" name="shopProfile" rows="3" th:text="*{shopProfile}" style="height: 64px;"></textarea>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label required">
+                <span>联系人:</span>
+            </label>
+            <div class="col-sm-3 padding-left-zero">
+                <input type="text" class="form-control" id="contactName" name="contactName" th:value="*{contactName}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label required">
+                <span>联系人手机号码:</span>
+            </label>
+            <div class="col-sm-3 padding-left-zero">
+                <input type="text" class="form-control" id="contactMobile" name="contactMobile" th:value="*{contactMobile}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>联系人微信号:</span>
+            </label>
+            <div class="col-sm-3 padding-left-zero">
+                <input type="text" class="form-control" id="contactWechat" name="contactWechat" th:value="*{contactWechat}"/>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>联系人QQ号:</span>
+            </label>
+            <div class="col-sm-3 padding-left-zero">
+                <input type="text" class="form-control" id="contactQq" name="contactQq" th:value="*{contactQq}"/>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label required">
+                <span>企业地址:</span>
+            </label>
+            <div class="col-sm-8 padding-left-zero">
+                <div id="distpicker">
+                    <select class="form-control inline" style="width:160px" id="province" name="province" data:province="*{province}"></select>
+                    <select class="form-control inline" style="width:160px" id="city" name="city" data:city="*{city}"></select>
+                    <select class="form-control inline" style="width:160px" id="area" name="area" data:district="*{area}"></select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+            </label>
+            <div class="col-sm-8 padding-left-zero">
+                <input type="text" class="form-control" id="address" name="address" th:value="*{address}"/>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save cmd-save" style="width:81px;" type="button" value="保存"/>
+            </div>
+        </div>
+        <div style="display:none;">
+            <input type="hidden" id="_id" th:value="*{id}"/>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/distpicker/distpicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/media/media-image-picker.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $("#distpicker").distpicker({
+                placeholder: false
+            });
+            $("#province,#city").on("change", function () {
+                if($("#area").find("option").length===0){
+                    $("#area").hide();
+                }else{
+                    $("#area").show();
+                }
+            }).trigger("change");
+
+            new ImagePicker({
+                id: "btnLogoImagePicker",
+                onOk: function (resp) {
+                    $("#logoImagePrev").attr("src", resp[0].url + "!wh100");
+                    $("#logoImagePrev").show();
+                    //$("#topShopLogo").attr("src", resp[0].url + "!wh100");
+                    $.post("/shop/config/updateLogo/", {
+                        "logoImageId": resp[0].id
+                    }, function(result){
+                        if(result.returnCode !== 0) {
+                            toast("对不起, 企业Logo更新失败!", "error");
+                        } else {
+                            Messenger.success("企业Logo更新成功，需要重新登录才能生效!");
+                        }
+                    }, "json");
+                }
+            });
+
+            $(".cmd-save").on("click", function(){
+                // 首先检测信息是否完整
+                if(!$('#iotForm').parsley().validate()) {
+                    return;
+                }
+
+                App.ajax.post({
+                    url: "/shop/config/update/",
+                    data: $("#iotForm").serializeObject(),
+                    onSuccess: function (resp) {
+                        if(resp.returnCode == 0) {
+                            Messenger.success("企业信息修改成功，需要重新登录才能生效!");
+                            //$("#topShopName").text($("#shopName").val());
+                        } else {
+                            toast("对不起, 信息更新失败!", "error");
+                        }
+                    }
+                });
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

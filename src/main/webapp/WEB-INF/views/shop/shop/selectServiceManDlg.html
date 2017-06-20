@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+</head>
+<body>
+<table class="table table-hover table-striped">
+    <thead>
+    <tr>
+        <th width="32px"></th>
+        <th>姓名</th>
+        <th width="160px">联系电话</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="service-man-tr" th:each="serviceMan : ${serviceMans}" data:user-id="${serviceMan.userDto.id}">
+        <th>
+            <input type="radio" class="icheck service-man-check"/>
+        </th>
+        <th><span th:text="${serviceMan.name}"></span></th>
+        <th><span th:text="${serviceMan.mobile}"></span></th>
+    </tr>
+    </tbody>
+</table>
+</body>
+<script type="text/javascript">
+    /**
+     * 对话框确定函数
+     */
+    function onOkFn() {
+        var selectServiceManId = "";
+        $('.service-man-tr').each(function () {
+            if($(this).hasClass("info")) {
+                selectServiceManId = $(this).data("userId");
+            }
+        });
+
+        if(selectServiceManId == "") {
+            Messenger.alert("请选择一个服务人员");
+            return false;
+        }
+
+        return {
+            selectServiceManId: selectServiceManId
+        };
+    }
+
+    /**
+     * 对话框内容加载完毕回调函数
+     */
+    function onLoaded() {
+        $('.icheck').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
+        });
+
+        $('.icheck').on('ifChanged', function(event){
+            $('.service-man-tr').each(function () {
+                $(this).removeClass("info");
+            });
+
+            $(this).closest(".service-man-tr").addClass("info");
+        });
+
+        $('.service-man-tr').on('click', function(){
+            $('.service-man-tr').each(function () {
+                $(this).removeClass("info");
+            });
+            $('.service-man-check').iCheck('uncheck');
+            $(this).addClass("info");
+            $(this).find(".service-man-check").iCheck('check');
+        });
+    }
+</script>
+</html>

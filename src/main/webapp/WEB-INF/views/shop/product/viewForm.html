@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='productMgm'">
+<head>
+    <title></title>
+</head>
+<body class="sbs" th:object="${entity}">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title pull-left">
+        <img src="" class="img-rounded inline" style="width:58px;height:58px;"
+             th:src="*{#strings.isEmpty(coverImage)} ? '/dist/images/logo/logo.png' : *{coverImage}"/>
+
+        <div class="inline margin-left">
+            <div class="margin-bottom-s">
+                <span th:text="*{name}">产品名称</span>
+                <span class="color-green-1" th:if="*{status == 0}">(出售中)</span>
+                <span class="text-second" th:if="*{status == 1}">(已下架)</span>
+            </div>
+            <span class="label label-info text-s" th:if="*{#strings.equalsIgnoreCase(productType, 'CP')}">产品</span>
+            <span class="label label-info text-s" th:if="*{#strings.equalsIgnoreCase(productType, 'PJ')}">配件</span>
+            <span class="label label-primary text-s" th:if="not *{#strings.isEmpty(categoryName1)}">
+                <span th:text="*{categoryName1}"></span>
+                <span th:text="|/*{categoryName2}|" th:if="not *{#strings.isEmpty(categoryName2)}"></span>
+                <span th:text="|/*{categoryName3}|" th:if="not *{#strings.isEmpty(categoryName3)}"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="pull-right" style="margin-top:15px;">
+        <button type="button" class="btn btn-primary btn-sm" role="button" id="btnCreateAuthCode">新建产品授权</button>
+        <a class="btn btn-default" th:href="@{|/shop/product/*{id}/edit|}">编辑</a>
+    </div>
+    <div class="clearfix"></div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs margin-bottom" role="tablist">
+        <li role="presentation" id="productInfoTab" class="active"><a href="#tab1" role="tab" data-toggle="tab">产品信息</a></li>
+        <li role="presentation" id="productPartsTab"><a href="#tab2" role="tab" data-toggle="tab" th:if="*{#strings.equalsIgnoreCase(productType, 'CP')}">配件列表</a></li>
+        <li role="presentation" id="productAuthCodesTab"><a href="#tab3" role="tab" data-toggle="tab">授权管理</a></li>
+        <li role="presentation" id="productFaqTab"><a href="#tab4" role="tab" data-toggle="tab">问题管理</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="margin-top-l">
+                            <h4 class="color-blue-2">基本信息</h4>
+                            <div class="margin-top text-s">
+
+                                <div class="field-info">
+                                    <span class="field-name">品牌</span>
+                                    <span th:text="*{bandName}"></span>
+                                </div>
+
+                                <div class="field-info">
+                                    <span class="field-name">产品类型</span>
+                                    <span th:if="*{#strings.equalsIgnoreCase(productType, 'CP')}">产品</span>
+                                    <span th:if="*{#strings.equalsIgnoreCase(productType, 'PJ')}">配件</span>
+                                </div>
+
+                                <div class="field-info">
+                                    <span class="field-name">产品货号</span>
+                                    <span th:if="*{multiSpec}">请看规格信息</span>
+                                    <span th:if="not *{multiSpec}" th:text="*{itemCode}">产品货号</span>
+                                </div>
+
+                                <div class="field-info">
+                                    <span class="field-name">产品分类</span>
+                                    <span th:text="*{categoryName1}" th:if="not *{#strings.isEmpty(categoryName1)}"></span>
+                                    <span th:text="|/*{categoryName2}|" th:if="not *{#strings.isEmpty(categoryName2)}"></span>
+                                    <span th:text="|/*{categoryName3}|" th:if="not *{#strings.isEmpty(categoryName3)}"></span>
+                                </div>
+
+                                <div class="field-info">
+                                    <span class="field-name">上架时间</span>
+                                    <span th:text="*{created == null} ? '' : *{#dates.format(created, 'yyyy-MM-dd')}"></span>
+                                </div>
+                            </div>
+
+                            <div class="margin-top-xl" th:if="*{multiSpec}">
+                                <h4 class="color-blue-2">产品规格</h4>
+                                <hr class="dash"/>
+                                <div class="field-info" th:each="item : *{specs}" th:if="${item.status == 0}">
+                                    <span class="field-name" th:text="|货号：${item.itemCode}|" style="width: 200px;">产品货号</span>
+
+                                    <span class="label label-info" th:each="spec : ${item.specItems}" th:text="|${spec.name}:${spec.value}|"></span>
+                                </div>
+                            </div>
+
+                            <div class="margin-top-xl">
+                                <h4 class="color-blue-2">产品描述</h4>
+                                <hr class="dash"/>
+                                <p class="margin-top" th:utext="*{sellPoint}" th:if="not *{#strings.isEmpty(sellPoint)}"></p>
+                                <p th:utext="*{#strings.isEmpty(productDesc)} ? '未描述' : *{productDesc}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2"></div>
+        <div role="tabpanel" class="tab-pane" id="tab3"></div>
+        <div role="tabpanel" class="tab-pane" id="tab4"></div>
+    </div>
+    <input type="hidden" id="id" th:value="*{id}"/>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+<script type="text/javascript" th:src="@{/dist/scripts/pages/product/authCode.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href"); // activated tab
+            if(target.indexOf("#tab2") > -1){
+                $.get("/shop/product/" + $("#id").val() + "/parts", function (html) {
+                    $("#tab2").html(html);
+                });
+            }
+            else if(target.indexOf("#tab3") > -1){
+                $.get("/shop/product/authCode/list", {productId: $("#id").val()}, function (html) {
+                    $("#tab3").html(html);
+                });
+            }else if(target.indexOf("#tab4") > -1){
+                $.get("/shop/product/productFaq/list", {productId: $("#id").val()}, function (html) {
+                    $("#tab4").html(html);
+                });
+            }
+        });
+
+        $("#btnCreateAuthCode").on("click", function () {
+            AuthCode.openCreateDlg({productId: $("#id").val()}, function () {
+                $('.nav-tabs a[href="#tab3"]').tab('show');
+                AuthCode.gridReload();
+            });
+        });
+    });
+    /*]]>*/
+</script>
+</section>
+</html>

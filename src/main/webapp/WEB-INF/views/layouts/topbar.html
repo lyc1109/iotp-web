@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Spring Bootstrap Page Left SideBar Template Fragment</title>
+</head>
+<body>
+
+<th:block th:fragment="topbar">
+    <header class="topbar-wrapper">
+        <nav class="navbar topbar" role="navigation">
+            <!--<div class="navbar-header">-->
+                <!--<a href="javascript:;" class="navbar-brand" th:href="@{/}">-->
+                    <!--<div class="brand-logo text-wrapper">-->
+                        <!--<img id="topShopLogo" src="#" width="32px" height="32px" th:src="@{/dist/images/logo/logo.png}" th:if="${#strings.isEmpty(#authentication.getPrincipal().shopLogo)}"/>-->
+                        <!--<img id="topShopLogo" src="#" width="32px" height="32px" th:src="${#authentication.getPrincipal().shopLogo} + '!wh100'" th:if="not ${#strings.isEmpty(#authentication.getPrincipal().shopLogo)}"/>-->
+                        <!--<span id="topShopName" th:text="${#authentication.getPrincipal().shop.name}">小哈伙伴</span>-->
+                    <!--</div>-->
+                <!--</a>-->
+            <!--</div>-->
+            <div class="navbar-wrapper">
+                <div class="sidebar-toggle">
+                    <a href="#" data-toggle-state="aside-collapsed">
+                        <em class="fa fa-navicon"></em>
+                    </a>
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a th:href="@{/notify}">
+                            <em class="fa fa-bell"></em>
+                            <div class="label label-danger" id="unreadNotifyCount" style="display: none;">0</div>
+                        </a>
+                    </li>
+
+                    <li class="dropdown dropdown-list">
+                        <a href="#" data-toggle="dropdown" aria-expanded="true">
+                            <img id="topShopLogo" src="#" width="32px" height="32px" th:src="@{/dist/images/touxiang.jpg}" th:if="${#strings.isEmpty(#authentication.getPrincipal().shopLogo)}"/>
+                            <img id="topShopLogo" src="#" width="32px" height="32px" th:src="${#authentication.getPrincipal().shopLogo} + '!wh100'" th:if="not ${#strings.isEmpty(#authentication.getPrincipal().shopLogo)}"/>
+                            <span th:text="${#authentication.getPrincipal().getUser().getNickname()}"></span> <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" style="padding-top: 10px">
+                            <li class="padding-bottom" th:each="shop : ${#authentication.getPrincipal().getShops()}">
+                                <a class="a-default" href="#" th:href="@{|/${shop.confuseId}|}">
+                                    <i class="fa fa-circle-o" aria-hidden="true" th:if="${#authentication.getPrincipal().shop.id} != ${shop.id}"></i>
+                                    <i class="fa fa-check-circle-o" aria-hidden="true" th:if="${#authentication.getPrincipal().shop.id} == ${shop.id}"></i>
+                                    &nbsp;&nbsp;
+                                    <span th:text="${shop.name}"></span>
+                                </a>
+                            </li>
+                            <li role="presentation" class="divider margin-zero"></li>
+                            <li class="margin-top padding-bottom">
+                                <a class="a-default" href="#" th:href="@{/user/password/change}">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>&nbsp;&nbsp;
+                                    <span>修改密码</span>
+                                </a>
+                            </li>
+                            <li class="padding-bottom">
+                                <a class="a-default" href="#" th:href="@{/logout}">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;&nbsp;
+                                    <span>登出系统</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="visible-xs">
+                        <a href="#" data-toggle-state="aside-toggle" data-no-persist="true">
+                            <em class="fa fa-navicon"></em>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</th:block>
+
+</body>
+</html>

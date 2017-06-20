@@ -1,0 +1,110 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+[v-cloak]{
+  display: none;
+}
+.productLease{
+  position: absolute;
+  background: #fff;
+  height:100%;
+  width: 97%;
+
+  h1{
+    border-bottom:1px solid #ececec;
+    padding-bottom:10px;
+    line-height: 40px;
+
+    .title{
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight:normal;
+      height: 40px;
+    }
+  }
+
+  .addBtn{
+    float: right;
+  }
+  .productLeasebox{
+    width:100%;
+    margin-top:20px;
+    display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+
+    .productLeaseboxli{
+      flex:1;
+      margin:0 20px;
+    }
+
+    .productLeaseboxMain{
+      border:1px solid #777;
+      width: 100%;
+      padding:15px 0;
+
+      li{
+        width: 100%;
+        line-height: 35px;
+        text-align: center;
+
+        span{
+          color: #444;
+          font-size: 18px;
+        }
+      }
+    }
+  }
+  .productLeaseRecord{
+    margin-top:20px;
+
+    h2{
+      width: 100%;
+      line-height: 40px;
+
+      b{
+        font-size: 18px;
+        padding-left:10px;
+        border-left:5px solid orange;
+      }
+      span{
+        float: right;
+        font-size: 13px;
+        color: #555;
+        font-weight:normal;
+      }
+    }
+  }
+  .productLeaseForm{
+    .el-form-item{
+      float: left;
+      margin-right: 8px;
+
+      label{
+        display: inline-block;
+        float: left;
+        margin:0 10px;
+      }
+      .el-button{
+        margin-left: 10px;
+      }
+    }
+  }
+  .productLeaseRecordTable{
+    .page{
+      margin-top:20px;
+      float: right;
+
+      .el-pagination__jump{
+        float: right;
+      }
+    }
+  }
+}

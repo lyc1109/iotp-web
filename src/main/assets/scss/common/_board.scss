@@ -1,0 +1,57 @@
+/* -------------------------------------------------------
+ * 组件 -- 统计色块
+ * ------------------------------------------------------- */
+
+.board{
+  background: $primary;
+  color: $white-1;
+
+  .heading, .counting{
+    display: inline-block;
+    vertical-align: middle;
+    padding: 20px 0;
+  }
+
+  .heading{
+    text-align: center;
+    width: 33%;
+    background: darken($primary, 10%);
+  }
+
+  .counting{
+    max-width: 60%;
+    overflow: hidden;
+
+    h2{
+      margin: 0;
+      color: $white-1;
+      font-weight: 500;
+      line-height: 1.1;
+    }
+
+    .sub{
+      margin-top: 5px;
+      @include font-size(13px);
+    }
+  }
+}
+
+.board.board-purple{
+  background: $purple;
+  .heading{ background: darken($purple, 10%); }
+}
+
+.board.board-green{
+  background: $green-4;
+  .heading{ background: darken($green-4, 10%); }
+}
+
+.board.board-red{
+  background: $red-2;
+  .heading{ background: darken($red-2, 10%); }
+}
+
+.board.board-gray{
+  background: #F5F5F5;
+  .heading{ background: #F5F5F5; }
+}

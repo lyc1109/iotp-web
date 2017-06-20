@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <meta charset="UTF-8"/>
+    <title>消息列表</title>
+</head>
+<body>
+<th:block th:fragment="pageContent">
+    <div th:object="${page}">
+        <div class="container-fluid">
+            <div class="row row-notify"
+                 th:each="item : *{content}"
+                 th:classappend="${item.readed} ? '' : 'unread' "
+                 data:id="${item.id}">
+                <div class="col-sm-9 col-md-9 col-lg-9">
+                    <div class="" th:text="${item.notify.content}"></div>
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3 align-right">
+                    <div class="" th:text="${#dates.format(item.createdAt, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="clearfx align-center text-second padding-l" th:if="*{totalElements == 0}">
+            暂无任何通知消息
+        </div>
+
+        <!-- 分页条信息[必须] -->
+        <div class="spage-data"
+             data:totalpages="*{totalPages}"
+             data:totalelements="*{totalElements}"
+             data:pagenumber="*{number}"
+             data:islast="*{last}">
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

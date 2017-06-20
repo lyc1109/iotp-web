@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='workOrderMgm'">
+<head>
+    <title>工单详情</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/fancybox/jquery.fancybox.css}"/>
+</head>
+<body class="sbs" style="background-color: #F5F5F5">
+    <section layout:fragment="content" th:remove="tag">
+        <form id="sbsForm" class="form-horizontal margin-top-m" th:object="${entity}">
+            <div class="content-heading" style="margin-bottom:5px !important;">
+                <div class="title pull-left" th:text="|工单详情: ${entity.workOrderId}|">工单详情</div>
+                <a href="javascript:history.go(-1)" class="btn btn-default btn-sm pull-right margin-left"><span class="glyphicon glyphicon-arrow-left"></span> 返回</a>
+                <a href="javascript:history.go(0)" class="btn btn-default btn-sm pull-right"><span class="fa fa-refresh"></span> 刷新</a>
+                <div class="clearfix"></div>
+            </div>
+            <div class="content-body">
+                <div class="container margin-zero padding-zero" style="width:100%;border-top:2px solid #339966;">
+                    <div class="row">
+                        <div class="col-sm-3 padding padding-top-m padding-bottom-l border-right" style="height:240px;">
+                            <div class="padding-left-m" th:text="|工单编号：${entity.workOrderId}|">工单编号</div>
+                            <div class="padding-left-m margin-top">
+                                <a th:href="@{|/shop/serviceOrder/${entity.serviceOrderId}|}" th:text="|服务订单：${entity.orderId}|"></a>
+                            </div>
+                            <div class="align-center" style="margin:28px;">
+                                <h3 class="color-orange-2 text-weight" th:text="${entity.statusDesc}">工单状态</h3>
+                            </div>
+                            <div class="align-center margin-top-l">
+                                <div th:if="${isServiceOrder} and (*{status == 0} or *{status == 10})">
+                                    <button type="button" class="btn btn-sm btn-primary-outline cmd-assign" style="width:100px">派单</button>
+                                </div>
+                                <div class="margin-top-m" th:if="${isServiceOrder} and *{status == 0}">
+                                    <button type="button" class="btn btn-sm btn-primary-outline cmd-reject" style="width:100px">拒绝</button>
+                                </div>
+                                <div class="margin-top-m" th:if="${isServiceOrder} and *{status == 20}">
+                                    <button type="button" class="btn btn-sm btn-primary-outline cmd-reassign" style="width:100px">重新派单</button>
+                                </div>
+                                <div class="margin-top-m" th:if="${isServiceOrder} and *{status == 85}">
+                                    <button type="button" class="btn btn-sm btn-primary-outline cmd-confirmCancel" style="width:100px">确认取消</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-9 align-center padding-m order-process padding-left-zero" style="margin-top:55px">
+                            <div style="text-align: center;margin-left: auto;margin-right: auto;display: block">
+                                <div class="inline" style="width:64px;padding-top: 25px;padding-bottom:25px;">
+                                    <div class="margin-bottom-s">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:#71b247"></i>
+                                    </div>
+                                    <div class="text-s">
+                                        提交工单
+                                    </div>
+                                </div>
+                                <div class="inline" style="width: 104px">
+                                    <div class="proc doing" style="margin-top:-15px;" th:if="*{status == 0 || status == 10}"></div>
+                                    <div class="proc done" style="margin-top:-15px;" th:if="*{status ge 20}"></div>
+                                </div>
+                                <div class="inline" style="width:64px;padding-top: 25px;padding-bottom:25px;">
+                                    <div class="margin-bottom-s">
+                                        <i class="fa fa-male" aria-hidden="true" style="font-size:24px;" th:styleappend="*{status gt 0} ? 'color:#71b247'"></i>
+                                    </div>
+                                    <div class="text-s">
+                                        已派单
+                                    </div>
+                                </div>
+                                <div class="inline" style="width: 104px">
+                                    <div class="proc wait" style="margin-top:-15px;" th:if="*{status lt 20}"></div>
+                                    <div class="proc doing" style="margin-top:-15px;" th:if="*{status ge 20 and status lt 40}"></div>
+                                    <div class="proc done" style="margin-top:-15px;" th:if="*{status ge 40}"></div>
+                                </div>
+                                <div class="inline" style="width:64px;padding-top: 25px;padding-bottom:25px;">
+                                    <div class="margin-bottom-s">
+                                        <i class="fa fa-wrench" aria-hidden="true" style="font-size:24px;" th:styleappend="*{status ge 40} ? 'color:#71b247'"></i>
+                                    </div>
+                                    <div class="text-s">
+                                        进行服务
+                                    </div>
+                                </div>
+                                <div class="inline" style="width: 104px">
+                                    <div class="proc wait" style="margin-top:-15px;" th:if="*{status lt 40 and status != 45}"></div>
+                                    <div class="proc doing" style="margin-top:-15px;" th:if="*{status ge 40 and status le 60 and status != 45}"></div>
+                                    <div class="proc done" style="margin-top:-15px;" th:if="*{status gt 60 or status == 45}"></div>
+                                </div>
+                                <div class="inline" style="width:64px;padding-top: 25px;padding-bottom:25px;">
+                                    <div class="margin-bottom-s">
+                                        <i class="fa fa-credit-card" aria-hidden="true" style="font-size:24px;" th:styleappend="*{status ge 65 or status == 45} ? 'color:#71b247'"></i>
+                                    </div>
+                                    <div class="text-s">
+                                        已支付
+                                    </div>
+                                </div>
+                                <div class="inline" style="width: 104px">
+                                    <div class="proc wait" style="margin-top:-15px;" th:if="*{status lt 60 and status != 45}"></div>
+                                    <div class="proc doing" style="margin-top:-15px;" th:if="*{status == 45}"></div>
+                                    <div class="proc done" style="margin-top:-15px;" th:if="*{status ge 70}"></div>
+                                </div>
+                                <div class="inline" style="width:64px;padding-top: 25px;padding-bottom:25px;">
+                                    <div class="margin-bottom-s">
+                                        <i class="fa fa-check-circle-o" aria-hidden="true" style="font-size:24px;" th:styleappend="*{status ge 70} ? 'color:#71b247'"></i>
+                                    </div>
+                                    <div class="text-s">
+                                        完成
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="height:20px;background-color:#F5F5F5">
+
+                </div>
+                <!-- 订单详情 -->
+                <div class="container margin-zero padding-zero" style="width:100%;border-top:1px solid #F1F1F1;">
+                    <div class="row">
+                        <div class="col-sm-3 padding padding-top-m padding-bottom-l border-right">
+                            <div class="align-center">
+                                <img class="img-thumbnail" width="160px" height="160px" th:src="@{|*{productImage}!wh200|}"/>
+                            </div>
+                            <div class="margin-top-m padding-left-l text-s" style="line-height:24px;">
+                                <div class="form-group margin-bottom-zero">
+                                    <label class="col-sm-4 control-label padding-left-zero padding-right" style="color:#333333;font-weight: normal;">
+                                        <span>产品名称:</span>
+                                    </label>
+                                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;color:#333333;font-weight: normal;">
+                                        <span th:text="*{productName}" th:if="*{#strings.equals(orderType, 'common')}">产品名称</span>
+                                        <span th:text="*{leaseProduct.name}" th:if="*{#strings.equals(orderType, 'lease')}">产品名称</span>
+                                    </label>
+                                </div>
+                                <div class="form-group margin-bottom-zero">
+                                    <label class="col-sm-4 control-label padding-left-zero padding-right" style="color:#333333;font-weight: normal;">
+                                        <span>服务类型:</span>
+                                    </label>
+                                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;color:#333333;font-weight: normal;">
+                                        <span th:text="*{shopServiceName}" th:if="*{#strings.equals(orderType, 'common')}">服务类型</span>
+                                        <span th:if="*{#strings.equals(orderType, 'lease')}">租赁预约</span>
+                                    </label>
+                                </div>
+                                <div class="form-group margin-bottom-zero">
+                                    <label class="col-sm-4 control-label padding-left-zero padding-right" style="color:#333333;font-weight: normal;">
+                                        <span>联系人:</span>
+                                    </label>
+                                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;color:#333333;font-weight: normal;">
+                                        <span th:text="*{contactName}">联系人</span>
+                                    </label>
+                                </div>
+                                <div class="form-group margin-bottom-zero">
+                                    <label class="col-sm-4 control-label padding-left-zero padding-right" style="color:#333333;font-weight: normal;">
+                                        <span>联系电话:</span>
+                                    </label>
+                                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;color:#333333;font-weight: normal;">
+                                        <span th:text="*{contactMobile}">联系电话</span>
+                                    </label>
+                                </div>
+                                <div class="form-group margin-bottom-zero">
+                                    <label class="col-sm-4 control-label padding-left-zero padding-right" style="color:#333333;font-weight: normal;">
+                                        <span>预约时间:</span>
+                                    </label>
+                                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;color:#333333;font-weight: normal;">
+                                        <span th:text="${#calendars.format(entity.serviceDate, 'yyyy-MM-dd')}"></span>
+                                        <span th:text="${entity.serviceTime}"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group margin-bottom-zero">
+                                    <label class="col-sm-4 control-label padding-left-zero padding-right" style="color:#333333;font-weight: normal;">
+                                        <span>地址:</span>
+                                    </label>
+                                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;color:#333333;font-weight: normal;">
+                                        <span th:text="*{serviceAddress}">地址</span>
+                                    </label>
+                                </div>
+                                <div class="form-group margin-bottom-zero"  th:if="not *{#strings.isEmpty(customerMemo)}">
+                                    <label class="col-sm-4 control-label padding-left-zero padding-right" style="color:#333333;font-weight: normal;">
+                                        <span>客户留言:</span>
+                                    </label>
+                                    <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;color:#333333;font-weight: normal;">
+                                        <span id="question_content" th:text="*{customerMemo}">客户留言</span>
+
+                                    </label>
+
+                                </div>
+
+                                <div class="form-group margin-bottom-zero" th:if="not *{#lists.isEmpty(images)}">
+                                    <div class="col-sm-4 control-label padding-left-zero padding-right">图片:</div>
+                                    <div class="col-sm-8 col-zero">
+                                        <div class="inline margin-right-s margin-bottom-s"  th:each="img : *{images}">
+                                            <a class="fancybox" rel="group" th:href="${img}">
+                                                <div class="bg-box-48 inline" th:style="|background-image: url(${img}!wh100)|"></div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-9 align-center padding-m order-process">
+                            <div class="log-timeline">
+                                <div class="log-timeline-row"
+                                     th:if="!${#lists.isEmpty(ratingReplies)}"
+                                     th:each="reply,iterStat:${ratingReplies}"
+                                     th:classappend="${iterStat.first ? 'active':''}">
+                                    <div class="log-timeline-node">
+                                        <i class="fa fa-dot-circle-o" th:if="${iterStat.first}"></i>
+                                    </div>
+                                    <div class="log-timeline-content">
+                                        <div class="log-timeline-time" th:text="${#calendars.format(reply.repliedAt, 'yyyy-MM-dd HH:mm:ss')}">
+                                            2016-12-25 25:32:26
+                                        </div>
+                                        <div class="log-timeline-log"  th:text="|[${reply.authorMemberName}] 回复评价 : ${reply.replyContent}">这里是订单处理日志</div>
+                                    </div>
+                                </div>
+                                <div class="log-timeline-row"
+                                     th:each="log,iterStat : ${entity.logs}"
+                                     th:classappend="${#lists.isEmpty(ratingReplies)} ? ${iterStat.first ? 'active' : ''}"
+                                     th:if="!${#strings.isEmpty(log.log)} and !${#strings.equalsIgnoreCase(log.log, 'null')}">
+                                    <div class="log-timeline-node">
+                                        <i class="fa fa-dot-circle-o" th:if="${#lists.isEmpty(ratingReplies)} ? ${iterStat.first}"></i>
+                                    </div>
+                                    <div class="log-timeline-content">
+                                        <div class="log-timeline-time" th:text="${#calendars.format(log.created, 'yyyy-MM-dd HH:mm:ss')}">
+                                            2016-12-25 25:32:26
+                                        </div>
+                                        <div class="log-timeline-log" th:text="${log.log}">这里是订单处理日志</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="height:20px;background-color:#F5F5F5">
+
+                </div>
+                <!-- 配件/服务项目明细 -->
+                <div class="container margin-zero padding-zero" style="width:100%;border-top:1px solid #F1F1F1;"
+                     th:if="!${#lists.isEmpty(entity.feeItems)} and (${entity.paidTime != null} or ${entity.status > 41})">
+                    <div style="border-bottom: 1px solid #DDD">
+                        <table class="table table-striped" style="margin-bottom:0px;">
+                            <thead>
+                            <tr style="background-color: #F1F1F1;">
+                                <th width="42px"></th>
+                                <th class="text-s" style="font-weight:normal;">配件/服务名称</th>
+                                <th class="text-s" width="160px" style="font-weight:normal;">价格</th>
+                                <th class="text-s" width="160px" style="font-weight:normal;">数量</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="feeItem,iterStat : ${entity.feeItems}">
+                                <th class="align-center text-s" th:text="${iterStat.count}">
+                                    1
+                                </th>
+                                <th class="text-s" style="font-weight:normal;" th:text="|[${feeItem.feeTypeDesc}]${feeItem.feeDefName}|">[服务]上门服务费</th>
+                                <th class="text-s currency-rmb" style="font-weight:normal;" th:text="${feeItem.feeItemPrice / 100.0}">$30.00</th>
+                                <th class="text-s" style="font-weight:normal;" th:text="${feeItem.feeItemNum}">1</th>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="margin-top-m">
+                        <div class="padding-right-m">
+                            <ul style="float: right;list-style: none;font-size:12px;color:#666">
+                                <li style="display: block;line-height: 28px;">
+                                    <span style="float: left;width: 500px;text-align: right;">订单总额:</span>
+                                    <span class="currency-rmb" style="float: left;width: 130px;text-align: right;font-family: verdana;" th:text="${entity.totalAmount / 100.0}">$50.00</span>
+                                </li>
+                                <li style="display: block;line-height: 28px;">
+                                    <span style="float: left;width: 500px;text-align: right;">优&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;惠:</span>
+                                    <span class="currency-rmb" style="float: left;width: 130px;text-align: right;font-family: verdana;" th:text="${entity.discountFee / 100.0}">$0.00</span>
+                                </li>
+                                <li style="display: block;line-height: 28px;">
+                                    <span style="float: left;width: 500px;text-align: right;color: #FF6600">应付总额:</span>
+                                    <span class="currency-rmb" style="float: left;width: 130px;text-align: right;font-family: verdana;color: #FF6600;font-size:18px;font-weight:700;" th:text="${entity.payment / 100.0}">$50.00</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:none">
+                <input type="hidden" id="id" th:value="${entity.id}"/>
+            </div>
+        </form>
+    </section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/fancybox/jquery.fancybox.pack.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/shop-employee/employee-selector.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/workOrder/work-order-actions.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $(".cmd-assign").on("click", function(){
+                WorkOrderActions.assign($("#id").val());
+            });
+            $(".cmd-reassign").on("click", function(){
+                WorkOrderActions.assign($("#id").val(), true);
+            });
+
+            $(".cmd-reject").on("click", function(){
+                WorkOrderActions.reject($("#id").val());
+            });
+
+            $(".cmd-confirmCancel").on("click", function(){
+                WorkOrderActions.confirmCancel($("#id").val());
+            });
+
+            $(".fancybox").fancybox({
+                prevEffect: 'fade',
+                nextEffect: 'fade',
+                maxWidth: '800',
+                autoCenter: true
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

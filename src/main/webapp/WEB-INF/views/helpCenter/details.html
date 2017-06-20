@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:data="http://www.thymeleaf.org/extras/data">
+<head>
+    <meta charset="UTF-8"/>
+    <title>品智云</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <th:block th:include="helpCenter/centerTpl::head"></th:block>
+    <th:block>
+        <link rel="stylesheet" href="/dist/css/pages/helpCenter/details.css"/>
+        <link rel="stylesheet" href="/dist/3rd/editormd/editormd.min.css" />
+        <link rel="stylesheet" href="/dist/3rd/editormd/editormd.preview.min.css"/>
+        <link rel="stylesheet" href="/dist/3rd/editormd/editormd.preview.min.css"/>
+        <script src="/dist/3rd/editormd/editormd.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/marked.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/prettify.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/raphael.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/underscore.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/sequence-diagram.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/flowchart.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/jquery.flowchart.min.js"></script>
+    </th:block>
+</head>
+<body>
+<th:block th:replace="helpCenter/centerTpl::center-header"></th:block>
+
+<div class="container" th:object="${help}">
+    <div class="row nav">
+        <div class="col-sm-12">
+            <header style="color: #666;padding-bottom: 12px;
+    border-bottom: 1px solid #d7d8d9;" >
+                <span >
+                    <a th:href="@{|/helpCenter?role=${role}|}">帮助中心</a> >
+                    <a th:href="@{|/helpCenter?pageCode=${pageCode}&amp;role=${role}|}" th:text="${pageCode} == 'help' ? '帮助手册':'常见问题'">帮助手册</a> >
+                    <a id="categorynav" data:category-name="${helpCategory.name}"  href="javascript:void(0)"  th:text="${helpCategory.name}"></a>
+                </span>
+                <span th:text="'>'"></span>
+                <span th:text="${help.name}" style="color: #aaa"></span>
+            </header>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px">
+        <!--<div class="col-sm-2 sider-left">
+            <div id="tree"></div>
+        </div>-->
+        <div class="col-sm-2 sider">
+            <div class="sider-title" th:text="${helpCategory.name}">账号管理</div>
+            <div class="help-li" th:each="helpNav:${helps}">
+                <a href="#"  th:text="${helpNav.name}" th:href="@{|/helpCenter/${helpCategory.id}/${helpNav.id}?pageCode=help&amp;role=${role}|}" th:classappend="${help.id} == ${helpNav.id}?'active'"></a>
+            </div>
+            <div class="help-li" th:each="helpNav:${faqs}">
+                <a href="#"  th:text="${helpNav.name}" th:href="@{|/helpCenter/${helpCategory.id}/${helpNav.id}?pageCode=faq&amp;role=${role}|}" th:classappend="${help.id} == ${helpNav.id}?'active'"></a>
+            </div>
+        </div>
+        <div class="col-sm-10 content">
+            <div id="help_datails" th:if="${help}">
+                <div id="help_head" class="text-center">
+                    <h2 th:text="*{name}"></h2>
+                    <small th:text="'更新时间 : '+${#dates.format(help.lastModifyTime,'yyyy-MM-dd HH:mm:ss')}"></small>
+                </div>
+                <div id="editormd-view" style="width: auto;">
+                    <textarea id="append-test" style="display: none"  th:text="*{content}">
+                    </textarea>
+                </div>
+
+                <div class="padding margin-top">
+                    <div th:if="${#lists.size(helpList)>0}">
+                        <span class="linkTitle">相关帮助</span>
+                        <ul style="color: #38F">
+                            <li th:each="help:${helpList}"><a target="_blank" th:href="@{|/helpCenter/${help.categoryId}/${help.id}?pageCode=help&amp;role=${role}|}" th:text="${help.name}"></a></li>
+                        </ul>
+                    </div>
+                    <div class="margin-top-l" th:if="${#lists.size(faqList)>0}">
+                        <span class="linkTitle">常见问题</span>
+                        <ul style="color: #38F">
+                            <li th:each="faq:${faqList}"><a target="_blank" th:href="@{|/helpCenter/${faq.categoryId}/${faq.id}?pageCode=faq&amp;role=${role}|}" th:text="${faq.name}"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script  th:inline="javascript">
+    /*<![CDATA[*/
+
+    var menu = /*[[${menu}]]*/
+    var pattern = /*[[${help.name}]]*/;
+    var tree = $('#tree').treeview({
+        data: menu,
+        levels:1,
+        backColor:"#f2f2f2",
+        showBorder:false,
+//        color:"#fff",
+        onhoverColor:"#fafafa",
+        expandIcon: 'glyphicon glyphicon-chevron-right',
+        collapseIcon: 'glyphicon glyphicon-chevron-down',
+        selectedColor:"#fff",
+        selectedBackColor:"#23b7e5",
+        highlightSearchResults:false,
+        onNodeSelected:function (event,data) {
+            window.open(data.href,"_self")
+        },
+
+    });
+    search(pattern);
+    $(function () {
+        testEditormdView2 = editormd.markdownToHTML("editormd-view", {
+            htmlDecode      : "style,script,iframe",  // you can filter tags decode
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+        });
+
+        //实现点击节点内容的同时，展开或者关闭子节点
+        $('#tree').on('click','li',function(){
+            if($(event.target).children(".glyphicon").hasClass("glyphicon-chevron-right") || $(event.target).children(".glyphicon").hasClass("glyphicon-chevron-down")){
+                $(event.target).children(".glyphicon")[0].click();
+            }
+        });
+
+        $('#categorynav').on('click',function () {
+            var pattern = $(this).data("categoryName");
+            var options = {
+                ignoreCase: false,
+                exactMatch: true,
+                revealResults: true}
+            var result = tree.treeview('search', [ pattern, options ]);
+            tree.treeview('selectNode',[result,{silent: true}])
+        });
+
+
+    });
+
+    function search(pattern) {
+        var options = {
+            ignoreCase: false,
+            exactMatch: true,
+            revealResults: true}
+        var result = tree.treeview('search', [ pattern, options ]);
+        tree.treeview('selectNode',[result,{silent: true}])
+    }
+
+    /*]]>*/
+</script>
+</html>

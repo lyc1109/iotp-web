@@ -1,0 +1,43 @@
+@import "../../imports";
+
+$grid-columns: 10;                 // 覆写栅格系统总列数
+
+// 生成10列的row，无间距
+.row-setting{
+  @include make-row(30px);
+  padding-bottom: 4px;
+
+  .col{
+    @include make-md-column(2, 0);
+    padding: 0 4px 0 0;
+
+    @include responsive-mobile{
+      padding: 4px 0 0 0;
+    }
+    @include responsive-tablet{
+      padding: 4px 4px 0 0;
+    }
+  }
+
+  .col-sm{
+    @include responsive-tablet(){
+      @include make-sm-column(5, 0);
+      padding: 0 4px 0 0;
+
+      @include responsive-mobile{
+        padding: 4px 0 0 0;
+      }
+      @include responsive-tablet{
+        padding: 4px 4px 0 0;
+      }
+    }
+  }
+}
+
+
+// 右侧帮助色块
+.block-gray{
+  background-color: $light-1;
+  text-align: center;
+  padding: 25px;
+}

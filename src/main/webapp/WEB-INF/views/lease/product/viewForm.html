@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='leaseCfg_LeaseProducts'">
+<head>
+    <title>租赁产品详情</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/fancybox/jquery.fancybox.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/swiper/swiper-3.4.2.min.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/lease/lease-product-view.css}"/>
+</head>
+<body class="sbs" th:object="${entity}">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title pull-left">
+        <img src="" class="img-rounded inline" style="width:58px;height:58px;"
+             th:src="*{#strings.isEmpty(productCoverImg)} ? '/dist/images/logo/logo.png' : *{productCoverImg}"/>
+
+        <div class="inline margin-left">
+            <div class="margin-bottom-s">
+                <span th:text="*{name}">产品名称</span>
+                <span class="color-green-1" th:if="*{status == 0}">(租赁中)</span>
+                <span class="text-second" th:if="*{status == 1}">(已下架)</span>
+            </div>
+            <span class="label label-info text-s" th:text="|产品代码：*{code}|">产品</span>
+            <span class="label label-primary text-s" th:text="|已租数量：*{leaseNum}|"></span>
+            <span class="label label-danger text-s" th:text="|开通区域：*{openedArea}|" th:if="!*{#strings.isEmpty(openedArea)}"></span>
+        </div>
+    </div>
+
+    <div class="pull-right" style="margin-top:15px;">
+        <button type="button" class="btn btn-primary btn-sm" role="button" id="btnCreateAuthCode">新建产品授权</button>
+        <a class="btn btn-default" th:href="@{|/lease/product/*{id}/edit|}">编辑</a>
+    </div>
+    <div class="clearfix"></div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <ul class="nav nav-tabs margin-bottom" role="tablist">
+        <li role="presentation" id="productInfoTab" class="active"><a href="#tab1" role="tab" data-toggle="tab">产品信息</a></li>
+        <li role="presentation"><a href="#tab4agreement" role="tab" data-toggle="tab">租赁协议</a></li>
+        <li role="presentation" id="productAuthCodesTab"><a href="#tab2" role="tab" data-toggle="tab">授权管理</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1">
+            <div class="pull-left">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" th:each="image : *{images}">
+                            <a class="fancybox" rel="group" th:href="${image}">
+                                <img src="#" th:src="${image}"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div class="product-infos">
+                <h4 class="font-bold" th:text="*{name}"></h4>
+
+                <div class="text-second text-wrapper-2line briefIntroduction" th:text="*{briefIntroduction}"></div>
+
+                <div class="deviceDeposit margin-top-m">
+                    <span class="text-second">设备押金</span>
+                    <span class="currency-rmb" th:text="*{deviceDeposit/100.0}"></span>
+                </div>
+
+                <div class="margin-top-l">
+                    <div class="row">
+                        <div class="col-sm-3" th:if="*{yearlyRental > 0}">
+                            <div class="pay-package pay-package-yellow">
+                                <div class="header">年卡</div>
+                                <div class="content"
+                                     th:classappend="*{monthlyRental*12 &gt; yearlyRental} ? 'content-price-delete' : 'content-default'">
+                                    ￥<span class="currency-number" th:text="|*{yearlyRental/100.0}|"></span>
+
+                                    <div class="price-delete" th:if="*{monthlyRental*12 &gt; yearlyRental}">
+                                        <s>原价￥<span class="currency-number" th:text="|*{(monthlyRental/100.0)*12}|"></span></s>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" th:if="*{halfyearlyRental > 0}">
+                            <div class="pay-package pay-package-green">
+                                <div class="header">半年卡</div>
+                                <div class="content"
+                                     th:classappend="*{monthlyRental*6 &gt; halfyearlyRental} ? 'content-price-delete' : 'content-default'">
+
+                                    <div>￥<span class="currency-number" th:text="|*{halfyearlyRental/100}|"></span></div>
+                                    <div class="price-delete" th:if="*{monthlyRental*6 &gt; halfyearlyRental}">
+                                        <s>原价￥<span class="currency-number" th:text="|*{(monthlyRental/100)*6}|"></span></s>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" th:if="*{quarterlyRental > 0}">
+                            <div class="pay-package pay-package-cyan">
+                                <div class="header">季度卡</div>
+                                <div class="content"
+                                     th:classappend="*{monthlyRental*3 &gt; quarterlyRental} ? 'content-price-delete' : 'content-default'">
+                                    ￥<span class="currency-number" th:text="|*{quarterlyRental/100}|"></span>
+                                    <div class="price-delete" th:if="*{monthlyRental*3 &gt; quarterlyRental}">
+                                        <s>原价￥<span class="currency-number" th:text="|*{(monthlyRental/100)*3}|"></span></s>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" th:if="*{monthlyRental > 0}">
+                            <div class="pay-package pay-package-blue">
+                                <div class="header">月卡</div>
+                                <div class="content">
+                                    ￥<span class="currency-number" th:text="|*{monthlyRental/100}|"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix margin-top"></div>
+
+            <div class="padding-m border-top text-second text-s bg"> 租赁产品详情 </div>
+
+            <div class="padding" th:utext="*{description}"></div>
+        </div>
+
+        <!-- 租赁协议 -->
+        <div role="tabpanel" class="tab-pane" id="tab4agreement">
+            <div class="padding" th:utext="*{leaseAgreement}"></div>
+        </div>
+
+        <!-- 产品授权 -->
+        <div role="tabpanel" class="tab-pane" id="tab2">
+        </div>
+    </div>
+
+    <input type="hidden" id="id" th:value="*{id}"/>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/fancybox/jquery.fancybox.pack.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/3rd/swiper/swiper-3.4.2.jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/product/authCode.js?ts=1}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            new Swiper ('.swiper-container', {
+                loop: true,
+                pagination: '.swiper-pagination',
+                autoplay: 5000
+            });
+            $(".fancybox").fancybox({
+                width: '100%',
+                maxWidth: '100%',
+                autoCenter: true
+            });
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var target = $(e.target).attr("href"); // activated tab
+                if(target.indexOf("#tab2") > -1){
+                    $.get(
+                        "/shop/product/authCode/list",
+                        {
+                            type: "leaseProduct",
+                            leaseProductId: $("#id").val()
+                        },
+                        function (html) {
+                            $("#tab2").html(html);
+                        });
+                }
+            });
+
+            $("#btnCreateAuthCode").on("click", function () {
+                AuthCode.openCreateDlg(
+                    {
+                        type: "leaseProduct",
+                        leaseProductId: $("#id").val()
+                    },
+                    function () {
+                        $('.nav-tabs a[href="#tab2"]').tab('show');
+                        AuthCode.gridReload();
+                    });
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>商品规格管理</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/product/spec-group.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/editable-select/jquery-editable-select.min.css}"/>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${entity.isNew()} ? '新增规格模板' : '修改规格信息'">规格详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="sbsForm" class="form-horizontal margin-top-m parsley-form" method="post" th:object="${entity}" th:action="@{|/shop/product/specGroup/*{id}|}">
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>模板名称</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" th:value="*{name}" data-parsley-required="true" data-parsley-trigger="blur"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>商品规格</span>
+            </label>
+            <div class="col-sm-8">
+                <div class="spec-item" th:each="specInfo : ${specInfoList}">
+                    <div class="input-group" style="width:320px;">
+                        <select class="form-control editable-select spec-name" data-filter="false" th:value="${specInfo.name}">
+                            <option th:each="stdSpec : ${stdSpecs}" th:text="${stdSpec.name}" th:value="${stdSpec.name}">颜色</option>
+                        </select>
+                    <span class="input-group-btn">
+                        <button class="btn btn-danger btn-sm cmd-del-spec" type="button">删除</button>
+                    </span>
+                    </div>
+                    <div class="padding-top-s padding-bottom">
+                        <div class="form-control-spec form-control-spec-static" th:each="optionVal : ${specInfo.items}">
+                            <span class="spec-item-value" th:text="${optionVal}">黑色</span>
+                            <i class="fa fa-close color-red-1 btn-spec-item-remove"></i>
+                        </div>
+
+                        <input type="text" class="form-control form-control-spec form-control-spec-input" placeholder="请输入规格选项"/>
+                        <span class="form-control-spec-input-tips">回车确定添加</span>
+
+                        <button type="button" class="btn btn-default form-control-spec btn-add-spec-item">
+                            <i class="fa fa-pencil"></i> 输入规格
+                        </button>
+                    </div>
+                </div>
+                <div class="spec-commands">
+                    <button class="btn btn-default btn-sm cmd-add-spec" type="button">添加商品规格</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>模板说明</span>
+            </label>
+            <div class="col-sm-8">
+                <textarea class="form-control" name="description" rows="3" th:text="*{description}" style="height: 64px;"></textarea>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save" style="width:81px;" type="button" id="btnSave" value="保存"/>
+            </div>
+        </div>
+
+        <input type="hidden" name="specs" id="specs" title=""/>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/3rd/editable-select/jquery-editable-select.min.js}"></script>
+    <script id="specTpl" type="text/x-jquery-tmpl">
+        <div class="spec-item">
+            <div class="input-group" style="width:320px;">
+                <select class="form-control editable-select spec-name" data-filter="false">
+                    <option th:each="stdSpec : ${stdSpecs}" th:text="${stdSpec.name}" th:value="${stdSpec.name}">颜色</option>
+                </select>
+                <span class="input-group-btn">
+                    <button class="btn btn-danger btn-sm cmd-del-spec" type="button">删除</button>
+                </span>
+            </div>
+            <div class="padding-top-s padding-bottom">
+                <!--<select class="form-control spec-select2 spec-items" multiple="multiple" data-parsley-required="true"></select>-->
+
+                <!--<div class="form-control-spec form-control-spec-static">
+                    黑色
+                    <i class="fa fa-close color-red-1"></i>
+                </div>-->
+
+                <input type="text" class="form-control form-control-spec form-control-spec-input" placeholder="请输入规格选项"/>
+                <span class="form-control-spec-input-tips">回车确定添加</span>
+
+                <button type="button" class="btn btn-default form-control-spec btn-add-spec-item">
+                    <i class="fa fa-pencil"></i> 输入规格
+                </button>
+            </div>
+        </div>
+    </script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var SpecGroup = (function(){
+            return {
+                /**
+                 * 添加商品规格
+                 */
+                addSpecGroup: function(){
+                    var specItem = $($("#specTpl").html()).insertBefore(".spec-commands");
+                    specItem.find('.editable-select').editableSelect({
+                        effects: 'slide'
+                    });
+                },
+
+                /**
+                 * 回车确定添加规格选项
+                 *
+                 * @param $input 当前规格选项输入框
+                 */
+                addSpecItem: function($input){
+                    var itemVal = $.trim($input.val());
+                    if(itemVal.length === "" || itemVal.length === 0){
+                        toast("请输入规格内容", "error");
+                        return;
+                    }
+
+                    var specHtml = '<div class="form-control-spec form-control-spec-static">';
+                    specHtml += '<span class="spec-item-value">' + itemVal + '</span>';
+                    specHtml += '<i class="fa fa-close color-red-1 btn-spec-item-remove"></i>';
+                    specHtml += '</div>';
+                    $input.before(specHtml);
+
+                    $(".btn-spec-item-remove").off("click").on("click", function () {
+                        $(this).closest(".form-control-spec-static").fadeOut(function () {
+                            $(this).remove();
+                        });
+                    });
+                },
+
+                getSpecItems: function () {
+                    var specs = "";
+                    $(".spec-item").each(function() {
+                        var specName = $.trim($(this).find(".spec-name").val());
+                        var $specItems = $(this).find(".spec-item-value");
+
+                        // 规避空格输入
+                        if (specName === "" || specName.length === 0 || $specItems.length === 0) {
+                            specs = false;
+                            return false;
+                        }
+
+                        if (specs.length > 0)
+                            specs += ";";
+
+                        var specItemVals = "";
+                        $specItems.each(function () {
+                            if(specItemVals !== "")
+                                specItemVals += ",";
+                            specItemVals += $(this).text();
+                        });
+
+                        specs += specName + ":" + specItemVals;
+                    });
+                    return specs;
+                }
+            }
+        }());
+
+        $(function () {
+            $('.editable-select').editableSelect({
+                effects: 'slide'
+            });
+
+            $(".cmd-add-spec").click(function(){
+                SpecGroup.addSpecGroup();
+            });
+
+            // 删除规格
+            $(document).on("click", ".cmd-del-spec", function(){
+                $(this).closest(".spec-item").fadeOut("slow", function() {
+                    $(this).remove();
+                });
+            });
+
+            // 输入规格绑定
+            $(document).on("click", ".btn-add-spec-item", function(){
+                $(this).hide();
+                $(this).siblings(".form-control-spec-input").show().focus();
+                $(this).siblings(".form-control-spec-input-tips").show();
+            });
+            // 回车确定
+            $(document).on("keydown", ".form-control-spec-input", function(e){
+                if(e.keyCode == 13){
+                    if($(this).val()==="" || $(this).val()===0)
+                        return;
+
+                    SpecGroup.addSpecItem($(this));
+                    $(this).val("");
+                }
+            });
+            // 失去焦点隐藏输入框，显示按钮
+            $(document).on("blur", ".form-control-spec-input", function (e) {
+                $(this).hide();
+                $(this).siblings(".btn-add-spec-item").show();
+                $(this).siblings(".form-control-spec-input-tips").hide();
+            });
+            // 删除规格选项
+            $(".btn-spec-item-remove").off("click").on("click", function () {
+                $(this).closest(".form-control-spec-static").fadeOut(function () {
+                    $(this).remove();
+                });
+            });
+
+            // 重复选择规格校验
+            $(document).on('select.editable-select', '.editable-select', function (e) {
+                var specName = $(this).val();
+                var specCount = 0;
+                $(".spec-name").each(function() {
+                    if(specName === $(this).val())
+                        specCount += 1;
+                });
+                if(specCount > 1) {
+                    toast("对不起, 该规格已存在!", "error");
+                    $(this).val("");
+                }
+            });
+
+            // 提交表单
+            $("#sbsForm").submit(function(){
+                var specs = SpecGroup.getSpecItems();
+                if (specs === false) {
+                    toast("对不起, 请填写完整的规格信息!", "error");
+                    return false;
+                }
+                $("#specs").val(specs);
+                if(specs  === null || specs === ""){
+                    toast("请添加商品规格!","error");
+                    $(".cmd-add-spec").click();
+                    return false;
+                }
+                return true;
+            });
+            $("#btnSave").on("click", function () {
+                $("#sbsForm").submit();
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

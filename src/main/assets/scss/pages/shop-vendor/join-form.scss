@@ -1,0 +1,48 @@
+@import "../../imports";
+
+/*body {
+  background-color: $page_bg;
+}*/
+
+.form-container {
+  width: 814px;
+  margin: 50px auto;
+
+  @include responsive-tablet() {
+    width: 100%;
+  }
+}
+
+.form-container-header {
+  @extend %padding-bottom;
+}
+
+.form-container-body {
+  @include border();
+  @extend %padding;
+  background-color: $white-1;
+}
+
+
+.step {
+  text-align: center;
+  margin: 0 auto;
+  @include border(bottom);
+  margin: -10px -10px 25px -10px;
+  font-size: 14px;
+  font-weight: 300;
+  background-color: $light-1;
+
+  .step-item {
+    padding: 12px;
+  }
+
+  .step-item.active {
+    background-color: $primary;
+    color: $white-1;
+  }
+}
+
+.btn-cmd {
+  padding: 0 30px !important;
+}

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='serviceOrderMgm'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div>
+        <div class="pull-left title">服务订单管理</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm grid-refresh">
+                <span class="fa fa-refresh"></span> 刷新
+            </button>
+            <a class="btn btn-primary btn-sm" th:href="@{/shop/serviceOrder/create}" >
+                新增订单
+            </a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <ul class="nav nav-tabs margin-bottom" role="tablist">
+        <li role="presentation" th:classappend="${viewType == 10} ? 'active' : ''">
+            <a href="javascript:;" class="view-nav" data:view-type="10">待分派</a>
+        </li>
+        <li role="presentation" th:classappend="${viewType == 20} ? 'active' : ''">
+            <a href="javascript:;" class="view-nav" data:view-type="20">进行中</a>
+        </li>
+        <li role="presentation" th:classappend="${viewType == 30} ? 'active' : ''">
+            <a href="javascript:;" class="view-nav" data:view-type="30">待付款</a>
+        </li>
+        <li role="presentation" th:classappend="${viewType == 40} ? 'active' : ''">
+            <a href="javascript:;" class="view-nav" data:view-type="40">已完成</a>
+        </li>
+        <li role="presentation" th:classappend="${viewType == 50} ? 'active' : ''">
+            <a href="javascript:;" class="view-nav" data:view-type="50">退款中</a>
+        </li>
+        <li role="presentation" th:classappend="${viewType == 99} ? 'active' : ''">
+            <a href="javascript:;" class="view-nav" data:view-type="99">全部</a>
+        </li>
+    </ul>
+    <div style="margin:0;padding:3px 0 8px 0;">
+        <div class="btn-group pull-left view-filter-item" data-field-id="shopService" style="padding-right:6px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="min-width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有类型订单</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li th:each="option : ${serviceOptions}">
+                    <a href="javascript:;" class="view-filter font-s" data-field-id="shopService" data:field-value="${option.value}" data:field-text="${option.name}" th:text="${option.name}">服务名称</a>
+                </li>
+                <li class="divider"></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="shopService" data-field-value="lease" data-field-text="租赁预约">租赁预约</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="shopService" data-field-value="" data-field-text="所有类型订单">所有类型订单</a></li>
+            </ul>
+        </div>
+        <div class="btn-group pull-left view-filter-item" data-field-id="serviceDate" style="padding-right:6px;">
+            <button type="button" class="btn btn-default dropdown-toggle btn-sm" style="min-width:96px;" data-toggle="dropdown">
+                <span class="field-text">所有预约日期</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="serviceDate" data-field-value="1" data-field-text="今日">今日</a></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="serviceDate" data-field-value="7" data-field-text="本周">本周</a></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="serviceDate" data-field-value="14" data-field-text="下周">下周</a></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="serviceDate" data-field-value="30" data-field-text="本月">本月</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript:;" class="view-filter font-s" data-field-id="serviceDate" data-field-value="" data-field-text="所有预约日期">所有预约日期</a></li>
+            </ul>
+        </div>
+        <div class="input-group pull-left" style="width:360px;">
+            <input type="text" class="form-control grid-search" id="searchPhrase" placeholder="订单编号/商品信息/客户信息..." th:value="${searchPhrase}"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm" type="button" id="btnSearch" style="min-width:61px;">搜索</button>
+                <button class="btn btn-default btn-sm" type="button" id="btnAdvanceSearch" style="min-width:61px;">
+                    高级
+                    <i class="fa fa-angle-down"></i>
+                </button>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="alert alert-warning" role="alert" style="margin-bottom: 10px;display: none;">
+        <div class="padding-s">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            今日执行的服务订单有 <strong>6</strong> 单, <a href="#">点击这里查看</a>.
+        </div>
+    </div>
+    <div class="data-grid-container">
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-width="80px" data-column-id="status" data-formatter="statusFormatter">进度状态</th>
+                <th data-width="80px" data-column-id="shopServiceName" data-sortable="false" data-formatter="serviceNameFormatter">服务类型</th>
+                <th data-width="140px" data-column-id="orderId" data-formatter="link">服务单号</th>
+                <th data-width="200px" data-column-id="productName"  data-formatter="productNameFormatter">产品名称</th>
+                <th data-width="80px" data-column-id="contactName">客户姓名</th>
+                <!--<th data-column-id="serviceAddress.province" data-formatter="serviceAddressFormatter">所在地</th>-->
+                <th data-width="140px" data-column-id="serviceDate" data-formatter="serviceTimeFormatter">预约时间</th>
+                <th data-width="120px" data-column-id="created" data-formatter="formatDateTime" data-order="desc">创建时间</th>
+                <th data-width="160px" data-column-id="commands" data-formatter="commands">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div style="display:none">
+        <input class="view-filter-field" type="hidden" id="viewType" th:value="${viewType}"/>
+        <input class="view-filter-field" type="hidden" id="shopService" th:value="${shopService}"/>
+        <input class="view-filter-field" type="hidden" id="serviceDate" th:value="${serviceDate}"/>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/serviceorder/order-actions.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/shop-vendor/shop-vendor-selector.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/shop/serviceOrder";
+        var _bootgrid = null;
+
+        $(function () {
+            var preAction = $("#_preAction").val();
+            if("save" == preAction) {
+                toast("信息保存成功");
+            }
+
+            _bootgrid = new BootGrid({
+                url: _baseUrl,
+                data: {
+                    viewType: $("#viewType").val(),
+                    shopService: $("#shopService").val(),
+                    serviceDate: $("#serviceDate").val(),
+                    searchPhrase: $("#searchPhrase").val()
+                },
+                formatters: {
+                    statusFormatter: function(column, row) {
+                        var status = row.status;
+                        if (status == 0 || status == 10) {
+                            return "待分派";
+                        }
+                        if (status == 15) {
+                            return "服务商已拒绝";
+                        }
+                        if (status == 20) {
+                            return "已分派";
+                        }
+                        if (status == 40 || status == 41) {
+                            return "进行中";
+                        }
+                        if (status == 45) {
+                            return "已支付";
+                        }
+                        if (status == 60 || status == 65) {
+                            return "待支付";
+                        }
+                        if (status == 70) {
+                            return "待评价";
+                        }
+                        if (status == 80) {
+                            return "已关闭";
+                        }
+                        if (status == 85) {
+                            return "取消待确认";
+                        }
+                        if (status == 90 || status == 92 || status == 95) {
+                            return "已取消";
+                        }
+                        return status;
+                    },
+                    serviceAddressFormatter: function (column, row) {
+                        return row.serviceAddress.province + " - " + row.serviceAddress.city;
+                    },
+                    serviceTimeFormatter: function (column, row) {
+                        return moment(row.serviceDate).format("MM月DD日") + " " + row.serviceTime;
+                    },
+                    serviceNameFormatter: function (column, row) {
+                        if(row.orderType === "common"){
+                            return row.shopServiceName;
+                        } else if(row.orderType === "lease"){
+                            return "租赁预约";
+                        }
+                    },
+                    productNameFormatter: function (column, row) {
+                        if(row.orderType === "common"){
+                            return row.productName;
+                        } else if(row.orderType === "lease"){
+                            return row.leaseProduct.name;
+                        }
+                    },
+                    commands: function(column, row){
+                        var cmdBtns = "<button type=\"button\" title=\"查看详情\" class=\"btn btn-xs btn-default command-view-form\" data-row-id=\"" + row.id + "\">查看</button> ";
+                        var status = row.status;
+                        if (status === 0 || status === 10)
+                            cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default command-assign\" data-row-id=\"" + row.id + "\" data-service-id=\"" + row.shopServiceId + "\">派单</button> ";
+                        if (status === 15 || status === 20)
+                            cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default command-reassign\" data-row-id=\"" + row.id + "\" data-service-id=\"" + row.shopServiceId + "\">重新派单</button> ";
+                        if (status === 0 || status === 15)
+                            cmdBtns += "<button type=\"button\" class=\"btn btn-xs btn-default command-reject\" data-row-id=\"" + row.id + "\">拒绝</button> ";
+                        return cmdBtns;
+                    }
+                },
+                onInitialized: function () {
+                    ServiceOrderActions.setDataGrid(this);
+                },
+                onLoaded: function(){
+                    $(".command-view-form").on("click", function(){
+                        window.open("/shop/serviceOrder/" + $(this).data("rowId"), "_self");
+                    });
+                    $(".command-reject").on("click", function(){
+                        ServiceOrderActions.reject($(this).data("rowId"))
+                    });
+                    $(".command-assign").on("click", function(){
+                        var serviceOrderId = $(this).data("rowId");
+                        var shopServiceId = $(this).data("serviceId");
+                        ServiceOrderActions.assign(serviceOrderId, shopServiceId);
+                    });
+                    $(".command-reassign").on("click", function(){
+                        var serviceOrderId = $(this).data("rowId");
+                        var shopServiceId = $(this).data("serviceId");
+                        ServiceOrderActions.reassign(serviceOrderId, shopServiceId);
+                    });
+                }
+            });
+
+            $("#btnSearch").on("click", function(){
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+            $("#btnAdvanceSearch").on("click", function(){
+                Messenger.alert("功能完善中...");
+            });
+
+            if($(".grid-search").length > 0){
+                var $search = $(".grid-search");
+                $search.keyup(function(event){
+                    if(event.keyCode === 13){
+                        window.history.replaceState({}, 0, buildListUrl());
+                        reloadGird();
+                    }
+                });
+            }
+
+            $(".view-nav").on("click", function(){
+                var curViewType = $("#viewType").val();
+                var viewType = $(this).data("viewType");
+                if(curViewType == viewType)
+                    return;
+
+                $("#viewType").val(viewType);
+                $(this).closest(".nav-tabs").find("li").each(function(){
+                    $(this).removeClass("active");
+                });
+                $(this).closest("li").addClass("active");
+
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            $(".view-filter").on("click", function(){
+                var fieldId = $(this).data("fieldId");
+                var fieldValue = $(this).data("fieldValue");
+                var fieldText = $(this).data("fieldText");
+                $("#" + fieldId).val(fieldValue);
+
+                $(this).closest(".btn-group").find(".field-text").text(fieldText);
+
+                window.history.replaceState({}, 0, buildListUrl());
+                reloadGird();
+            });
+
+            // 同步已选中的值
+            $(".view-filter-field").each(function(){
+                var fieldId = $(this).attr("id");
+                var fieldVal = $(this).val();
+                $(".view-filter-item").each(function(){
+                    var itemFieldId = $(this).data("fieldId");
+                    if (itemFieldId == fieldId) {
+                        $(this).find(".view-filter").each(function(){
+                            if(fieldVal == $(this).data("fieldValue")) {
+                                $(this).closest(".btn-group").find(".field-text").text($(this).data("fieldText"));
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        function buildListUrl() {
+            var url = _baseUrl;
+            url += "?viewType=" + $("#viewType").val();
+            url += "&shopService=" + $("#shopService").val();
+            url += "&serviceDate=" + $("#serviceDate").val();
+            url += "&searchPhrase=" + $("#searchPhrase").val();
+            return url;
+        }
+
+        function reloadGird() {
+            _bootgrid.search({
+                viewType: $("#viewType").val(),
+                shopService: $("#shopService").val(),
+                serviceDate: $("#serviceDate").val(),
+                searchPhrase: $("#searchPhrase").val()
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

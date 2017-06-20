@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title></title>
+</head>
+<body>
+<div class="padding-bottom">
+    <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{/shop/product/productFaq/create(productId=${#httpServletRequest.getParameter('productId')})}" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">
+        新增产品问题
+    </a>
+    <button type="button" class="btn btn-default btn-sm cmd-link-faqs" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">
+        关联产品问题
+    </button>
+    <button type="button" class="btn btn-default btn-sm grid-refresh">
+        <span class="fa fa-refresh"></span> 刷新
+    </button>
+</div>
+<div class="data-grid-container">
+    <table id="faqDataGrid">
+        <thead>
+        <tr>
+            <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+            <th data-width="80px" data-column-id="is_common_quest" data-order="desc" data-visible="false">是否通用</th>
+            <th data-column-id="question" data-formatter="faqLinkFormatter">问题标题</th>
+            <th data-width="90px" data-column-id="commands" data-formatter="commands" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">操作</th>
+        </tr>
+        </thead>
+    </table>
+    <input type="hidden" id="productId" th:value="${#httpServletRequest.getParameter('productId')}"/>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/dist/scripts/pages/product/product-selector.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    var _faqBootgrid = null;
+    $(function () {
+        var result = [];
+        var curQuestion = [];
+        _faqBootgrid = new BootGrid({
+            id: "faqDataGrid",
+            url: "/shop/product/productFaq/" + $("#productId").val() + "/faqPage",
+            formatters:{
+                faqLinkFormatter: function (column, row) {
+                    return "<a class='curFaq' data-faq-id='"+row.id+"' href='/shop/product/productFaq/" + row.id + "'>" + row.question + "</a>";
+                },
+                commands: function(column, row){
+                    if(row.is_common_quest == 1){
+                        return;
+                    }
+                    return "<button type=\"button\" class=\"btn btn-xs btn-default cmd-remove\" data-row-id=\"" + row.id + "\">解除关联</button>";
+                }
+            },
+            onLoaded: function(){
+
+                $(".cmd-remove").on("click", function(){
+                    var _rowId = $(this).data("rowId");
+                    Messenger.confirm("确定要解除该关联么?", function () {
+                        $.post("/shop/product/productFaq/" + $("#productId").val() + "/removefaq", {
+                            "faqId" : _rowId
+                        }, function(data){
+                            if(data.returnCode == 0){
+                                toast("解除成功");
+                                _faqBootgrid.reload();
+                            }else{
+                                toast("抱歉, 操作执行失败");
+                            }
+                        }, 'json');
+                    });
+                });
+                curQuestion=[];
+                $(".curFaq").each(function () {
+                    curQuestion.push($(this).data("faqId"));
+                })
+            }
+        });
+
+        $(".cmd-link-faqs").on("click", function(){
+            new Dlg({
+                id:"selectFaqDlg",
+                title: "关联产品问题 - 请选择问题",
+                width: 800,
+                height: 400,
+                url: "/shop/product/productFaq/"+$('#productId').val()+"/selectfaqs",
+                onLoaded:function () {
+                    result = [];
+                    new BootGrid({
+                        id:"faqSelectGrid",
+                        url: "/shop/product/productFaq/"+$('#productId').val()+"/selectfaqs/list",
+                        selection: true,
+                        multiSelect: true,
+                        rowSelect: true,
+                        rowCount: 7,
+                        onSelected: function (rows) {
+                            var idx = _.findIndex(result, function (n) {
+                                return n.id === rows[0].id
+                            });
+                            if(idx === -1) {
+                                result.push(rows[0].id);
+                            }
+
+                        },
+                        onDeSelected: function (rows) {
+                            _.remove(result, function(n) {
+                                return n === rows[0].id;
+                            });
+                        }
+                    })
+                },
+                onOk: function () {
+                    if(result.length == 0){
+                        toast("请选择产品问题","error");
+                        return false;
+                    }
+                    var that = this;
+                    var faqIds = "";
+                    for(var i=0;i<result.length;i++){
+                        if($.inArray(result[i],curQuestion) < 0){
+                            if(i>0){
+                                faqIds += ",";
+                            }
+                            faqIds += result[i];
+                        }
+                    }
+                    $.post("/shop/product/productFaq/" + $("#productId").val() + "/addfaqs", {
+                        "faqIds" : faqIds
+                    }, function(data){
+                        if(data.returnCode == 0){
+                            toast("问题关联成功");
+                            _faqBootgrid.reload();
+                            that.close();
+                        }else{
+                            toast("抱歉, 操作执行失败");
+                            that.close();
+                        }
+                    }, 'json');
+                }
+            });
+        });
+    });
+    /*]]>*/
+</script>
+</html>

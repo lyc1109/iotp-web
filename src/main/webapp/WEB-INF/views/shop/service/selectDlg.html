@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="alert alert-info align-center" role="alert">不选择任何服务表示授权所有服务给服务商</div>
+
+    <div class="container-fluid margin-top">
+        <div class="row">
+            <div class="col-sm-4" th:each="item : ${shopServices}">
+                <div class="margin-bottom">
+                    <label class="radio-inline">
+                        <input type="checkbox" class="icheck shop-service-item" data:id="${item.id}" th:checked="${#strings.contains(selectedServiceIds, item.id)}"/>
+                        <span class="margin-left" th:text="${item.name}" th:remove="tag"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

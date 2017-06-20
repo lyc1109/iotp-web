@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='leaseCfg_LeaseDevice'">
+<head>
+      <link rel="stylesheet" th:href="@{/dist/css/pages/lease/leaseDevice.css}"/>
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+      <keep-alive>
+      <div id="equip" v-cloak="true">
+      <div class="equip">
+            <h1>
+                  <span class="title">租赁设备管理</span>
+                  <div class="addBtn">
+                  <a href=""><el-button size="small" v-on:click="deviceFresh()">刷新</el-button></a>
+                  </div>
+            </h1>
+            <div class="equipbox">
+                  <div class="equipboxli" v-for="(item,index) in equip" :data-val="typeSearch.vals">
+                        <div>
+                              <ul class="equipboxMain" :class="item.style" v-on:click="getValue(index);searchChange()">
+                                    <li><span>{{item.text}}台</span></li>
+                              </ul>
+                        </div>
+                        <p v-on:click="searchChange()">{{item.name}}</p>
+                  </div>
+            </div>
+            <div class="equipRecord">
+                  <div>
+                        <el-form class="equipForm">
+                              <el-col :xs="24" :span="5">
+                              <el-form-item>
+                                    <!--<el-select v-model="typeSearch.type" placeholder="所有状态" v-on:change="searchChange()">-->
+                                          <!--<el-option v-for="item in equipType" :value="item.value" :label="item.name"></el-option>-->
+                                    <!--</el-select>-->
+                                    <el-select v-model="equipSearches.product" placeholder="所有产品" v-on:change="searchChange()">
+                                          <el-option v-for="item in equipProduct" :value="item.value" :label="item.name"></el-option>
+                                    </el-select>
+                                    <!--<el-select v-model="city" placeholder="所有地区">-->
+                                          <!--<el-option v-for="item in equipCity" :value="item.text"></el-option>-->
+                                    <!--</el-select>-->
+                              </el-form-item>
+                              </el-col>
+                              <el-col :span="16" :xs="24">
+                              <el-form-item class="searchText">
+                                    <el-input placeholder="产品信息/客户信息" class="equipSearch" v-model="equipSearches.equipSearch" v-on:keyup.native.enter="searchChange()"></el-input>
+                                    <el-button type="primary" v-on:click="searchChange()" size="small" :class="{'el-icon-search': isIcon}">{{searchText}}</el-button>
+                              </el-form-item>
+                              </el-col>
+                        </el-form>
+                  </div>
+                  <div class="equipRecordTable">
+                        <el-table :data="equipData" style="width: 100%; margin-top: 10px;" v-on:sort-change="sortChange" :row-class-name="rowClass" v-on:row-click="gainID">
+                              <el-table-column :prop="item.pro" :width="item.width" :type="item.type" :label="item.label" v-for="item in dataTit"></el-table-column>
+                              <!--<el-table-column prop="operate" label="操作">-->
+                                    <!--<template scope="scope">-->
+                                                <!--<el-button size="small" v-on:click="gainID(scope.$index)" v-if="operateBtn">查看详情</el-button>-->
+                                    <!--</template>-->
+                              <!--</el-table-column>-->
+                        </el-table>
+                        <div class="page">
+                              <div class="showPage">
+                                    <span>显示第</span>
+                                    <b> {{pageArray.fisrtPage}} </b>
+                                    <span>到</span>
+                                    <b> {{pageArray.lastPage}} </b>
+                                    <span>条数据</span>
+                              </div>
+                              <el-pagination
+                                      v-on:size-change="handleSizeChange"
+                                      v-on:current-change="handleCurrentChange"
+                                      :current-page="pageArray.current"
+                                      :page-size="pageArray.size"
+                                      layout="total,prev,pager,next,jumper"
+                                      :total="pageArray.total">
+                              </el-pagination>
+                        </div>
+                  </div>
+            </div>
+      </div>
+      </div>
+      </keep-alive>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+      <script th:inline="javascript" th:src="@{/dist/scripts-vue/leaseDevice/leaseDevice.js}"></script>
+</section>
+</body>
+</html>

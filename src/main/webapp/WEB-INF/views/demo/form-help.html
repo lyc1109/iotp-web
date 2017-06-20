@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form-help"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">表单视图（带帮助说明）</div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+    <form id="appForm" class="form-horizontal margin-top-m" role="form" data-parsley-validate="true" method="post">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <label for="customerNo" class="col-sm-3 control-label required-label">客户编号</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="customerNo" name="customerNo" placeholder="客户编号"
+                                   data-parsley-required="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <label for="userName" class="col-sm-3 control-label required-label">姓名</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="userName" name="user.name" placeholder="姓名"
+                                   data-parsley-required="true"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userNickname" class="col-sm-3 control-label">昵称</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="userNickname" name="user.nickname" placeholder="昵称"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobileNo" class="col-sm-3 control-label required-label">手机号码</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="mobileNo" name="user.mobileNo" placeholder="手机号码"
+                                   data-parsley-required="true"
+                                   data-parsley-type="number"
+                                   data-parsley-maxlength="11"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idcard" class="col-sm-3 control-label">身份证</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="idcard" name="idcard" placeholder="身份证"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address" class="col-sm-3 control-label">现居住地</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="address" name="address" placeholder="现居住地"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-actions">
+                        <a href="javascript:history.back()" class="btn btn-default">返回</a>
+                        <button type="submit" class="btn btn-primary" id="btnSave">保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<section layout:fragment="help" th:remove="tag">
+    <div class="help-title">
+        帮助中心
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

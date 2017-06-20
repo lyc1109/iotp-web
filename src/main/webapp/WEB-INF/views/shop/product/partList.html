@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title></title>
+</head>
+<body>
+<div class="padding-bottom">
+    <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{'/shop/product/create'(productType=PJ, parentId= ${partParentId})}" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">
+        新增配件
+    </a>
+    <button type="button" class="btn btn-default btn-sm cmd-link-parts" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">
+        关联配件
+    </button>
+    <button type="button" class="btn btn-default btn-sm grid-refresh">
+        <span class="fa fa-refresh"></span> 刷新
+    </button>
+</div>
+<div class="data-grid-container">
+    <table id="partDataGrid">
+        <thead>
+        <tr>
+            <th data-width="32px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+            <th data-width="80px" data-column-id="status" data-formatter="statusFormatter">状态</th>
+            <th data-width="160px" data-column-id="itemCode">配件货号</th>
+            <th data-column-id="name" style="font-size:12px;" data-formatter="partLinkFormatter">配件名称</th>
+            <th data-width="90px" data-column-id="commands" data-formatter="commands" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">操作</th>
+        </tr>
+        </thead>
+    </table>
+
+    <input type="hidden" th:value="${partParentId}" id="partParentId"/>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/dist/scripts/pages/product/product-selector.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    var _partBootgrid = null;
+    $(function () {
+        _partBootgrid = new BootGrid({
+            id: "partDataGrid",
+            url: "/shop/product/" + $("#partParentId").val() + "/partPage",
+            formatters:{
+                statusFormatter: function (column, row) {
+                    return row.statusText;
+                },
+                partLinkFormatter: function (column, row) {
+                    return "<a href='/shop/product/" + row.id + "'>" + row.name + "</a>";
+                },
+                commands: function(column, row){
+                    return "<button type=\"button\" class=\"btn btn-xs btn-default cmd-remove\" data-row-id=\"" + row.id + "\">解除关联</button>";
+                }
+            },
+            onLoaded: function(){
+                $(".cmd-remove").on("click", function(){
+                    var _rowId = $(this).data("rowId");
+                    Messenger.confirm("确定要解除该关联么?", function () {
+                        $.post("/shop/product/" + $("#partParentId").val() + "/removePart", {
+                            "partId" : _rowId
+                            }, function(data){
+                                if(data.returnCode == 0){
+                                    toast("配件解除成功");
+                                    _partBootgrid.reload();
+                                }else{
+                                    toast("抱歉, 操作执行失败");
+                                }
+                            }, 'json');
+                    });
+                });
+            }
+        });
+
+        $(".cmd-link-parts").on("click", function(){
+            ProductSelector.selectParts(function (parts) {
+                var partIds = "";
+                $.each(parts ,function (idx, part) {
+                    if(partIds !== "") {
+                        partIds += ",";
+                    }
+                    partIds += part.id;
+                });
+                App.ajax.post({
+                    url: "/shop/product/" + $("#partParentId").val() + "/addParts",
+                    data: {
+                        "partIds" : partIds
+                    },
+                    onSuccess: function () {
+                        toast("配件关联成功");
+                        _partBootgrid.reload();
+                    }
+                })
+            })
+        });
+    });
+    /*]]>*/
+</script>
+</html>

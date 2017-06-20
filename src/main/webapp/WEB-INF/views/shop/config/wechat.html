@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='shopCfg_Basic'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div th:replace="shop/config/configTpl::headerTitle('企业设置')"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div th:replace="shop/config/configTpl::nav('wechat')"></div>
+    <form id="sbsForm" class="form-horizontal margin-top-l">
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>企业地址:</span>
+            </label>
+            <label class="col-sm-8 control-label" style="text-align:left;padding-left:0px;">
+                <span th:text="${shopUrl}">企业地址</span>
+            </label>
+        </div>
+        <div class="form-group margin-bottom">
+            <label class="col-sm-2 control-label">
+                <span>配置方式:</span>
+            </label>
+            <div class="col-sm-8 padding-left-zero">
+                <img class="border" src="" th:src="@{/dist/images/wechat_cfg.png}" width="640px"/>
+                <div>
+                    <ul style="font-size: 12px;color: #737373;padding-left:13px;list-style:decimal;">
+                        <li class="margin-top-s">进入微信公众号平台, 并打开<b class="color-red-2">自定义菜单</b>栏目;</li>
+                        <li class="margin-top-s">在<b class="color-red-2">自定义菜单</b>界面, 建立相关菜单;</li>
+                        <li class="margin-top-s">设定店面进入的子菜单, 如: 个人中心;</li>
+                        <li class="margin-top-s">子菜单内容, 设置为:<b class="color-red-2">跳转网页</b>, 并在页面地址中输入: <b class="color-red-2" th:text="${shopUrl}">企业地址</b></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

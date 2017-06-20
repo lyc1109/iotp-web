@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>产品授权管理</title>
+</head>
+<body>
+<div class="data-grid-container">
+    <div class="data-grid-header">
+        <div class="input-group grid-search-group">
+            <input type="text" class="form-control grid-search" placeholder="输入产品货号"/>
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm grid-search-go" type="button">搜索</button>
+            </span>
+        </div>
+    </div>
+
+    <table id="authCodeGrid">
+        <thead>
+        <tr>
+            <th data-width="20%" data-column-id="product.name" data-formatter="productNameFormatter" data-sortable="false" th:text="${#strings.equalsIgnoreCase(type, 'leaseProduct')} ? '租赁产品' : '产品名称'">产品名称</th>
+            <th data-width="12%" data-column-id="itemCode" data-formatter="productCodeFormatter"  data-sortable="false" th:text="${#strings.equalsIgnoreCase(type, 'leaseProduct')} ? '产品代码' : '产品货号'">产品货号</th>
+            <th data-width="10%" data-column-id="codeCount">授权数量</th>
+            <th data-width="15%" data-column-id="snStart" data-formatter="formatSn">授权流水号</th>
+            <th data-width="12%" data-column-id="codeSuffix">SN码后缀</th>
+            <th data-width="8%" data-column-id="countUsed" data-sortable="false">已使用</th>
+            <th data-width="10%" data-column-id="createdAt" data-formatter="formatDate" data-order="desc">创建时间</th>
+            <th data-width="18%" data-column-id="command" data-formatter="commands">操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
+
+<input type="hidden" th:value="${type}" id="type"/>
+<input type="hidden" th:value="${productId}" id="productId"/>
+<input type="hidden" th:value="${leaseProductId}" id="leaseProductId"/>
+
+</body>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        AuthCode.initGrid("authCodeGrid", {
+            type: $("#type").val(),
+            productId: $("#productId").val(),
+            leaseProductId: $("#leaseProductId").val()
+        });
+    });
+    /*]]>*/
+</script>
+</html>

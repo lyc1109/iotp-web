@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='home'">
+<head>
+    <title>管理工具箱</title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" style="color:red">发送Iot设备指令</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post">
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>设备Mac地址</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="mac" id="mac" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>指令代码</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="instructionCode" id="instructionCode" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-8 align-right">
+                <input class="btn btn-sm btn-execu btn-danger" style="width:81px;" type="button" value="执行"/>
+            </div>
+        </div>
+    </form>
+
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $(".btn-execu").on("click", function(){
+                var instance = $('#iotForm').parsley();
+                if(instance.validate() !== true){
+                    return;
+                }
+
+                var mac = $("#mac").val();
+                var instructionCode = $("#instructionCode").val();
+                $.post("/tools/execuInstruction", {
+                    "macAddress" : mac,
+                    "instructionCode" : instructionCode
+                }, function(data){
+                    if(data.returnCode == 0){
+                        // 获取执行结果
+                        $("body").mask("命令发送成功，等待执行结果...");
+                        executeSuccess = false;
+                        fetchTime = 0;
+                        loadResult(data.instructionId);
+                    }else{
+                        toast(data.returnMsg);
+                    }
+                }, 'json');
+            });
+        });
+
+        var timeout = 15000,
+                executeSuccess = false,
+                fetchTime = 0;
+
+
+        function loadResult(instructionId){
+            if(fetchTime === timeout){
+                $("body").unmask();
+                toast("命令执行超时，请重新尝试。", "error");
+                fetchTime = 0;
+                executeSuccess = false;
+                return;
+            }
+
+            setTimeout(function () {
+                $.ajax({
+                    url: "/tools/getInstructionResult",
+                    data: {instructionId: instructionId},
+                    type: "GET",
+                    dataType: "json"
+                })
+                        .done(function (resp) {
+                            console.log(resp);
+                            if(resp.returnCode === 0) {
+                                var instructionResult = resp.instructionResult;
+                                if(null !== instructionResult && instructionResult.resultCode === 0){
+                                    $("body").unmask();
+                                    executeSuccess = true;
+                                    fetchTime = 0;
+                                    toast("命令执行成功");
+                                }
+                            }else {
+                                $("body").unmask();
+                                executeSuccess = true;
+                                fetchTime = 0;
+                                toast(resp.returnMsg, "error");
+                            }
+
+                        })
+                        .fail(function () {
+                            $("body").unmask();
+                            toast("命令执行失败，请重新尝试", "error");
+                            fetchTime = 0;
+                            executeSuccess = false;
+                        })
+                        .always(function () {
+                            if(fetchTime <= timeout && !executeSuccess){
+                                fetchTime += 1000;
+                                loadResult(instructionId);
+                            }
+                        });
+            }, 1000);
+        }
+        /*]]>*/
+    </script>
+</section>
+</html>

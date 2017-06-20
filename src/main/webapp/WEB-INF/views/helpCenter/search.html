@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>帮助中心</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <th:block>
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="/dist/3rd/editormd/editormd.min.css" />
+        <link rel="stylesheet" href="/dist/3rd/editormd/editormd.preview.min.css"/>
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet"/>
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/dist/3rd/editormd/editormd.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/marked.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/prettify.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/raphael.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/underscore.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/sequence-diagram.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/flowchart.min.js"></script>
+        <script src="/dist/3rd/editormd/lib/jquery.flowchart.min.js"></script>
+    </th:block>
+
+    <link rel="stylesheet" href="/dist/css/pages/helpCenter/search.css"/>
+    <style>
+        /*body {
+            font-family: 微软雅黑, "Microsoft Yahei", "Hiragino Sans GB", tahoma, arial, 宋体;
+            line-height: 1.8;
+        }*/
+
+    </style>
+</head>
+<body>
+<th:block th:replace="helpCenter/centerTpl::center-header"></th:block>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-2" id="sider-left">
+            <div id="nav-wrap">
+                <div id="helpnav">
+                    <span>搜索结果</span>
+                    <ul class="list-unstyled" th:classappend="${pageCode}==''?'active'" >
+                        <li><a href="#" th:text="'全部(' + (${countHelp}+${countFaq})+')'" title="" th:href="@{/helpCenter/search/list(keyword=${keyword},pageCode=,role=${role})}" >全部(10)</a></li>
+                    </ul>
+                    <ul class="list-unstyled " th:classappend="${pageCode}=='help'?'active'">
+                        <li><a href="#" th:text="'帮助手册(' + ${countHelp}+')'" title="" th:href="@{/helpCenter/search/list(keyword=${keyword},pageCode=help,role=${role})}" >全部(10)</a></li>
+                    </ul>
+                    <ul class="list-unstyled " th:classappend="${pageCode}=='faq'?'active'">
+                        <li><a href="#" th:text="'常见问题(' + ${countFaq}+')'" title="" th:href="@{/helpCenter/search/list(keyword=${keyword},pageCode=faq,role=${role})}" >全部(10)</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-sm-9">
+            <table class="table table-striped" th:if="${hasRelevant} != 'false'">
+                <thead>
+                <tr>
+                    <th>帮助</th>
+                    <th>更新时间</th>
+                    <th>分类</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="help:${helpList}">
+                        <td><a th:text="${help.name}" th:href="@{|/helpCenter/${help.categoryId}/${help.id}?pageCode=help&amp;role=${role}|}"></a></td>
+                        <td th:text="${#dates.format(help.lastModifyTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td th:text="${help.categoryFullName}">
+                            <!--<a th:text="${help.categoryFullName}" th:href="@{|/helpCenter/category/${help.categoryId}|}"></a>-->
+
+                        </td>
+                    </tr>
+                    <tr th:each="help:${faqList}">
+                        <td><a th:text="${help.name}" th:href="@{|/helpCenter/${help.categoryId}/${help.id}?pageCode=faq&amp;role=${role}|}"></a></td>
+                        <td th:text="${#dates.format(help.lastModifyTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td th:text="${help.categoryFullName}">
+                            <!--<a th:text="${help.categoryFullName}" th:href="@{|/helpCenter/category/${help.categoryId}|}"></a>-->
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--<div id="helpList" th:if="${helps}" th:each="help:${helps}">
+                <h4><a th:text="${help.name}" th:href="@{|/helpCenter/${help.categoryId}/${help.id}|}"></a></h4>
+                <p th:text="${help.lastModifyTime}"></p>
+                <small><a th:text="${help.categoryFullName}" th:href="@{|/helpCenter/category/${help.categoryId}|}"></a></small>
+            </div>-->
+            <div th:if="${#lists.size(faqList)==0} and ${#lists.size(helpList)==0}">
+                <h3 class="text-center" th:text="'抱歉！没有搜到相关结果'"></h3>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $(function () {
+
+    });
+</script>
+</html>

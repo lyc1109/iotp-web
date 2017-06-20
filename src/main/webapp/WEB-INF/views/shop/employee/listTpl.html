@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>List Nav</title>
+</head>
+<body>
+<th:block th:fragment="headerTitle(title)">
+    <div>
+        <div class="pull-left title" th:text="${title}">员工管理</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm grid-refresh">
+                <span class="fa fa-refresh"></span> 刷新
+            </button>
+            <a href="#" class="btn btn-default btn-sm" role="button" th:href="@{/shop/employee/role/create}" th:if="false">
+                新增角色
+            </a>
+            <a href="#" class="btn btn-primary btn-sm" role="button" th:href="@{/shop/employee/create}">
+                新增员工
+            </a>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</th:block>
+<th:block th:fragment="nav(nav_code)">
+    <ul class="nav nav-tabs margin-bottom-s" role="tablist">
+        <li role="presentation" class="active" th:if="${#strings.equalsIgnoreCase('employee', nav_code)}">
+            <a href="#">员工管理</a>
+        </li>
+        <li role="presentation" th:if="!${#strings.equalsIgnoreCase('employee', nav_code)}">
+            <a href="#" th:href="@{/shop/employee}">员工管理</a>
+        </li>
+        <li role="presentation" class="active" th:if="${#strings.equalsIgnoreCase('role', nav_code)}">
+            <a href="#">角色管理</a>
+        </li>
+        <li role="presentation" th:if="!${#strings.equalsIgnoreCase('role', nav_code)}">
+            <a href="#" th:href="@{/shop/employee/role}">角色管理</a>
+        </li>
+    </ul>
+</th:block>
+</body>
+</html>

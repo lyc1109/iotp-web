@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title></title>
+</head>
+<body>
+<div class="data-grid-container">
+    <table id="dataGrid">
+        <thead>
+        <tr>
+            <th data-width="30%" data-column-id="productName">商品名称</th>
+            <th data-width="20%" data-column-id="itemCode" data-order="asc">商品货号</th>
+            <th data-width="10%" data-column-id="snStart" data-formatter="formatSn">流水号</th>
+            <th data-width="10%" data-column-id="countUsed" data-formatter="formatCount">已使用</th>
+            <th data-width="10%" data-column-id="size">打印尺寸</th>
+            <th data-width="20%" data-column-id="command" data-formatter="commands">操作</th>
+        </tr>
+        </thead>
+    </table>
+
+    <input type="hidden" th:value="${productId}" id="productId"/>
+</div>
+</body>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        new BootGrid({
+            url: "/shop/productQRCode",
+            data: {productId: $("#productId").val()},
+            formatters:{
+                formatSn: function (column, rows) {
+                    return rows[column.id] + "~" + rows.snEnd;
+                },
+                formatCount: function (column, rows) {
+                    return rows[column.id] + "/" + (rows.snEnd-rows.snStart+1);
+                },
+                commands: function (column, rows) {
+                    var btns = '<button type="button" class="btn btn-xs btn-default cmd-reprint" ';
+                    btns += 'data-row-id="'+ rows.id +'"';
+                    btns += 'data-product-id="'+ rows.productId +'"';
+                    btns += 'data-item-code="'+ rows.itemCode +'"';
+                    btns += 'data-size="'+ rows.sizeVal +'"';
+                    btns += 'data-sn-start="'+ rows.snStart +'"';
+                    btns += 'data-sn-end="'+ rows.snEnd +'"';
+                    btns += '>重新打印</button> ';
+
+                    btns += ' <button type="button" class="btn btn-xs btn-default cmd-used" data-row-id="'+ rows.id +'">使用记录</button>';
+                    return btns;
+                }
+            },
+            onLoaded: function () {
+                $(".cmd-reprint").off("click").on("click", function () {
+                    var data = $(this).data();
+                    data.count = data.snEnd - data.snStart + 1;
+                    QRCode.rePrint(data);
+                });
+
+                $(".cmd-used").off("click").on("click", function () {
+                    QRCode.viewUsed($(this).data("rowId"));
+                });
+            }
+        })
+    });
+    /*]]>*/
+</script>
+</html>

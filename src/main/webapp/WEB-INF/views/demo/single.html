@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-single-page"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+    <!--<link rel="stylesheet" type="text/css" th:href="@{/dist/css/pages/member/device-dashboard.css}"/>-->
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="divider">
+        用水统计
+
+        <div class="pull-right">
+            <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                <!--<button type="button" class="btn btn-default" data-type="day">日</button>-->
+                <button type="button" class="btn btn-info" data-type="week">周</button>
+                <button type="button" class="btn btn-default" data-type="month">月</button>
+                <button type="button" class="btn btn-default" data-type="year">年</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="divider">净水明细</div>
+
+    <div id="highChartContainer"></div>
+
+    <input type="hidden" th:value="*{iotDeviceId}" id="iotDeviceId"/>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts-3d.js"></script>
+    <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/themes/dark-unica.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _chart = null;
+        sessionStorage.setItem('id',this.equipDataSearch[index].id)
+        var id = sessionStorage.getItem('id');
+        function fetchData(dateScopeType) {
+            App.ajax.get({
+                url: '/api/v1/lease/devices/' + id + '/report',
+                data: {
+                    dateScopeType: dateScopeType
+                },
+                onSuccess: function (resp) {
+                    renderCharts(dateScopeType, resp.data);
+                }
+            });
+        }
+
+        function renderCharts(dateScopeType, datas) {
+            var categories = [];
+            var step = 1;
+            if(dateScopeType === "week"){
+                categories = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+            }
+            else if(dateScopeType === "month"){
+                step = 6;
+                $.each(datas, function (idx, data) {
+                    categories.push(moment(data.date).format("MM-DD"));
+                })
+            }
+            else if(dateScopeType === "year"){
+                $.each(datas, function (idx, data) {
+                    categories.push(moment(data.date).format("YYYY-MM"));
+                })
+            }
+
+            // 更新x坐标
+            var xAxis = _chart.xAxis[0];
+            xAxis.update({
+                labels: {
+                    step: step,
+                    rotation: -45
+                },
+                categories: categories
+            });
+
+            // 更新对应数据列
+            var series = _chart.series[0];
+            var seriesData = [];
+            $.each(datas, function (idx, data) {
+                //seriesData.push(parseInt(Math.random()*100));
+                seriesData.push(data.outWaterFlow);
+            });
+            series.update({
+                data: seriesData
+            });
+        }
+
+        $(function () {
+            $(".btn").on("click", function () {
+                $(this)
+                        .siblings(".btn")
+                        .removeClass("btn-info btn-default")
+                        .addClass("btn-default");
+
+                $(this).removeClass("btn-default").addClass("btn-info");
+
+                fetchData($(this).data("type"));
+            });
+
+            _chart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'highChartContainer',
+                    type: 'column',
+                    events: {
+                        load: fetchData("week")
+                    }
+                },
+                title: {
+                    text: ''
+                },
+                legend: {
+                    enabled: false
+                },
+                xAxis: {
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: ''
+                    }
+                },
+                /*tooltip: {
+                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                 '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                 footerFormat: '</table>',
+                 shared: true,
+                 useHTML: true
+                 },*/
+                /*plotOptions: {
+                 column: {
+                 pointPadding: 0.2,
+                 borderWidth: 0
+                 }
+                 },*/
+                series: [{
+                    name: '净水量(ml)',
+                    data: []
+                }],
+                credits:{
+                    enabled: false
+                }
+            });
+
+//            $("#listContainer").scrollPage({
+//                url: '/iot/iwater/' +  $("#iotDeviceId").val() + "/report/data/node",
+//                afterLoad: function () {
+//                }
+//            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

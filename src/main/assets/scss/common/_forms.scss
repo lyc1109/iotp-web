@@ -1,0 +1,140 @@
+/* -------------------------------------------------------
+ * 组件 -- 表单相关
+ * ------------------------------------------------------- */
+
+// -----------------
+// 表单
+.form-horizontal-static, .form-min{
+  .form-group{
+    margin-bottom: 8px;
+  }
+}
+
+
+// -----------------
+// 输入框等
+.form-control{
+    @include border();
+    @include box-shadow(0, 0, 0, 0);
+    @include placeholder();
+    /*-webkit-appearance:none;*/
+}
+
+.input-group-addon{
+    border-color: $border;
+    background-color: $light-1;
+}
+
+.input-group .input-group-btn .btn-default{
+    border-color: $border;
+}
+
+// -----------------
+// Label
+.icheck-label{
+  font-weight: normal;
+  cursor: pointer;
+
+  span{
+    display: inline-block;
+    margin-left: 3px;
+    margin-top: 1px;
+    vertical-align: middle;
+  }
+}
+
+.required-label:before{
+  content: "*";
+  color: $red-1;
+  margin-right: 2px;
+}
+
+.control-label{
+  color: $text_second;
+}
+
+// -----------------
+// 警告框
+.alert{
+  padding: 8px;
+  margin: 0;
+}
+
+form .container{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+
+// -----------------
+// 表单/详情页面按钮组
+.form-actions{
+  @extend %margin-top-l;
+  @include border(top);
+  @extend %padding-top-l;
+  max-width: $screen_pc;
+  text-align: center;
+
+  .btn{
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+
+// -----------------
+// 行内表单
+.form-inline{
+  .form-group{
+    @extend %margin-right;
+
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+
+  label.label-title{
+    margin-bottom: 0;
+    display: inline-block;
+    vertical-align: middle;
+    @extend %margin-right;
+    @extend %text-wrapper;
+  }
+}
+
+
+// -----------------
+// 添加图片选择按钮
+.media-plus {
+  width: 80px;
+  height: 80px;
+  @include border-dashed();
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+
+  &:before{
+    content: "+";
+    display: block;
+    font-size: 48px;
+    font-weight: 200;
+    color: $text_light;
+    text-align: center;
+    padding-right: 2px;
+  }
+}
+
+.media-items{
+  display: inline-block;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  position: relative;
+
+  .media-item-remove{
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    font-size: 18px;
+    color: $red-1;
+  }
+}

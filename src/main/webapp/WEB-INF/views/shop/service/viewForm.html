@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='serviceMgm'">
+<head>
+    <title>服务类目详情</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div>
+        <div class="pull-left title">服务类目详情</div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal" data-backdrop="false">
+                禁用
+            </button>
+            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal" data-backdrop="false">
+                删除
+            </button>
+            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal" data-backdrop="false">
+                编辑
+            </button>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div class="form-horizontal margin-top-m" th:object="${entity}">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">类目名称</label>
+            <div class="col-sm-4">
+                <p class="form-control-static" th:text="*{name}"></p>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            // [这里页面内部JS脚本]
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

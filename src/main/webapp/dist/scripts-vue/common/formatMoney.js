@@ -1,0 +1,1 @@
+"use strict";Number.prototype.formatMoney=function(t,s,e,a){t=isNaN(t=Math.abs(t))?2:t,s=void 0!==s?s:"￥",e=e||",",a=a||".";var r=this,i=r<0?"-":"",o=parseInt(r=Math.abs(+r||0).toFixed(t),10)+"",b=(b=o.length)>3?b%3:0;return s+i+(b?o.substr(0,b)+e:"")+o.substr(b).replace(/(\d{3})(?=\d)/g,"$1"+e)+(t?a+Math.abs(r-o).toFixed(t).slice(2):"")};

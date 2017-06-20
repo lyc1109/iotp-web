@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<th:block th:fragment="helpselectGrid">
+    <div class="data-grid-container">
+        <div class="data-grid-header padding-left padding-top-s">
+            <div class="input-group grid-search-group">
+                <input type="text" class="form-control grid-search" placeholder="输入名称"/>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary btn-sm grid-search-go" type="button" style="height: 34px;">搜索</button>
+                </span>
+            </div>
+        </div>
+        <table id="helpselectGrid">
+            <thead>
+            <tr>
+                <th data-width="80px" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-width="180px" data-column-id="categoryFullName">帮助分类</th>
+                <th data-column-id="name">帮助名称</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

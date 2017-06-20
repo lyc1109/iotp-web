@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>SideBar</title>
+</head>
+<body>
+<th:block th:fragment="sidebar(menu_code)">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+            <div class="navbar-header">
+                <a href="javascript:;" class="navbar-brand" th:href="@{/}">
+                    <div class="brand-logo text-wrapper">
+                        <div>
+                            <img id="topShopLogo" src="#" width="32px" height="32px" th:src="@{/dist/images/logo/logo.png}" th:if="${#strings.isEmpty(#authentication.getPrincipal().shopLogo)}"/>
+                            <img id="topShopLogo" src="#" width="32px" height="32px" th:src="${#authentication.getPrincipal().shopLogo} + '!wh100'" th:if="not ${#strings.isEmpty(#authentication.getPrincipal().shopLogo)}"/>
+                        </div>
+                        <span id="topShopName" th:text="${#authentication.getPrincipal().shop.name}">小哈伙伴</span>
+                        <hr/>
+                    </div>
+                </a>
+            </div>
+            <nav>
+                <ul id="sideUl">
+                    <li class="sidebar-item" th:classappend="${#strings.equalsIgnoreCase('home', menu_code)} ? 'active'">
+                        <a href="javascript:;" title="首页" th:href="@{/}">
+                            <em class="iconfont icon-home"></em>
+                            <span>企业首页</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item" th:classappend="${#strings.containsIgnoreCase('serviceOrderMgm', menu_code)} ? 'active'" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                        <a href="javascript:;" title="服务订单" th:href="@{/shop/serviceOrder}">
+                            <em class="iconfont icon-fuwu"></em>
+                            <span>服务订单</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item" th:classappend="${#strings.equalsIgnoreCase('workOrderMgm', menu_code)} ? 'active'">
+                        <a href="javascript:;" title="工单管理" th:href="@{/shop/workOrder}">
+                            <em class="iconfont icon-gongdan"></em>
+                            <span>工单管理</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item"
+                        th:classappend="${#strings.equalsIgnoreCase('ratingMgm', menu_code)} ? 'active'">
+                        <a href="javascript:;" title="评价管理" th:href="@{/shop/rating}">
+                            <em class="iconfont icon-pingjia-o"></em>
+                            <span>评价管理</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item"
+                        th:classappend="${#strings.startsWith(menu_code,'leaseCfg_')} ? 'active'"
+                        th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                        <a class="sidebar-group" href="#leasemgm" title="租赁管理" data-toggle="collapse">
+                            <em class="fa fa-cubes"></em>
+                            <span>租赁管理</span>
+                            <i class="fa fa-angle-down" aria-hidden="true"></i>
+                        </a>
+                        <ul id="leasemgm" class="nav sidebar-subnav collapse"
+                            th:classappend="${#strings.startsWith(menu_code,'leaseCfg_')} ? 'in'">
+                            <li class="sidebar-subnav-header">租赁管理</li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(menu_code,'leaseCfg_LeaseDevice')} ? 'active'">
+                                <a href="" th:href="@{/lease/devices}" title="租赁设备管理">
+                                    <span>租赁设备管理</span>
+                                </a>
+                            </li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(menu_code,'leaseCfg_LeaseProducts')} ? 'active'">
+                                <a href="" th:href="@{/lease/product}" title="租赁产品管理">
+                                    <span>租赁产品管理</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-item" th:classappend="${#strings.equalsIgnoreCase('memberMgm', menu_code)} ? 'active'" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                        <a href="javascript:;" title="会员管理" th:href="@{/shop/member}">
+                            <em class="iconfont icon-user-o"></em>
+                            <span>会员管理</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item" th:classappend="${#strings.equalsIgnoreCase('productMgm', menu_code)} ? 'active'" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                        <a href="javascript:;" title="产品管理" th:href="@{/shop/product}">
+                            <em class="iconfont icon-chanpinguanli"></em>
+                            <span>产品管理</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item" th:classappend="${#strings.equalsIgnoreCase('serviceMgm', menu_code)} ? 'active'" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                        <a href="javascript:;" title="服务管理" th:href="@{/shop/service}">
+                            <em class="iconfont icon-fuwuguanli"></em>
+                            <span>服务管理</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item" th:classappend="${#strings.equalsIgnoreCase('fundMgm', menu_code)} ? 'active'" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                        <a href="javascript:;" title="资金管理" th:href="@{/shop/expenseProcessForm}">
+                            <em class="iconfont icon-baoyangfuwu"></em>
+                            <span>资金管理</span>
+                        </a>
+                    </li>
+                    <!--<li class="sidebar-item" th:classappend="${#strings.equalsIgnoreCase('dashboard', menu_code)} ? 'active'">
+                        <a href="javascript:;" title="数据看板" th:href="@{/shop/dashboard}">
+                            <em class="iconfont icon-dashboard"></em>
+                            <span>数据看板</span>
+                        </a>
+                    </li>-->
+                    <li class="sidebar-item"
+                        th:classappend="${#strings.startsWith(menu_code,'shopCfg_')} ? 'active'">
+                        <a class="sidebar-group" href="#sysconfig" title="企业设置" data-toggle="collapse">
+                            <em class="iconfont icon-cogs"></em>
+                            <span>企业设置</span>
+                            <i class="fa fa-angle-down" aria-hidden="true"></i>
+                        </a>
+                        <ul id="sysconfig" class="nav sidebar-subnav collapse"
+                            th:classappend="${#strings.startsWith(menu_code,'shopCfg_')} ? 'in'">
+                            <li class="sidebar-subnav-header">企业设置</li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(menu_code,'shopCfg_Basic')} ? 'active'" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">
+                                <a href="" th:href="@{/shop/config/basic}" title="基本设置">
+                                    <span>基本设置</span>
+                                </a>
+                            </li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(menu_code,'shopCfg_Employee')} ? 'active'" sec:authorize="hasAnyRole('SUPER_ADMIN', 'ADMIN')">
+                                <a href="#" th:href="@{/shop/employee}" title="员工管理">
+                                    <span>员工管理</span>
+                                </a>
+                            </li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(menu_code,'shopCfg_Media')} ? 'active'">
+                                <a href="" th:href="@{/media}" title="素材管理">
+                                    <span>素材管理</span>
+                                </a>
+                            </li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(menu_code,'shopCfg_WorkFlow')} ? 'active'" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                                <a href="" th:href="@{/workflow}" title="审批配置">
+                                    <span>审批配置</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+</th:block>
+</body>
+</html>

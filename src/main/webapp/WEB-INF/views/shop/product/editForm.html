@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>产品管理</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/summernote/summernote.css}"/>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:text="${entity.isNew()} ? '发布产品' : '修改产品信息'">产品管理</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post" th:object="${entity}" th:action="@{|/shop/product/*{id}/save|}">
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>产品类型</span>
+            </label>
+            <div class="col-sm-8">
+                <div class="text-second" th:if="${isMapping}">
+                    <p class="form-control-static">该配件已被关联，不可更改类型</p>
+                    <input type="hidden" name="productType" th:value="*{productType}"/>
+                </div>
+                <div th:if="!${isMapping}">
+                    <label class="radio-inline">
+                        <input type="radio" class="icheck chk-product-type-cp" name="productType" id="productType0" value="CP" th:checked="*{productType} == 'CP'"/> 设备
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" class="icheck chk-product-type-pj" name="productType" id="productType1" value="PJ" th:checked="*{productType} == 'PJ'"/> 配件
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" class="icheck chk-product-type-zp" name="productType" id="productType2" value="ZP" th:checked="*{productType} == 'ZP'"/> 赠品
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="deviceType" class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>设备类型</span>
+            </label>
+            <div class="col-sm-8">
+                <label class="radio-inline">
+                    <input type="radio" class="icheck" name="deviceType" value="C" th:checked="*{deviceType} == 'C'"/> 普通设备
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" class="icheck" name="deviceType" value="I" th:checked="*{deviceType} == 'I'"/> 智能设备
+                </label>
+            </div>
+        </div>
+
+        <div id="iotDeviceInfo" style="display: none;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label required" for="iotDeviceType">智能设备类型</label>
+                <div class="col-sm-8">
+                    <div>
+                        <select class="form-control select2" name="iotDeviceType" id="iotDeviceType" style="width: 100%;"
+                                data-parsley-errors-container="#iotDeviceTypeError">
+                            <option
+                                    th:each="deviceType : ${iotDeviceTypes}"
+                                    th:value="${deviceType.value}"
+                                    th:text="${deviceType.name}"
+                                    th:selected="${#strings.equalsIgnoreCase(deviceType.value, entity.iotDeviceType)}">净水机</option>
+                        </select>
+                    </div>
+                    <div id="iotDeviceTypeError"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label required" for="iotDeviceModel">智能设备型号</label>
+                <div class="col-sm-8">
+                    <div>
+                        <select class="form-control select2" name="iotDeviceModel" id="iotDeviceModel" data-placeholder="请选择智能设备型号" style="width: 100%;"
+                                data-parsley-errors-container="#iotDeviceModelError">
+                        </select>
+                    </div>
+                    <div id="iotDeviceModelError"></div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="margin-top-l margin-bottom-l"/>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>产品分类</span>
+            </label>
+            <div class="col-sm-8">
+                <div>
+                    <select id="productCategoryConfuseIds" class="form-control select2" data-placeholder="请选择产品分类" name="productCategoryConfuseIds" multiple="multiple"
+                            data-parsley-required="true"
+                            data-parsley-errors-container="#productCategoryError">
+                        <option th:each="option : ${categoryOptions}"
+                                th:value="${option.value}"
+                                th:text="${option.name}"
+                                th:selected="${#strings.equalsIgnoreCase(option.name, entity.categoryName1)} or ${#strings.equalsIgnoreCase(option.name, entity.categoryName2)} or ${#strings.equalsIgnoreCase(option.name, entity.categoryName3)}">分类名称</option>
+                    </select>
+                </div>
+                <div id="productCategoryError"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>产品品牌</span>
+            </label>
+            <div class="col-sm-8">
+                <select id="productBandConfuseId" class="form-control select2" name="productBandConfuseId" data-placeholder="请选择产品品牌">
+                    <option th:each="option : ${bandOptions}"
+                            th:value="${option.value}"
+                            th:text="${option.name}"
+                            th:selected="${#strings.equalsIgnoreCase(option.name, entity.bandName)}">品牌名称</option>
+                </select>
+            </div>
+        </div>
+
+        <hr class="margin-top-l margin-bottom-l"/>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>产品名称</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="name" th:value="*{name}" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="form-group" id="productItemCodeFormGroup">
+            <label class="col-sm-2 control-label required" for="productItemCode">
+                <span>产品货号</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="itemCode" id="productItemCode" th:value="*{itemCode}" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>产品规格模板</span>
+            </label>
+            <div class="col-sm-8">
+                <select id="productSpecGroupConfuseId" class="form-control select2" name="productSpecGroupConfuseId">
+                    <option th:each="option : ${specGroupOptions}"
+                            th:value="${option.value}"
+                            th:text="${option.name}"
+                            th:selected="*{productSpecGroupId} == ${option.value}">规格模板名称</option>
+                    <option value="-1" th:selected="*{#strings.isEmpty(productSpecGroupId)}">产品规格不适用</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group product-spec">
+            <label class="col-sm-2 control-label required">
+                <span>产品规格</span>
+            </label>
+            <div class="col-sm-8">
+                <div class="product-spec-container">
+                </div>
+            </div>
+        </div>
+        <div class="form-group product-spec-no">
+            <label class="col-sm-2 control-label required">
+                <span>产品价格</span>
+            </label>
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <span class="input-group-addon">&yen;</span>
+                    <input type="number" step="0.01" min="0" class="form-control currency-input" id="dblPrice" th:value="*{formatPrice}" data-parsley-required="true"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">产品主图</label>
+            <div class="col-sm-8">
+                <div class="inline valign-bottom">
+                    <img src="" th:src="*{#strings.isEmpty(coverImage)} ? '': *{coverImage} + '!wh100'" width="100" height="100px" class="img-rounded" id="coverImagePrev" th:hidden="*{#strings.isEmpty(coverImage)}"/>
+                </div>
+                <div class="inline valign-bottom">
+                    <button type="button" class="btn btn-primary btn-sm" id="btnCoverImagePicker">请选择一张图片</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>产品卖点</span>
+            </label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="sellPoint" th:value="*{sellPoint}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+                <span>产品描述</span>
+            </label>
+            <div class="col-sm-8">
+                <textarea class="form-control summernote" id="productDesc" name="productDesc" placeholder="输入产品介绍" rows="28"
+                          th:utext="*{productDesc}"></textarea>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-10 align-right">
+                <input class="btn btn-sm btn-save" style="width:81px;" type="submit" value="保存"/>
+            </div>
+        </div>
+        <div style="display:none;">
+            <input type="hidden" id="coverImageConfuseId" name="coverImageConfuseId" th:value="*{coverImageId}"/>
+            <input type="hidden" id="price" name="price"/>
+            <input type="hidden" id="listPrice" name="listPrice"/>
+            <input type="hidden" id="specs" name="productSpecs"/>
+            <input type="hidden" id="parentId" name="parentId" th:value="${parentId}"/>
+            <input type="hidden" id="_id" name="id" th:value="*{id}"/>
+
+            <input type="hidden" id="iotDeviceModelVal" th:value="*{iotDeviceModel}"/>
+            <input type="hidden" id="iotDeviceModelName" th:value="${iotDeviceModelName}"/>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <!--<script type="text/javascript" th:src="@{/dist/3rd/maskmoney/jquery.maskMoney.min.js}"></script>-->
+    <script type="text/javascript" th:src="@{/dist/3rd/summernote/summernote.min.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/3rd/summernote/lang/summernote-zh-CN.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/media/media-image-picker.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/components/summernote-init.js}"></script>
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/product/editForm.js?ts=1265124}"></script>
+
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            ProductForm.init();
+
+            $("#iotForm").submit(function(){
+                if($("#coverImageConfuseId").val() === "" || $("#coverImageConfuseId").val().length === 0) {
+                    toast("请选择产品主图", "error");
+                    return false;
+                }
+                return ProductForm.submit();
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

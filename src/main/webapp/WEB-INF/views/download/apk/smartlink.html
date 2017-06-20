@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-single-page">
+<head>
+    <title>下载智能配网工具</title>
+    <!-- 引入页面css -->
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="align-center padding-m">
+        <div class="alert alert-danger" role="alert" id="tips" style="display: none">请点击右上角 > 选择在浏览器打开</div>
+
+        <img th:src="@{/dist/images/smartlink/logo.png}"/>
+        <!--<img th:src="@{/dist/images/smartlink/arrow.png}"/>-->
+
+        <div class="margin-top-m">
+            <button class="btn btn-primary" type="button" id="btnDownload">点我下载智能配网工具</button>
+        </div>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        function isWechat(){
+            return (/MicroMessenger/i).test(window.navigator.userAgent);
+        }
+
+        $(function () {
+            if(isWechat()){
+                $("#tips").show();
+            }else{
+                $("#tips").hide();
+            }
+
+            // [这里页面内部JS脚本]
+            $("#btnDownload").on("click", function () {
+                if(isWechat()){
+                    Messenger.info({
+                        title: "微信限制提示",
+                        message: "请点击右上角选择在浏览器中打开并重新下载"
+                    });
+                }else{
+                    window.open("http://shmedias.oss-cn-shenzhen.aliyuncs.com/softs/SmartLink.apk", "_self");
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

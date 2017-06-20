@@ -1,0 +1,39 @@
+<!-- DataGrid数据表格显示模板 -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE">品智云</title>
+    <th:block th:include="layouts/head::default"/>
+</head>
+<body>
+<div class="wrapper">
+    <div th:replace="layouts/topbar::topbar"></div>
+    <div th:replace="layouts/sidebar::sidebar(${menuCode})"></div>
+
+    <div class="content-wrapper" style="padding: 15px;">
+        <div class="content-heading" style="padding:16px 0;">
+            <section layout:fragment="heading">page title</section>
+        </div>
+
+        <section layout:fragment="content">page main content</section>
+    </div>
+
+    <!--<div th:replace="layouts/footer::footer"></div>-->
+</div>
+<div>
+    <section layout:fragment="footer"></section>
+</div>
+<div style="display:none">
+    <input type="hidden" id="_preAction" th:value="${_preAction}"/>
+    <input type="hidden" id="gridCurPage" th:value="${currentPage}"/>
+</div>
+</body>
+<th:block th:include="layouts/scripts::scripts"/>
+<section layout:fragment="scripts">
+    <!-- Javascript -->
+</section>
+</html>

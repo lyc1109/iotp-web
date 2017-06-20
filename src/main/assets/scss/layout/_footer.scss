@@ -1,0 +1,26 @@
+footer{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60px;
+  border-top: 1px solid #e4eaec;
+  padding: 20px;
+  z-index: 109;
+
+  @include responsive-tablet(){
+    margin-left: $sidebar_width;
+  }
+}
+
+.sidebar-open{
+  footer{
+    @include translate3d($sidebar_width, 0, 0);
+  }
+}
+
+.sidebar-collapsed{
+  footer{
+    margin-left: $sidebar_collapse_width;
+  }
+}

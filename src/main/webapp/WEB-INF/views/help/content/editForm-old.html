@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='helpContent'">
+<head>
+    <link rel="stylesheet" href="/dist/3rd/editormd/editormd.min.css" />
+    <link rel="stylesheet" href="/dist/3rd/editormd/editormd.preview.min.css"/>
+    <title>帮助管理</title>
+    <style>
+        #RelationHelp ul,#RelationFaq ul{
+            margin-bottom: 0px;
+        }
+        #RelationHelp li,#RelationFaq li{
+            font-size: 16px;
+            line-height: 16px;
+            margin-right: 15px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title" th:if="${pageCode}=='help'" th:text="${entity.isNew()} ? '新增普通帮助' : '修改普通帮助'">帮助详情</div>
+    <div class="title" th:if="${pageCode}=='faq'" th:text="${entity.isNew()} ? '新增常见问题' : '修改常见问题'">帮助详情</div>
+    <div class="title" th:if="${pageCode}=='page'" th:text="${entity.isNew()} ? '新增版面帮助' : '修改版面帮助'">帮助详情</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post" th:object="${entity}" th:action="@{|/help/content/*{id}|}">
+        <div class="form-group" id="pageSelect" th:if=" ${pageCode}=='page'">
+            <label class="col-sm-2 control-label required-label">
+                <span>版面</span>
+            </label>
+            <div class="col-sm-6">
+                <select class="form-control" name="code" >
+                </select>
+            </div>
+        </div>
+        <div class="form-group" id="name">
+            <label class="col-sm-2 control-label  required-label">
+                <span>标题</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="name"  th:value="*{name}" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="form-group" id="category">
+            <label class="col-sm-2 control-label  required-label">
+                <span>所属分类</span>
+            </label>
+            <div class="col-sm-6">
+                <select class="form-control" name="categoryId" data-parsley-required="true">
+                    <option th:each="category : ${categories}"
+                        th:label="${category.fullName}"
+                        th:value="${category.id}"
+                        th:selected="${category.id} == *{categoryId}" th:placeholder="'--请选择--'"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group" id="role">
+            <label class="col-sm-2 control-label  required-label">
+                <span>所属角色</span>
+            </label>
+            <div class="col-sm-6">
+                <label class="checkbox-inline">
+                    <input class="icheck" type="checkbox" name="roles" value="CS" data-parsley-required="true" th:checked="${#strings.contains((entity.roles),'CS')}?'checked'"/> 厂商
+                </label>
+                <label class="checkbox-inline">
+                    <input class="icheck" type="checkbox" name="roles" value="FWS"  data-parsley-required="true" th:checked="${#strings.contains((entity.roles),'FWS')}?'checked'"/> 服务商
+                </label>
+                <label class="checkbox-inline">
+                    <input class="icheck" type="checkbox" name="roles" value="SERVICE_MAN" data-parsley-required="true" th:checked="${#strings.contains((entity.roles),'SERVICE_MAN')}?'checked'"/> 服务人员
+                </label>
+                <label class="checkbox-inline">
+                    <input class="icheck" type="checkbox" name="roles" value="MEMBER" data-parsley-required="true" th:checked="${#strings.contains((entity.roles),'MEMBER')}?'checked'"/> 用户
+                </label>
+            </div>
+        </div>
+        <div class="form-group" id="order_no">
+            <label class="col-sm-2 control-label">
+                <span>显示序号</span>
+            </label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" name="order_no" th:value="*{order_no}" data-parsley-type="integer" data-parsley-required="true" data-parsley-min="0"/>
+                <small class="padding">*显示序号为一个大于0的数字, 数字越大显示时越靠前</small>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label  required-label">内容</label>
+            <div class="col-sm-10">
+                <div class="editormd" id="helpConent">
+                    <textarea class="editormd-markdown-textarea" name="content" th:text="*{content}"></textarea>
+
+                    <!-- html textarea 需要开启配置项 saveHTMLToTextarea == true -->
+                    <textarea class="editormd-html-textarea" name="helpConent-html-doc" ></textarea>
+                </div>
+                <span><i class="fa fa-question-circle"> 请用<a href="http://www.markdown.cn/" target="_blank" data-toggle="tooltip" data-placement="left" title="语法说明!">markdown</a>语法编写</i></span>
+                <!--<div class="font-s text-second pull-right">注意：禁止直接复制粘贴图片，请上传到素材中心再点击 <i class="fa fa-picture-o"></i> 进行选取。</div>-->
+            </div>
+        </div>
+        <div class="form-group" id="RelationHelp">
+            <hr class="margin-top-l margin-bottom-l"/>
+            <label class="col-sm-2 control-label">相关帮助</label>
+            <div class="col-sm-6">
+                <ul class="list-unstyled list-inline">
+                    <li th:each="help:${helpList}" th:id="${help.id}" class="alert"><i class='glyphicon glyphicon-check margin-right'></i><span th:text="${help.name}"></span><a href="" class="glyphicon glyphicon-remove margin-left" data-dismiss="alert" aria-label="close"></a></li>
+                </ul>
+                <button type="button" id="selectHelp" class="btn btn-default margin-left">选择帮助</button>
+            </div>
+        </div>
+        <div class="form-group" id="RelationFaq">
+            <hr class="margin-top-l margin-bottom-l"/>
+            <label class="col-sm-2 control-label">常见问题</label>
+            <div class="col-sm-6">
+                <ul class="list-unstyled list-inline">
+                    <li th:each="help:${faqList}" th:id="${help.id}" class="alert"><i class='glyphicon glyphicon-check margin-right'></i><span th:text="${help.name}"></span><a href="" class="glyphicon glyphicon-remove margin-left" data-dismiss="alert" aria-label="close"></a></li>
+                </ul>
+                <button type="button" id="selectFaq" class="btn btn-default margin-left">选择问题</button>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-12 align-right">
+                <input class="btn btn-default" type="button" style="width:81px;" onclick="javascript:history.back()" value="返回"/>
+                <input class="btn btn-sm btn-save" style="width:81px;" type="button" id="btnSave" value="保存"/>
+            </div>
+        </div>
+
+        <input type="hidden" name="createrId" th:value="*{createrId}" />
+        <input type="hidden" name="createDate" th:value="${#calendars.format(entity.createDate,'yyy-MM-dd HH:mm:ss')}" th:if="*{createDate}" />
+        <input type="hidden" id="pageCode" name="pageCode" th:value="${pageCode}"/>
+        <input type="hidden" id="helpCategory" th:value="${helpCategory}"/>
+        <input type="hidden" id="curCode" th:value="*{code}"/>
+        <input type="hidden" id="isNew" th:value="${entity.isNew()}"/>
+        <input type="hidden" name="type" th:value="${pageCode}"/>
+        <div class="relevant hide">
+            <input type="text" name="helpId" th:each="help:${helpList}" th:id="${help.id}" th:value="${help.id}"/>
+            <input type="text" name="helpId" th:each="help:${faqList}" th:id="${help.id}" th:value="${help.id}"/>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/media/media-image-picker.js}"></script>
+    <th:block th:include="layouts/markdown::script"></th:block>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var HelpForm = (function (MDU) {
+            var _HelpGrid = null;
+            var _FaqGrid = null;
+            var selectFaq = [];
+            var selectHelp = [];
+            MDU = {
+                init:function () {
+                    var that = this;
+                    that.editor();
+                    $("#selectHelp").on('click',function () {
+                        that.selectHelp();
+                    });
+                    $("#selectFaq").on('click',function () {
+                        that.selectFaq();
+                    });
+                    $(document).on("click",".glyphicon-remove",function () {
+                        var arg = $(this).parent().attr("id");
+                        $("input[id='"+arg+"']").remove();
+                    })
+                    var helpType = $("#pageCode").val()
+                    if(helpType === "page"){
+                        $("#category").hide();
+                        $("#role").show();
+                        $("#order_no").hide();
+                        $("#name").hide();
+                    }
+                },
+                editor:function () {
+                    editormd("helpConent", {
+                        height : 550,
+                        lineNumbers:false,
+                        path   : "/dist/3rd/editormd/lib/",
+                        saveHTMLToTextarea : true,
+                        placeholder:"帮助内容",
+                        toolbarIcons:function () {
+                            return ["undo", "redo", "|", "bold",  "italic", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "link" , "list-ul", "list-ol", "hr","|","myImage","|","watch", "preview","fullscreen","clear"];
+                        },
+                        toolbarCustomIcons:{
+                            myImage:"<li><a id='myImage' href=\"javascript:;\" title=\"选择图片\" unselectable=\"on\"><i class=\"fa fa-picture-o\" name=\"myImage\" unselectable=\"on\"></i></a></li>"
+                        },
+                        onload:function () {
+                            new ImagePicker({
+                                id:"myImage",
+                                onOk: function (e) {
+                                    var imageUrl = "![]("+e[0].url+")"
+                                    testEditor.insertValue(imageUrl);
+                                }
+                            });
+                        },
+                        onfullscreen:function () {
+                            $('aside.sidebar').hide();
+                            $('header.topbar-wrapper').hide();
+                        },
+                        onfullscreenExit:function () {
+                            $('aside.sidebar').show();
+                            $('header.topbar-wrapper').show();
+                        }
+                    });
+                },
+                selectHelp:function () {
+                    new Dlg({
+                        id: "selectHelpDlg",
+                        title: "选择相关帮助",
+                        url: '/help/content/selectHelps',
+                        width: 800,
+                        height: 500,
+                        onLoaded:function () {
+                            MDU._initHelpGrid();
+                        },
+                        onOk:function () {
+                            MDU._initHelpList(selectHelp);
+                            selectHelp = [];
+                            this.close();
+                        }
+                    });
+                },
+                selectFaq :function () {
+                    new Dlg({
+                        id:"selectFaqDlg",
+                        title:"选择相关问题",
+                        url: '/help/content/selectHelps',
+                        width: 800,
+                        height: 500,
+                        onLoaded:function () {
+                            MDU._initFaqGrid();
+                        },
+                        onOk:function () {
+                            MDU._initFaqList(selectFaq);
+                            selectFaq = [];
+                            this.close();
+                        }
+                    });
+                },
+                _initFaqGrid:function () {
+                  _FaqGrid = new BootGrid({
+                      id: "helpselectGrid",
+                      url: "/help/content",
+                      data:{
+                          pageCode:'faq'
+                      },
+                      selection: true,
+                      multiSelect: true,
+                      rowSelect: true,
+                      rowCount: 10,
+                      onSelected:function (rows) {
+                          selectFaq = selectFaq.concat(rows)
+                      },
+                      onDeSelected:function (rows) {
+                          selectFaq.splice(jQuery.inArray(rows,selectFaq),1);
+                      }
+                  });
+                },
+                _initHelpGrid:function () {
+                    _HelpGrid = new BootGrid({
+                        id: "helpselectGrid",
+                        url: "/help/content",
+                        data:{
+                            pageCode:'help'
+                        },
+                        selection: true,
+                        multiSelect: true,
+                        rowSelect: true,
+                        rowCount: 10,
+                        onSelected:function (rows) {
+                            selectHelp = selectHelp.concat(rows)
+                        },
+                        onDeSelected:function (rows) {
+                            selectHelp.splice(jQuery.inArray(rows,selectHelp),1);
+
+                        }
+                    });
+                },
+                _initFaqList:function (selectFaqList) {
+                    var ul = $("#RelationFaq ul");
+                    for(var i=0;i<selectFaqList.length;i++){
+                        var selectedFaq = selectFaqList[i];
+                        var id = selectedFaq.id;
+                        var flag = false;
+                        $("#RelationFaq ul li").each(function (i,item) {
+                            var oid = $(this).attr("id")
+                            if(id == oid){
+                                flag = true;
+                            }
+                        });
+                        if(!flag){
+                            ul.append("<li id=\""+selectedFaq.id+"\" class=\"alert\"><i class='glyphicon glyphicon-check margin-right'></i>"+selectedFaq.name+"<a href=\"\" class=\"glyphicon glyphicon-remove margin-left\" data-dismiss=\"alert\" aria-label=\"close\"></a></li>");
+                            $("div.relevant").append($("<input type=\"text\" name=\"helpId\" id=\""+selectedFaq.id+"\" value=\""+selectedFaq.id+"\"/>"));
+                        }
+                    }
+                },
+                _initHelpList:function (selectHelpList) {
+                    var ul = $("#RelationHelp ul");
+                    for(var i=0;i<selectHelpList.length;i++){
+                        var selectedHelp = selectHelpList[i];
+                        var id = selectedHelp.id;
+                        var flag = false;
+                        $("#RelationHelp ul li").each(function (i,item) {
+                            var oid = $(this).attr("id")
+                            if(id == oid){
+                                flag = true;
+                            }
+                        });
+                        if(!flag){
+                            ul.append("<li id=\""+selectedHelp.id+"\" class=\"alert \"><i class='glyphicon glyphicon-check margin-right'></i>"+selectedHelp.name+"<a href=\"\" class=\"glyphicon glyphicon-remove margin-left\" data-dismiss=\"alert\" aria-label=\"close\"></a></li>");
+                            $("div.relevant").append($("<input type=\"text\" name=\"helpId\" id=\""+selectedHelp.id+"\" value=\""+selectedHelp.id+"\"/>"));
+                        }
+
+                    }
+                }
+            };
+            return MDU;
+        }(window.HelpForm || {}));
+
+        $(function () {
+            HelpForm.init();
+            if($("#isNew").val()=='true'){
+                $("input[name='roles'][value='CS']").iCheck("check");
+            }
+            var pageHelpOption = [
+                {text:'企业首页',value:'help-page-home'},
+                {text:'服务订单',value:'help-page-serviceOrder'},
+                {text:'工单管理',value:'help-page-workOrder'},
+                {text:'评价管理',value:'help-page-rating'},
+                {text:'会员管理',value:'help-page-member'},
+                {text:'服务管理',value:'help-page-service'},
+                {text:'产品管理',value:'help-page-product'},
+                {text:'资金管理',value:'help-page-fundManage'},
+            ]
+            //设置版面下拉选项
+            $.each(pageHelpOption,function (i,item) {
+                $("select[name='code']").append(new Option(item.text,item.value));
+            });
+            //初始化版面下拉菜单
+            $("select[name='code']").val($("#curCode").val());
+
+
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("select[name='code']").on('change',function () {
+                $("input[name='name']").val($(this).find("option:selected").text());
+            })
+
+            $('#btnSave').on('click',function () {
+                var content = $('.editormd-html-textarea').val();
+                if(content.length > 0){
+                    $('#iotForm').submit();
+                }else{
+                    Messenger.warning("帮助内容不能为空");
+                }
+
+            })
+
+
+
+
+        });
+
+        /*]]>*/
+    </script>
+</section>
+</html>

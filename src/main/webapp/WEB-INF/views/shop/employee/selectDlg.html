@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<th:block th:fragment="employee4selectGrid">
+    <div class="data-grid-container">
+        <div class="data-grid-header padding-left padding-top-s">
+            <div class="input-group grid-search-group">
+                <input type="text" class="form-control grid-search" placeholder="输入名称/货号"/>
+                <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm grid-search-go" type="button">搜索</button>
+            </span>
+            </div>
+        </div>
+        <table id="employee4selectGrid">
+            <thead>
+            <tr>
+                <th data-column-id="id" data-identifier="true" data-visible="false"></th>
+                <th data-width="40%" data-column-id="name">姓名</th>
+                <th data-width="30%" data-column-id="mobile">手机号码</th>
+                <th data-width="30%" data-column-id="email">电子邮箱</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</th:block>
+</body>
+</html>

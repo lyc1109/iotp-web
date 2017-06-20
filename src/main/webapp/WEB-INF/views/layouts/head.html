@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>品智云</title>
+
+    <th:block th:fragment="default">
+        <meta charset="UTF-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="renderer" content="webkit"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="keywords" content=""/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+        <link rel="icon" th:href="@{/dist/images/logo/favicon.ico}" type="image/x-ico"/>
+
+        <th:block th:remove="tag" th:if="${application.isProduct}">
+            <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+            <link href="//cdn.bootcss.com/select2/4.0.3/css/select2.css" rel="stylesheet"/>
+        </th:block>
+
+        <th:block th:remove="tag" th:if="not ${application.isProduct}">
+            <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/bootstrap/css/bootstrap.min.css}"/>
+            <link type="text/css" rel="stylesheet" th:href="@{/dist/3rd/select2/select2.css}"/>
+        </th:block>
+
+        <link type="text/css" rel="stylesheet" th:href="@{/dist/css/vendor.min.css}"/>
+
+        <link type="text/css" rel="stylesheet" th:href="@{/dist/fonts/font-awesome/font-awesome.css}"/>
+        <link type="text/css" rel="stylesheet" th:href="@{/dist/fonts/iconfont/iconfont.css}"/>
+
+        <link type="text/css" rel="stylesheet" th:href="@{/dist/css/app.css}"/>
+    </th:block>
+</head>
+<body>
+</body>
+</html>

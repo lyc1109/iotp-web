@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='home'">
+<head>
+    <title>欢迎登录品智云</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/home/index.css}"/>
+    <link href="//cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet"/>
+    <th:block th:include="layouts/markdown::link"></th:block>
+</head>
+<body data-help-code="help-page-home" data-help-container="editormd-view">
+<section layout:fragment="vue" th:remove="tag">
+    <div id="home" v-cloak="cloak">
+        <!--服务商-->
+        <el-row :gutter="20"  th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+            <el-col :span="20" :lg="20" :md="20" :sm="24" :xs="24" class="index-left">
+                <!--<div class="message-box">-->
+                <!--<i class="message-img iconfont icon-laba"></i>-->
+                <!--<ul class="message-box-main">-->
+                <!--<li class="message-main">小哈品智云通过一个中心、两个标准、三个原则，打造企业服务微生态。帮助企业合理布局服务网络，充分利用自身上下游资源，充分整合社会化资源</li>-->
+                <!--<li class="message-main">哈哈</li>-->
+                <!--<li class="message-main">一本院校，综合实力湖南第五</li>-->
+                <!--</ul>-->
+                <!--</div>-->
+                <el-row class="device">
+                    <el-col :span="6" :lg="6" :md="6" :sm="24" :xs="24">
+                        <h2 class="device-tit">设备激活总数</h2>
+                        <div id="device-nums" style="height: 200px;"></div>
+                    </el-col>
+                    <el-col :span="18" :lg="18" :md="18" :sm="24" :xs="24">
+                        <el-row class="device-box">
+                            <el-col :span="8" :lg="8" :md="8" :sm="24" :xs="24">
+                                <h1>
+                                    <span>{{totalDeviceCount}}</span>
+                                    <i class="iconfont icon-jiantou up"></i>
+                                </h1>
+                                <el-row class="small-detail">
+                                    <el-col v-for="item in deviceBox">
+                                        <i :class="item.icon"></i>
+                                        <span>{{item.title}}</span>
+                                        <b>{{item.value}}</b>
+                                    </el-col>
+                                </el-row>
+                            </el-col>
+                            <el-col :span="8" :lg="8" :md="8" :sm="24" :xs="24">
+                                <h1>
+                                    <b>会员总数</b>
+                                    <span>{{memberCount}}</span>
+                                    <i class="iconfont icon-jiantou down"></i>
+                                </h1>
+                                <el-row class="small-detail">
+                                    <el-col v-for="item in deviceBox2">
+                                        <i :class="item.icon"></i>
+                                        <span>{{item.title}}</span>
+                                        <b>{{item.value}}</b>
+                                    </el-col>
+                                </el-row>
+                            </el-col>
+                            <el-col :span="8" :lg="8" :md="8" :sm="24" :xs="24">
+                                <h1>
+                                    <b>资金池余额</b>
+                                    <span>{{balance}}</span>
+                                    <i class="iconfont icon-jiantou up"></i>
+                                </h1>
+                                <el-row class="small-detail">
+                                    <el-col v-for="item in deviceBox3">
+                                        <i :class="item.icon"></i>
+                                        <span>{{item.title}}</span>
+                                        <b>{{item.value}}</b>
+                                    </el-col>
+                                </el-row>
+                            </el-col>
+                        </el-row>
+                    </el-col>
+                </el-row>
+                <el-row class="module-box" :gutter="20">
+                    <el-col :span="6" :lg="6" :md="6" :sm="24" :xs="24" v-for="(item,index) in moduleBox">
+                        <div :style="{ backgroundColor: item.bg,transform: item.hover }"
+                             v-on:mouseenter="boxEnter(index)"
+                             v-on:mouseleave="boxLeave(index)">
+                            <a :href="item.href">
+                                <i :class="item.icon"></i>
+                                <span>{{item.label}}</span>
+                            </a>
+                        </div>
+                    </el-col>
+                </el-row>
+                <el-row class="index-list" :gutter="20">
+                    <el-col :span="12" :lg="12" :md="12" :sm="24" :xs="24">
+                        <div class="order-list">
+                            <el-tabs v-model="orderListName">
+                                <el-tab-pane v-for="item in orderList" :label="item.label" :name="item.name"></el-tab-pane>
+                            </el-tabs>
+                            <!--执行中订单-->
+                            <transition :enter-active-class="activeClass" :leave-active-class="leaveClass">
+                                <el-col class="ordering" v-show="orderListName === 'doing'">
+                                    <el-table :data="doingData" :row-class-name="doingClass">
+                                        <!--<el-table-column v-for="item in doingTab" :prop="item.prop" :label="item.label" :max-width="item.width"></el-table-column>-->
+                                        <el-table-column prop="shopServiceName" label="服务类型" max-width="150"></el-table-column>
+                                        <el-table-column prop="orderId" label="服务订单">
+                                            <template scope="scope">
+                                                <el-button type="text" size="small" v-on:click="doingID(scope.$index)">{{ doingData[scope.$index].orderId }}</el-button>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="customerNick" label="客户名称" max-width="150"></el-table-column>
+                                    </el-table>
+                                </el-col>
+                            </transition>
+                            <!--最新订单-->
+                            <transition :enter-active-class="activeClass" :leave-active-class="leaveClass">
+                                <el-col class="new-order" v-show="orderListName === 'newest'">
+                                    <el-table :data="newestData" :row-class-name="doingClass">
+                                        <!--<el-table-column v-for="item in newestTab" :prop="item.prop" :label="item.label" :max-width="item.width"></el-table-column>-->
+                                        <el-table-column prop="shopServiceName" label="服务类型" max-width="150"></el-table-column>
+                                        <el-table-column prop="orderId" label="服务订单">
+                                            <template scope="scope">
+                                                <el-button type="text" size="small" v-on:click="newestID(scope.$index)">{{ newestData[scope.$index].orderId }}</el-button>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="customerNick" label="客户名称" max-width="150"></el-table-column>
+                                    </el-table>
+                                </el-col>
+                            </transition>
+                        </div>
+                    </el-col>
+                    <!--我的待办-->
+                    <el-col :span="12" :lg="12" :md="12" :sm="24" :xs="24">
+                        <div class="agenda">
+                            <el-tabs v-model="agendaName">
+                                <el-tab-pane :label="agendaLabel" name="agenda">
+                                    <div class="agendaTab">
+                                        <el-table :data="agendaData" :row-class-name="doingClass">
+                                            <!--<el-table-column v-for="item in agendaTab" :prop="item.prop" :label="item.label" :max-width="item.width"></el-table-column>-->
+                                            <el-table-column prop="processFormEntityType" label="待办类型"></el-table-column>
+                                            <el-table-column prop="subject" label="标题">
+                                                <template scope="scope">
+                                                    <el-button type="text" size="small" v-on:click="agendaID(scope.$index)">{{ agendaData[scope.$index].subject }}</el-button>
+                                                </template>
+                                            </el-table-column>
+                                        </el-table>
+                                    </div>
+                                </el-tab-pane>
+                            </el-tabs>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-col>
+            <!--<el-col :span="4" class="index-right">-->
+            <!--<div class="right-main">-->
+            <!--<el-row :gutter="20" class="helpLogo">-->
+            <!--<el-col :span="12" v-for="item in helpLogo">-->
+            <!--<a :href="item.href">-->
+            <!--<i :class="item.icon"></i>-->
+            <!--<span>{{item.label}}</span>-->
+            <!--</a>-->
+            <!--</el-col>-->
+            <!--</el-row>-->
+            <!--<el-row class="help-box">-->
+            <!--<h2>相关帮助</h2>-->
+            <!--<el-col><a href="">-服务商注册</a></el-col>-->
+            <!--<el-col><a href="">-设置企业公众号</a></el-col>-->
+            <!--<el-col><a href="">-审批配置</a></el-col>-->
+            <!--</el-row>-->
+            <!--<el-row class="help-box">-->
+            <!--<h2>常见问题</h2>-->
+            <!--<el-col><a href="">-如何设置企业微信公众号？</a></el-col>-->
+            <!--<el-col><a href="">-如何远程维护设备？</a></el-col>-->
+            <!--<el-col><a href="">-如何配网绑定设备？</a></el-col>-->
+            <!--</el-row>-->
+            <!--<el-row class="help-box">-->
+            <!--<h2>产品日志</h2>-->
+            <!--<el-col><a href="">-优化：素材管理图片上传、分组修改</a></el-col>-->
+            <!--<el-col><a href="">-新增：会员管理增加会员已购产品详</a></el-col>-->
+            <!--<el-col><a href="">-优化：使用阿里大于替代原有短信服务</a></el-col>-->
+            <!--</el-row>-->
+            <!--</div>-->
+            <!--</el-col>-->
+            <section layout:fragment="help" th:remove="tag">
+                <el-col :span="4" :lg="4" :md="4" :sm="24" :xs="24" class="index-right">
+                    <div class="right-main">
+                        <el-row :gutter="20" class="helpLogo">
+                            <el-col :span="12" v-for="item in helpLogo">
+                                <a :href="item.href">
+                                    <i :class="item.icon"></i>
+                                    <span>{{item.label}}</span>
+                                </a>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <div id="editormd-view" class="col-sm" style="padding: 10px">
+                        <textarea style="display:none;">
+                        </textarea>
+                    </div>
+                </el-col>
+            </section>
+        </el-row>
+
+        <!--厂商-->
+        <el-row th:if="${#authentication.getPrincipal().isServiceVendor()}">
+            <el-col :span="20" :lg="20" :md="20" :sm="24" :xs="24" class="index-left">
+                <div class="title"><span th:text="${shopName}">企业名称</span></div>
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder} : @{/shop/workOrder}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-orange-1 font-bold-500" th:text="${statistics.todoCount}">12</h2>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'CS')}">待执行订单</div>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'FWS')}">待执行工单</div>
+                        </div>
+                    </a>
+
+                </div>
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder(viewType=99,serviceDate=1)} : @{/shop/workOrder(viewType=99,serviceDate=1)}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-red-1 font-bold-500" th:text="${statistics.todayCount}">4</h2>
+
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'CS')}">今日订单</div>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'FWS')}">今日工单</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder(viewType=99,serviceDate=7)} : @{/shop/workOrder(viewType=99,serviceDate=7)}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-blue-2 font-bold-500" th:text="${statistics.weekCount}">8</h2>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'CS')}">本周订单</div>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'FWS')}">本周工单</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder(viewType=40,serviceDate=7)} : @{/shop/workOrder(viewType=40,serviceDate=7)}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-blue-1 font-bold-500 currency-rmb" th:text="${statistics.weekAmount / 100.0}">1560.00</h2>
+                            <div class="text-primary">本周交易额</div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="row margin-top-xxl">
+                    <div class="col-sm-12 col-left-zero col-right-zero">
+                        <h4 class="font-bold-600">常用功能</h4>
+                        <hr/>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s">
+                    <a th:href="@{/shop/workOrder}">
+                        <div class="board board-gray">
+                            <div class="heading"><i class="fa fa-wrench fa-2x color-orange-1"></i></div>
+                            <div class="counting text-primary"> 工单查询 </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s">
+                    <a th:href="@{/shop/employee/create}">
+                        <div class="board board-gray margin-bottom-zero">
+                            <div class="heading"><i class="fa fa-user-plus fa-2x color-cyan"></i></div>
+                            <div class="counting text-primary"> 新增员工 </div>
+                        </div>
+                    </a>
+                </div>
+            </el-col>
+            <section layout:fragment="help" th:remove="tag">
+                <el-col :span="4" :lg="4" :md="4" :sm="24" :xs="24" class="index-right">
+                    <div class="right-main">
+                        <el-row :gutter="20" class="helpLogo">
+                            <el-col :span="12" v-for="item in helpLogo">
+                                <a :href="item.href">
+                                    <i :class="item.icon"></i>
+                                    <span>{{item.label}}</span>
+                                </a>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <div id="editormd-view" class="col-sm" style="padding: 10px">
+                        <textarea style="display:none;">
+                        </textarea>
+                    </div>
+                </el-col>
+            </section>
+        </el-row>
+    </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/home/index.js}"></script>
+    <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts-3d.js"></script>
+    <th:block th:include="layouts/markdown::script"></th:block>
+    <!--<script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/themes/dark-unica.js"></script>-->
+</section>
+</body>
+</html>

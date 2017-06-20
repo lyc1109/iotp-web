@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-vue"
+      th:with="menuCode='home'">
+<head>
+    <title>Iot设备详情</title>
+    <link rel="stylesheet" th:href="@{/dist/css/pages/tools/IotDeviceDetail.css}"/>
+</head>
+<body>
+<section layout:fragment="vue" th:remove="tag">
+    <div id="IotDeviceDetail" v-cloak="cloak">
+        <el-row>
+            <el-col class="title"><span>Iot设备详情查看器</span></el-col>
+            <el-button size="small" v-show="back" v-on:click="goback()" class="back">返回</el-button>
+        </el-row>
+        <el-row type="flex" justify="center">
+            <!--Iot设备详情搜索器-->
+            <el-col :span="12" :lg="12" :md="24" :sm="24" :xs="24" class="IotDeviceDetailMain" v-show="IotDeviceDetailSearch">
+                <el-input v-model="searchInput" placeholder="请输入Mac地址或设备编号" v-on:change="getResult"></el-input>
+                <el-checkbox label="仅显示在线设备" v-model="onoff" v-on:change="getOnoff()"></el-checkbox>
+                <el-col class="searchResults">
+                    <el-radio-group v-model="searchResult" v-on:change="getSearchResult">
+                        <el-radio-button v-for="item in searchResults" :label="item.name" :name="item.value"></el-radio-button>
+                    </el-radio-group>
+                    <!--<el-col>-->
+                        <!--<div class="searchResult" v-for="(item,index) in searchResults" v-on:click="getSearchResult(index)">{{item.name}}</div>-->
+                    <!--</el-col>-->
+                </el-col>
+                <!--查询按钮-->
+                <!--<el-col class="checkDetail">-->
+                    <!--<el-button type="primary" v-on:click="getSearchDetail()">查看Iot设备详情</el-button>-->
+                    <!--<el-dialog size="tiny" :visible.sync="searchDetailDia" top="35%">-->
+                        <!--<i class="el-icon-warning"></i>-->
+                        <!--<p>请选择一个Mac地址</p>-->
+                        <!--<span slot="footer">-->
+                            <!--<el-button type="primary" v-on:click="searchDetailDia = false">确定</el-button>-->
+                        <!--</span>-->
+                    <!--</el-dialog>-->
+                <!--</el-col>-->
+            </el-col>
+
+            <!--Iot设备详情查看器-->
+            <el-col :span="12" :lg="12" :md="24" :sm="24" :xs="24" class="IotDeviceDetailMain" v-show="IotDeviceDetail">
+                <h2 class="title"><span>基本信息</span></h2>
+                <el-row v-for="item in IotDeviceDetails" justify="center" class="IotDeviceDetails">
+                    <el-col :span="12">{{item.key}}:</el-col>
+                    <el-col :span="9" :offset="1">{{item.value}}</el-col>
+                </el-row>
+                <el-row class="parts" justify="center" v-for="(i,index) in IotDevicePart">
+                    <h2 class="title"><span>配件-{{index + 1}}</span></h2>
+                    <el-col class="partsMain">
+                        <el-row>
+                            <el-col :span="12">{{IotDeviceParts.num}}:</el-col>
+                            <el-col :span="9" :offset="1">{{i.partCode}}</el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">{{IotDeviceParts.created}}:</el-col>
+                            <el-col :span="9" :offset="1">{{i.installedAt}}</el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">{{IotDeviceParts.total}}:</el-col>
+                            <el-col :span="9" :offset="1">{{i.waterTotalFlow}}</el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="12">{{IotDeviceParts.percent}}:</el-col>
+                            <el-col :span="9" :offset="1">{{i.availablePercentage}}</el-col>
+                        </el-row>
+                    </el-col>
+                </el-row>
+            </el-col>
+        </el-row>
+    </div>
+</section>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/scripts-vue/tools/IotDeviceDetail.js}"></script>
+</section>
+</body>
+</html>

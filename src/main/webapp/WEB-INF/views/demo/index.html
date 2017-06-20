@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='home'">
+<head>
+    <title>前端UI例子</title>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div class="content-heading">
+        <div class="title">前端UI例子</div>
+    </div>
+
+    <h3 class="page-header">1. 基本说明</h3>
+    <h3 class="page-header">2. 辅助类</h3>
+    <h3 class="page-header">3. css组件</h3>
+    <h3 class="page-header">4. js组件</h3>
+    <ul>
+        <li><h4><a th:href="@{demo/list}">数据表格(BootGrid)</a></h4></li>
+        <li><h4><a th:href="@{demo/dialog}">对话框(Dlg)</a></h4></li>
+    </ul>
+    <h3 class="page-header"><a th:href="@{demo/imagePicker}">5. 图片元素选择器</a></h3>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

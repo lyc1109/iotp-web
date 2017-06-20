@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title></title>
+</head>
+<body th:object="${entity}">
+<form class="form-horizontal container-fluid" id="authCodeForm" role="form">
+    <div th:if="not ${#strings.equalsIgnoreCase(type, 'leaseProduct')}">
+        <div class="form-group margin-top">
+            <label class="col-sm-3 control-label">产品名称</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" th:text="*{product.name}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">产品型号</label>
+            <div class="col-sm-7">
+                <p class="form-control-static" th:text="*{itemCode}"></p>
+            </div>
+        </div>
+    </div>
+    <div th:if="${#strings.equalsIgnoreCase(type, 'leaseProduct')}">
+        <div class="form-group margin-top">
+            <label class="col-sm-3 control-label">租赁产品</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" th:text="*{leaseProductName}"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">产品代码</label>
+            <div class="col-sm-7">
+                <p class="form-control-static" th:text="*{leaseProductCode}"></p>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">打印数量</label>
+        <div class="col-sm-7">
+            <p class="form-control-static" th:text="*{codeCount}"></p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">二维码尺寸</label>
+        <div class="col-sm-7">
+            <select class="form-control" id="qrcodeSize">
+                <!--<option value="100">100*100</option>-->
+                <option value="200" selected="selected">200*200</option>
+                <option value="300">300*300</option>
+                <option value="400">400*400</option>
+                <option value="500">500*500</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="alert alert-warning margin-top" role="alert">下载二维码时浏览器需打开新的页面，注意新页面是否被拦截。</div>
+
+    <input type="hidden" id="authCodeId" th:value="*{id}"/>
+</form>
+</body>
+<!--<script type="text/javascript" th:src="@{/dist/scripts/pages/product/qrcode.js}"></script>-->
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        // 绑定规格选择
+        if($("#authCodeProductSpecId").length > 0){
+            $("#authCodeProductSpecId").on("change", function () {
+                $("#productItemCode").val($("#authCodeProductSpecId").find("option:selected").text());
+            }).trigger("change");
+        }
+    });
+    /*]]>*/
+</script>
+</html>

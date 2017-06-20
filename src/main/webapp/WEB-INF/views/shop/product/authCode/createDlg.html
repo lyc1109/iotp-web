@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title></title>
+</head>
+<body th:object="${entity}">
+    <form class="form-horizontal container-fluid" id="authCodeForm" role="form">
+        <div th:if="not ${#strings.equalsIgnoreCase(type, 'leaseProduct')}">
+            <div class="form-group margin-top">
+                <label class="col-sm-3 control-label">产品名称</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" th:text="${product.name}"></p>
+                </div>
+            </div>
+            <div class="form-group" th:if="not ${product.multiSpec}">
+                <label class="col-sm-3 control-label">产品货号</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" th:text="${product.itemCode}"></p>
+                </div>
+            </div>
+            <div class="form-group" th:if="${product.multiSpec}">
+                <label class="col-sm-3 control-label" for="authCodeProductSpecId">产品货号</label>
+                <div class="col-sm-7">
+                    <select class="form-control" id="authCodeProductSpecId" name="productSpecConfuseId">
+                        <option th:each="item : ${product.specs}" th:value="${item.id}" th:text="${item.itemCode}"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#strings.equalsIgnoreCase(type, 'leaseProduct')}">
+            <div class="form-group margin-top">
+                <label class="col-sm-3 control-label">租赁产品</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" th:text="${leaseProduct.name}"></p>
+                </div>
+            </div>
+            <div class="form-group margin-top">
+                <label class="col-sm-3 control-label">产品代码</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" th:text="${leaseProduct.code}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="form-group">
+            <label class="col-sm-3 control-label" for="authCodeStart">生产线</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" id="productionLine" name="productionLine" th:value="*{productionLine}" data-parsley-required="true"/>
+            </div>
+        </div>-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="authCodeStart">授权起始号</label>
+            <div class="col-sm-7">
+                <input type="number" class="form-control" id="authCodeStart" name="authCodeStart" readonly="readonly" th:value="*{authCodeStart}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="codeCount">授权数量</label>
+            <div class="col-sm-7">
+                <input type="number" class="form-control" id="codeCount" name="codeCount" th:value="1000"
+                       data-parsley-required="true"
+                       data-parsley-min="1"/>
+                <div class="text-s text-second margin-top-s">每次授权数量不得超过1000个</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="codeSuffix">SN码后缀</label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" id="codeSuffix" name="codeSuffix" th:value="*{codeSuffix}"
+                       pattern="^[A-Za-z0-9]+$"
+                       maxlength="5"/>
+                <div class="text-s text-second margin-top-s">仅允许英文字母，数字，不得超过5个字符</div>
+            </div>
+        </div>
+
+        <input type="hidden" name="authType" th:value="*{authType}"/>
+        <input type="hidden" name="productConfuseId" th:value="*{productId}"/>
+        <input type="hidden" name="leaseProductConfuseId" th:value="${leaseProduct.id}" th:if="${#strings.equalsIgnoreCase(type, 'leaseProduct')}"/>
+        <input type="hidden" id="productItemCode" name="itemCode" th:value="*{itemCode}"/>
+    </form>
+</body>
+<!--<script type="text/javascript" th:src="@{/dist/scripts/pages/product/qrcode.js}"></script>-->
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+$(function () {
+    // 绑定规格选择
+    if($("#authCodeProductSpecId").length > 0){
+        $("#authCodeProductSpecId").on("change", function () {
+            $("#productItemCode").val($("#authCodeProductSpecId").find("option:selected").text());
+        }).trigger("change");
+    }
+});
+/*]]>*/
+</script>
+</html>

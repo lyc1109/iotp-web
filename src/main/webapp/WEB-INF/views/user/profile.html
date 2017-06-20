@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>品智云</title>
+    <th:block th:include="layouts/head::default"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/user/profile.css}"/>
+</head>
+<body>
+<div class="wrapper">
+    <div th:replace="layouts/topbar::topbar"></div>
+
+    <div class="wrapper-body">
+        <div class="content-heading">个人中心</div>
+
+
+        <div class="profile">
+            <div class="profile-avatar">
+                <img class="img-circle" src="#" width="90px" height="90px"
+                     th:src="null == ${curUser.avatar} ? '/dist/images/user_avatar.png' : ${curUser.avatar}"/>
+            </div>
+
+            <div class="profile-infos">
+                <div class="inline">
+                    <h4 th:text="|Hi，${curUser.nickname}|"></h4>
+                </div>
+
+                <div class="profile-actions">
+                    <button type="button" class="btn btn-default">个人设置</button>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">个人信息</div>
+            <div class="panel-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block th:include="layouts/scripts::scripts"/>
+<section layout:fragment="scripts">
+    <!-- Javascript -->
+</section>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='helpContentView'">
+<head>
+    <th:block th:include="layouts/markdown::link"></th:block>
+    <title>帮助详情</title>
+    <style>
+        .linkTitle{
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #666;
+            padding-left: 8px;
+            font-size: 14px;
+        }
+        .padding ul{
+            padding-left: 9px;
+        }
+        .padding ul li{
+            line-height: 24px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+
+        }
+    </style>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title pull-left " th:object="${entity}">
+        <p  id="h1-editor-md"><span th:text="*{name}">Markdown转HTML的显示处理</span></p>
+            <p>
+                <span class="label label-info text-s" th:text="*{categoryFullName}"></span>
+                <span class="label label-primary text-s" th:text="${#calendars.format(entity.lastModifyTime,'yyyy-MM-dd HH:mm:ss')
+                }"></span>
+                <input type="hidden" id="code" th:value="*{code}"/>
+            </p>
+    </div>
+    <div class="pull-right" style="margin-top: 31px">
+        <a class="btn btn-default" th:href="@{/help/content(pageCode=${pageCode})}" style="line-height: normal">返回</a>
+        <a class="btn btn-primary" th:href="@{'/help/content/'+${entity.id}+'/edit'(pageCode=${pageCode},helpCategory=${helpCategory},helpType=${helpType})}" style="line-height: normal">编辑</a>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" style="width: 238px" class="form-horizontal" method="post" th:object="${entity}">
+        <div id="editormd-view">
+            <textarea id="append-test" style="display:none;"  th:text="*{content}">
+            </textarea>
+        </div>
+        <div class="padding">
+            <div th:if="${#lists.size(helpList)>0}">
+                <span class="linkTitle">相关帮助</span>
+                <ul style="color: #38F">
+                    <li th:each="help:${helpList}"><a target="_blank" th:href="@{|/help/content/details/${help.categoryId}/${help.id}?pageCode=help|}" th:text="${help.name}"></a></li>
+                </ul>
+            </div>
+            <div th:if="${#lists.size(faqList)>0}">
+                <span class="linkTitle">常见问题</span>
+                <ul style="color: #38F">
+                    <li th:each="faq:${faqList}"><a target="_blank" th:href="@{|/help/content/details/${faq.categoryId}/${faq.id}?pageCode=faq|}" th:text="${faq.name}"></a></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <th:block th:include="layouts/markdown::script"></th:block>
+    <script th:inline="javascript" type="text/javascript">
+        $(function () {
+                editormd.markdownToHTML("editormd-view", {
+                htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                emoji           : true,
+                taskList        : true,
+                tex             : true,  // 默认不解析
+                flowChart       : true,  // 默认不解析
+                sequenceDiagram : true,  // 默认不解析
+            });
+        });
+    </script>
+</section>
+</html>

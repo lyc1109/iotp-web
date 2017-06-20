@@ -1,0 +1,35 @@
+<!-- 表单页、详情页显示模板 -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE">品智云</title>
+    <th:block th:include="layouts/head::default"/>
+</head>
+<body>
+<div class="wrapper">
+    <div th:replace="layouts/topbar::topbar"></div>
+    <div th:replace="layouts/sidebar::sidebar(${menuCode})"></div>
+
+    <div class="content-wrapper">
+        <div class="content-heading">
+            <section layout:fragment="heading">page title</section>
+        </div>
+
+        <div class="content-body">
+            <section layout:fragment="content">page main content</section>
+        </div>
+    </div>
+</div>
+<div style="display:none">
+    <input type="hidden" id="_sbsException" th:value="${_sbsException}"/>
+</div>
+</body>
+<th:block th:include="layouts/scripts::scripts"/>
+<section layout:fragment="scripts">
+    <!-- Javascript -->
+</section>
+</html>

@@ -1,0 +1,168 @@
+
+body {
+  position: relative;
+  overflow: hidden;
+}
+.back {
+  position: absolute;
+  top:0;
+  right: 0px;
+}
+.content-heading {
+  font-size: 20px;
+  line-height: 1.2;
+  margin: 0px 0 5px 0;
+  padding: 8px 0;
+  font-weight: 400;
+  //border-bottom: 1px solid #eaeaea;
+  .title {
+    padding-left: 10px;
+    margin-left: 0px;
+    border-left: 3px solid #23b7e5;
+  }
+
+}
+.content-body {
+  @import "buttons";
+  padding-left: 10px;
+  .form-group {
+    label {
+      font-weight: 600;
+    }
+  }
+}
+
+#RelationFaq li,#RelationHelp li {
+  line-height: 24px;
+  width: 100%;
+  .remove {
+    float: right;
+  }
+}
+.roles {
+  div {
+    margin: 2px 0 2px 5px;
+  }
+}
+.left {
+  padding-right: 10px;
+  width: 220px;
+  position: absolute;
+  top: 0px;
+  left: 0px;;
+  bottom: 0px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid rgb(221, 221, 221);
+  -webkit-transition: left 250ms ease;
+  -moz-transition: left 250ms ease;
+  -o-transition: left 250ms ease;
+  transition: left 250ms ease;
+}
+.right {
+  width: auto;
+  position: absolute;
+  left: 220px;
+  /* height: 100%; */
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  webkit-transition: left 250ms ease;
+  -moz-transition: left 250ms ease;
+  -o-transition: left 250ms ease;
+  transition: left 250ms ease;
+}
+.leftZero {
+  left: -220px;
+}
+.editormd.editormd-vertical {
+  border: 0px;
+  margin: 0px;
+}
+.editormd.page {
+  .markdown-body.editormd-preview-container {
+    width: 280px;
+  }
+  .editormd-html-preview{
+    hr{
+      display: none;
+    }
+  }
+  .markdown-body{
+    h6{
+      font-size: 13px!important;
+      color: #32a8ee!important;
+      text-align: center;
+      margin:0;
+      position: relative;
+      font-weight:normal!important;
+
+      &>a{
+        color: #32a8ee;
+      }
+
+      &:after,&:before{
+        position: absolute;
+        width: 30%;
+        height: 1px;
+        top:50%;
+        content: '';
+        background: #32a8ee;
+        opacity: .4;
+        filter: alpha(opacity=40);
+      }
+      &:after{
+        right:0;
+      }
+      &:before{
+        left:0;
+      }
+    }
+    p{
+      line-height: 25px;
+      margin-bottom:0!important;
+
+      &:before{
+        content: '-';
+        float: left;
+        margin-right:2px;
+      }
+
+      a{
+        font-size: 12px;
+        color: #666;
+        height:25px;
+        width: 93%;
+        overflow: hidden;
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space:nowrap;
+        display: block;
+      }
+      &.updateLog{
+        font-size: 12px;
+        color: #666;
+        height:25px;
+        width: 100%;
+        overflow: hidden;
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space:nowrap;
+        display: block;
+      }
+    }
+  }
+}
+
+
+
+
+
+/*@media screen and (max-width: 1399px){
+  .checkbox-inline {
+    padding-bottom: 5px;
+  }
+  .checkbox-inline:first-child {
+    padding-left: 30px;
+  }
+}*/

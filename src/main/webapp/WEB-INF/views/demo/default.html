@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-default"
+      th:with="menuCode='home'">
+<head>
+    <title></title>
+</head>
+<body>
+<section layout:fragment="content" th:remove="tag">
+    <div id="app">
+    <h4>默认视图</h4>
+    <p>* 无标题</p>
+    <p>* 无content-body样式</p>
+    <img src="" id="images" alt=""/>
+    <button type="button" id="upload">打开</button>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" th:src="@{/dist/js3rd/vue/vue.2.2.6.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+//        $(function () {
+//            new Uploader({
+//                id: "upload",
+//                 prefix:  "images",
+////                 onComplete: function (resp) {
+////                     var img = resp.files[0]
+////                     $("#images").attr("src", img.path)
+////                     // $("#logoImageId").val(img.id)
+////                 }
+//            })
+//        });
+        new Vue({
+            el: '#app',
+            data (){
+                return {}
+            },
+            mounted(){
+                new Uploader({
+                    id: "upload"
+                })
+            },
+            methods: {}
+        })
+        /*]]>*/
+    </script>
+</section>
+</html>

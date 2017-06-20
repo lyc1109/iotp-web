@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='home'">
+<head>
+    <title>管理工具箱</title>
+</head>
+<body>
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">注册租赁设备</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <form id="iotForm" class="form-horizontal margin-top-m parsley-form" method="post">
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>设备编号/ID</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="deviceId" id="deviceId" data-parsley-required="true"/>
+                <div style="font-size:12px;color:red">这里设备编号一定时租赁授权码，否则绑定会失败</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>设备Mac地址</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="macAddress" id="macAddress" data-parsley-required="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label required">
+                <span>用户手机号码</span>
+            </label>
+            <div class="col-sm-6">
+                <input type="number" class="form-control" name="mobile" id="mobile"
+                       pattern="/(^13\d{9}$)|(^14)[5,7]\d{8}$|(^15[0,1,2,3,5,6,7,8,9]\d{8}$)|(^17)[0,3,6,7,8]\d{8}$|(^18\d{9}$)|(^199\d{8}$)/g"
+                       data-parsley-required="true"
+                       data-parsley-error-message="请输入正确手机号码"/>
+            </div>
+        </div>
+        <div class="row border-top margin-top padding-top final-row">
+            <div class="col-sm-8 align-right">
+                <input class="btn btn-sm btn-save btn-success" style="width:81px;" type="button" value="注册"/>
+            </div>
+        </div>
+    </form>
+
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            $(".btn-save").on("click", function(){
+                var instance = $('#iotForm').parsley();
+                if(instance.validate() !== true){
+                    return;
+                }
+
+                $.post("/tools/registerLeaseDevice", {
+                    "deviceId" : $("#deviceId").val(),
+                    "macAddress" : $("#macAddress").val(),
+                    "mobile" : $("#mobile").val()
+                }, function(data){
+                    if(data.returnCode == 0){
+                        toast(data.returnMsg);
+                        $("#deviceId").val("");
+                        $("#macAddress").val("");
+                    }else{
+                        toast(data.returnMsg);
+                    }
+                }, 'json');
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

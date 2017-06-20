@@ -1,0 +1,149 @@
+[v-cloak]{
+  display: none;
+}
+html{
+  font-size: 62.5%;
+}
+#IotDeviceDetail{
+  position: relative;
+  top:0;
+
+  .title{
+    line-height: 40px;
+    border-bottom:1px solid #ececec;
+
+    span{
+      padding-left:10px;
+      border-left: 5px solid #3a9ada;
+      font-size: 20px;
+    }
+  }
+  .back{
+    position: absolute;
+    right: 0;
+    top: 10%;
+  }
+  .IotDeviceDetailMain{
+    margin:20px 0;
+    line-height: 40px;
+
+    &:last-child{
+      margin: 0;
+    }
+
+    .searchResults{
+      border:1px solid #bfcbd9;
+      text-align: center;
+      overflow-y: scroll;
+      height: 40vh;
+
+      //.searchResult{
+      //  width: 100%;
+      //  display: inline-block;
+      //}
+
+      .el-radio-group{
+        width: 100%;
+
+        .el-radio-button{
+          width: 100%;
+          margin-bottom:0;
+        }
+
+        .el-radio-button__inner{
+          border:0 none;
+          border-radius: 0;
+          width: 100%;
+        }
+      }
+    }
+    .checkDetail{
+      text-align: center;
+      margin-top:10px;
+
+      .el-dialog__body{
+        padding:50px 20px 0;
+
+        .el-icon-warning{
+          font-size: 4vw;
+          color: #ea4848;
+        }
+        p{
+          font-size: 1.5vw;
+          color: #555;
+          margin-top:10px;
+        }
+      }
+
+      .el-dialog__footer{
+        text-align: center!important;
+      }
+    }
+    .title{
+      line-height: 40px;
+      border-bottom: 0 none;
+
+      span{
+        color: #333;
+        font-size: 18px;
+        border-left:0 none;
+        //padding-left:0;
+        border-left:3px solid #f07979;
+        //display: inline-block;
+        //line-height: 30px;
+      }
+    }
+    .IotDeviceDetails,.partsMain{
+      &:nth-child(even){
+        background: #eee;
+      }
+      .el-col-12{
+        text-align: right;
+        color: #333;
+      }
+      .el-col-9{
+        color: #757575;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    .partsMain{
+      .el-row{
+        &:nth-child(odd){
+          background: #eee;
+        }
+        &:nth-child(even){
+          background: #fff;
+        }
+      }
+    }
+  }
+}
+@media only screen and (max-width: 767px){
+  .content-wrapper{
+    transform:initial;
+  }
+}
+@media screen and (max-width: 1199px){
+  .checkDetail{
+    .el-dialog--tiny{
+      width: 60%;
+
+      .el-dialog__header{
+        padding-top:10px;
+      }
+      .el-dialog__body{
+        padding:10px 20px 0;
+
+        .el-icon-warning{
+          font-size: 4rem!important;
+        }
+        p{
+          font-size: 1.7rem!important;
+          margin-top:0!important;
+        }
+      }
+    }
+  }
+}

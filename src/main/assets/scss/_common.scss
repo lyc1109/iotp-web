@@ -1,0 +1,347 @@
+/* ----------------------------------------------
+ * 全局通用样式，包括覆盖样式
+ * ---------------------------------------------- */
+
+html,body{ height: 100%; }
+
+body{
+  background-color: $white-1;
+  position: relative;
+  color: $text_primary;
+  margin: 0;
+  overflow: auto;
+  @include font-size();
+
+  @include responsive-tablet(){
+    min-height: 100%;
+  }
+}
+ul,li,ol{
+  list-style-type:none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 10px 0;
+}
+
+h1 {
+  line-height: 43px;
+}
+
+h2 {
+  line-height: 35px;
+}
+
+h3 {
+  line-height: 30px;
+}
+
+h4 {
+  line-height: 22px;
+}
+
+h3 small, h4 small, h5 small {
+  font-weight: 300;
+  color: #444;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 300;
+  color: #505458;
+}
+
+*{
+  outline: none !important;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+a:hover,a:active,a:focus {
+  color: $primary;
+  outline: 0;
+  text-decoration: none;
+}
+
+a.a-default{
+  color: $text_primary !important;
+}
+a.a-white{
+  color: $white-1 !important;
+}
+
+label{
+  font-weight: normal;
+}
+
+.nav>li>a:focus,
+.nav>li>a:hover,
+.nav .open>a,
+.nav .open>a:focus,
+.nav .open>a:hover {
+  background: none;
+}
+
+
+:focus {
+  outline: none;
+}
+
+::-moz-focus-inner {
+  border: 0;
+}
+
+.label{
+  padding: 0.3em 0.6em;
+}
+
+// ---------------------------
+// 滚动条样式
+/* 设置滚动条的样式 */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+  @include border-radius();
+  background-color: $light-1;
+}
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background-color: $border;
+  @include border-radius();
+}
+::-webkit-scrollbar-button {
+  background-color: #888;
+  display: none;
+}
+
+input[type='number'] {
+  -moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+// ---------------------------
+// iCheck 样式覆写
+.radio-inline > div[class*="iradio_square"],
+.checkbox-inline > div[class*="icheckbox_square"]{
+  margin-left: -20px;
+  margin-top: -3px;
+  margin-right: 5px;
+}
+
+// ---------------------------
+// 覆盖日期选择插件
+.datetimepicker{
+  .next i,
+  .prev i{
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .next i:before {
+    content: "\f054";
+  }
+  .prev i:before {
+    content: "\f053";
+  }
+}
+
+// ============================================================================
+// 覆盖导航条 ===================================================================
+.nav-tabs>li>a {
+  border-radius: 0;
+  line-height: 1.25;
+  border: 1px solid #DDD;
+  margin-right: -1px;
+  background-color: #F5F5F5;
+  min-width: 96px;
+  text-align: center;
+  padding-left: 6px;
+  padding-right: 6px;
+  color: #878787;
+}
+
+.bootgrid-no-header {
+  .bootgrid-header {
+    display: none;
+  }
+}
+
+
+// ---------------------------
+// 横线
+hr{
+  border: none;
+  height: 1px;
+  margin: 10px 0;
+  background-color: $light-1;
+}
+
+hr.gray{
+  background-color: $border;
+}
+
+hr.dash{
+  background-color: $white-1;
+  border-top: 1px dashed $light-1;
+}
+
+hr.dotted{
+  background-color: $white-1;
+  border-top: 1px dotted $light-1;
+}
+
+
+// ----------------------------
+// 进度条
+.proc {
+  height: 9px;
+  width: 104px;
+  background: url("/dist/images/proce-icons.png") no-repeat;
+}
+
+.order-process {
+  .wait {
+    background-position: 0 -19px;
+  }
+
+  .doing {
+    background-position: 0 0;
+  }
+
+  .done {
+    background-position: 0 -38px;
+  }
+}
+
+
+// ----------------------------
+// 时间线
+.log-timeline {
+  position: relative;
+  padding: 0;
+  margin-top: 15px;
+  margin-bottom: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    height: 100%;
+    width: 1px;
+    background: #F1F1F1;
+  }
+
+  .log-timeline-row {
+    position: relative;
+    margin: 8px 0;
+
+    .log-timeline-node {
+      position: absolute;
+      top: 5px;
+      left: 17px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #F1F1F1;
+    }
+
+    .log-timeline-content {
+      position: relative;
+      margin-left: 38px;
+      padding: 0 0 5px 0;
+      text-align: left;
+      font-size: 12px;
+      color: #878787;
+
+      .log-timeline-log {
+        float: left;
+      }
+
+      .log-timeline-time {
+        width: 160px;
+        float: left;
+        display: inline-block;
+      }
+    }
+
+    .log-timeline-content:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  }
+
+  .active {
+    .log-timeline-node {
+      position: absolute;
+      top: 0px;
+      left: 15px;
+      width: 0;
+      height: 0;
+      background-color: transparent;
+      color: #FF6600;
+    }
+
+    .log-timeline-content {
+      color: #FF6600;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+}
+
+
+
+// ----------------------------
+// 消息提示
+hr.swal2-spacer{
+  height: auto;
+  margin: auto;
+  background: none;
+}
+
+.swal2-modal{
+  .swal2-title{
+    font-size: 20px;
+    line-height: normal;
+  }
+
+  /*.swal2-icon{
+    width: 60px;
+    height: 60px;
+    margin: 20px auto;
+    font-size: 40px !important;
+    line-height: 60px !important;
+  }*/
+
+  .swal2-content{
+    margin: 15px auto 30px;
+  }
+}
+
+// ----------------------------
+// iCheck图片
+.icheckbox_square-blue,
+.iradio_square-blue {
+  background-image: url(/dist/images/icheck/blue.png);
+}
+/* HiDPI support */
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi), (min-resolution: 1.25dppx) {
+    .icheckbox_square-blue,
+    .iradio_square-blue {
+        background-image: url(/dist/images/icheck/blue@2x.png);
+    }
+}

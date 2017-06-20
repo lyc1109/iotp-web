@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+</head>
+<body>
+<th:block th:fragment="usedDlg">
+    <div class="data-grid-container">
+        <table id="authCodeUsedGrid">
+            <thead>
+            <tr>
+                <th data-width="25%" data-column-id="productAuthCodeQuota.product.name">产品名称</th>
+                <th data-width="15%" data-column-id="productAuthCodeQuota.itemCode">产品货号</th>
+                <th data-width="15%" data-column-id="authCode">设备ID</th>
+                <th data-width="20%" data-column-id="usedAt" data-formatter="formatDateTime">使用时间</th>
+            </tr>
+            </thead>
+        </table>
+
+        <input type="hidden" id="productAuthCodeQuotaId" th:value="${productAuthCodeQuotaId}"/>
+    </div>
+</th:block>
+</body>
+</html>

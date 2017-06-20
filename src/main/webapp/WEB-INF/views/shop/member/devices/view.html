@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='memberMgm'">
+<head>
+    <title></title>
+</head>
+<body class="sbs" th:object="${entity}">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title pull-left">
+        <img src="" class="img-rounded inline" style="width:58px;height:58px;"
+             th:src="*{#strings.isEmpty(productImage)} ? '/dist/images/logo/logo.png' : *{productImage}"/>
+
+        <div class="inline margin-left">
+            <div class="margin-bottom-s">
+                <span th:text="*{deviceName}">产品名称</span>
+            </div>
+            <span class="label label-primary text-s" th:text="*{#strings.equalsIgnoreCase(deviceType,'I')} ? '智能设备' : '普通产品'"></span>
+            <span class="label label-info text-s" th:if="!*{#strings.isEmpty(itemCode)}" th:text="|商品货号: *{itemCode}|"></span>
+
+        </div>
+    </div>
+
+    <div class="pull-right" style="margin-top:15px;">
+
+    </div>
+    <div class="clearfix"></div>
+</section>
+
+<section layout:fragment="content" th:remove="tag">
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="margin-top-l">
+                            <h4 class="color-blue-2">基本信息</h4>
+                            <div class="margin-top text-s">
+
+                                <div class="field-info">
+                                    <span class="field-name">设备别名</span>
+                                    <span th:text="*{deviceName}"></span>
+                                </div>
+
+                                <div class="field-info" th:if="not *{#strings.isEmpty(productSpecId)} and not *{#strings.equalsIgnoreCase(productSpecId, '-1')}">
+                                    <span class="field-name">商品规格</span>
+                                    <span class="label label-info"  th:text="${item}" th:each="item : *{specs}"></span>
+                                </div>
+
+                                <div class="field-info">
+                                    <span class="field-name">安装地址</span>
+                                    <span th:text="*{null != address} ? *{address.fullAddress} : ''"></span>
+                                </div>
+
+                                <div class="field-info">
+                                    <span class="field-name">购买时间</span>
+                                    <span th:text="*{#dates.format(purchasedDate,'yyyy年MM月dd号')}"></span>
+                                </div>
+
+                            </div>
+                            <div class="margin-top-l" th:if="*{#strings.equalsIgnoreCase(deviceType,'I')}">
+                                <h4 class="color-blue-2">智能设备信息</h4>
+                                <div class="margin-top text-s">
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">设备ID</span>
+                                        <span class="col-sm-3" th:text="*{iotDeviceDto.deviceId}"></span>
+                                        <span class="field-name col-sm-2">设备Mac地址</span>
+                                        <span class="col-sm-3" th:text="*{iotDeviceDto.deviceMac}"></span>
+                                    </div>
+
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">设备远程地址</span>
+                                        <span class="col-sm-3" th:text="*{iotDeviceDto.remoteIp}"></span>
+                                        <span class="field-name col-sm-2">是否锁定</span>
+                                        <span class="col-sm-3" th:text="*{iotDeviceDto.locked} ? '是' : '否'"></span>
+                                    </div>
+
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">设备安装时间</span>
+                                        <span class="col-sm-3" th:text="*{#dates.format(iotDeviceDto.installedAt,'yyyy-MM-dd HH:mm:SS')}"></span>
+                                        <span class="field-name col-sm-2">设备激活时间</span>
+                                        <span class="col-sm-3" th:text="*{#dates.format(iotDeviceDto.activedAt,'yyyy-MM-dd HH:mm:SS')}"></span>
+                                    </div>
+
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">设备运行总时长</span>
+                                        <span class="col-sm-3" th:text="(*{iotDeviceDto.totalDuration}/1000)/60 + ' 分钟'"></span>
+                                        <span class="field-name col-sm-2">设备是否在线</span>
+                                        <span class="col-sm-3" th:text="*{iotDeviceDto.online} ? '是':'否'"></span>
+                                    </div>
+
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">异常代码</span>
+                                        <span class="col-sm-3" th:classappend="*{iotDeviceDto.getExceptionMsg()}=='0'?'text-success':'text-danger'" th:text="*{iotDeviceDto.getExceptionMsg()}=='0'?'无异常':*{iotDeviceDto.getExceptionMsg()}"></span>
+                                        <span class="field-name col-sm-2">设备开关状态</span>
+                                        <span class="col-sm-3" th:classappend="*{iotDeviceDto.powerOn}?'text-success':'text-danger'" th:text="*{iotDeviceDto.powerOn}?'开机':'关机'"></span>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                            <div class="margin-top-l" th:if="*{#strings.equalsIgnoreCase(deviceType,'I')} and *{#strings.equalsIgnoreCase(iotDeviceType,'iWater')}">
+                                <h4 class="color-blue-2">智能净水信息</h4>
+                                <div class="margin-top text-s">
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">水位状态</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.waterLevel}==0">水满</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.waterLevel}==1">无水</span>
+                                        <span class="field-name col-sm-2">水泵状态</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.waterPump}==0">停止</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.waterPump}==1">运行</span>
+                                    </div>
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">冲洗状态</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.waterFlush}==0">停止</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.waterFlush}==1">冲洗中</span>
+                                        <span class="field-name col-sm-2">出水阀状态</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.outValve}==0">停止</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.outValve}==1">运行</span>
+                                    </div>
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">进水阀状态</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.inValve}==0">停止</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.inValve}==1">运行</span>
+                                        <span class="field-name col-sm-2">高压开关状态</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.highVoltageSwitch}==0">开启</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.highVoltageSwitch}==1">关闭</span>
+                                    </div>
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">低压开关状态</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.lowVoltageSwitch}==0">开启</span>
+                                        <span class="col-sm-3 text-info" th:if="*{iotDeviceDto.lowVoltageSwitch}==1">关闭</span>
+                                        <span class="field-name col-sm-2">水温值</span>
+                                        <span class="col-sm-3" th:text="*{iotDeviceDto.waterTemperature}"></span>
+                                    </div>
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">净水前TDS值</span>
+                                        <span class="col-sm-3" th:text="|*{iotDeviceDto.inWaterTds} mg/L|"></span>
+                                        <span class="field-name col-sm-2">净水后TDS值</span>
+                                        <span class="col-sm-3" th:text="|*{iotDeviceDto.outWaterTds} mg/L|"></span>
+
+                                    </div>
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-2">总处理水量</span>
+                                        <span class="col-sm-3" th:text="|*{iotDeviceDto.inWaterTotalFlow / 1000} L|"></span>
+                                        <span class="field-name col-sm-1">今日处理水量</span>
+                                        <span class="col-sm-3" th:text="|*{iotDeviceDto.inWaterTodayFlow / 1000} L|"></span>
+                                    </div>
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">总出水量</span>
+                                        <span class="col-sm-3" th:text="|*{iotDeviceDto.outWaterTotalFlow / 1000} L|"></span>
+                                        <span class="field-name col-sm-2">今日出水量</span>
+                                        <span class="col-sm-3" th:text="|*{iotDeviceDto.outWaterTodayFlow / 1000} L|"></span>
+                                    </div>
+                                    <div class="field-info row">
+                                        <span class="field-name col-sm-1">日均用水量</span>
+                                        <span class="col-sm-3" th:text="|*{iotDeviceDto.outWaterAvgFlow / 1000} L|"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="margin-top-l" th:if="*{iotDeviceDto} and !*{#lists.isEmpty(iotDeviceDto.parts)}">
+                                <h4 class="color-blue-2">配件信息</h4>
+                                <div class="margin-top text-s">
+                                    <div  class="field-info row"
+                                       th:each="part : *{iotDeviceDto.parts}"
+                                       th:object="${part}">
+                                        <span class="field-name col-sm-1">配件名称</span>
+                                        <span class="col-sm-3" th:text="*{name}"></span>
+                                        <span class="field-name col-sm-1" th:text="|剩余可使用|"></span>
+                                        <div class="col-sm-3">
+                                            <div class="progress" th:if="*{availablePercentage &gt; 59}">
+                                                <div class="progress-bar progress-bar-success"  th:style="|width: *{availablePercentage}%|"></div>
+                                            </div>
+
+                                            <div class="progress" th:if="*{availablePercentage &gt; 19} and *{availablePercentage &lt; 60}">
+                                                <div class="progress-bar progress-bar-waning"  th:style="|width: *{availablePercentage}%|"></div>
+                                            </div>
+
+                                            <div class="progress" th:if="*{availablePercentage &lt; 20}">
+                                                <div class="progress-bar progress-bar-danger"  th:style="|width: *{availablePercentage}%|"></div>
+                                            </div>
+                                        </div>
+                                        <span class="col-sm-1" th:text="|*{availablePercentage}%|"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2"></div>
+        <div role="tabpanel" class="tab-pane" id="tab3"></div>
+        <div role="tabpanel" class="tab-pane" id="tab4"></div>
+    </div>
+    <input type="hidden" id="id" th:value="*{id}"/>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script type="text/javascript" th:src="@{/dist/scripts/pages/product/authCode.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

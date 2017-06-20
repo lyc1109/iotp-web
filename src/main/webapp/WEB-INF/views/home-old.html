@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-help"
+      th:with="menuCode='home'">
+<head>
+    <title>欢迎登录品智云</title>
+    <link type="text/css" rel="stylesheet" th:href="@{/dist/css/pages/home/home.css}"/>
+    <th:block th:include="layouts/markdown::link"></th:block>
+</head>
+<body data-help-code="help-page-home" data-help-container="editormd-view">
+    <section layout:fragment="heading" th:remove="tag">
+        <div class="title" th:text="${shopName}">企业名称</div>
+    </section>
+    <section layout:fragment="content" th:remove="tag">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder} : @{/shop/workOrder}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-orange-1 font-bold-500" th:text="${statistics.todoCount}">12</h2>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'CS')}">待执行订单</div>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'FWS')}">待执行工单</div>
+                        </div>
+                    </a>
+
+                </div>
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder(viewType=99,serviceDate=1)} : @{/shop/workOrder(viewType=99,serviceDate=1)}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-red-1 font-bold-500" th:text="${statistics.todayCount}">4</h2>
+
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'CS')}">今日订单</div>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'FWS')}">今日工单</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder(viewType=99,serviceDate=7)} : @{/shop/workOrder(viewType=99,serviceDate=7)}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-blue-2 font-bold-500" th:text="${statistics.weekCount}">8</h2>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'CS')}">本周订单</div>
+                            <div class="text-primary" th:if="${#strings.equals(shopType, 'FWS')}">本周工单</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-4 col-md-3 col-left-zero">
+                    <a class="a-default"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/shop/serviceOrder(viewType=40,serviceDate=7)} : @{/shop/workOrder(viewType=40,serviceDate=7)}">
+                        <div class="align-center bg-gray padding-m margin-bottom-s">
+                            <h2 class="color-blue-1 font-bold-500 currency-rmb" th:text="${statistics.weekAmount / 100.0}">1560.00</h2>
+                            <div class="text-primary">本周交易额</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+
+            <div class="row margin-top-xxl">
+                <div class="col-sm-12 col-left-zero col-right-zero">
+                    <h4 class="font-bold-600">常用功能</h4>
+                    <hr/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3 col-left-zero col-min margin-bottom-s" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                    <a th:href="@{/shop/serviceOrder}">
+                        <div class="board board-gray">
+                            <div class="heading"><i class="fa fa-file-text-o fa-2x color-primary"></i></div>
+                            <div class="counting text-primary"> 订单查询 </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s">
+                    <a th:href="@{/shop/workOrder}">
+                        <div class="board board-gray">
+                            <div class="heading"><i class="fa fa-wrench fa-2x color-orange-1"></i></div>
+                            <div class="counting text-primary"> 工单查询 </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                    <a th:href="@{/shop/product}">
+                        <div class="board board-gray">
+                            <div class="heading"><i class="fa fa-cube fa-2x  color-green-3"></i></div>
+                            <div class="counting text-primary"> 商品查询 </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                    <a th:href="@{/shop/member}">
+                        <div class="board board-gray">
+                            <div class="heading"><i class="fa fa-users fa-2x color-pink-2"></i></div>
+                            <div class="counting text-primary"> 会员查询 </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                    <a th:href="@{/shop/partner?viewType=0}">
+                        <div class="board board-gray">
+                            <div class="heading"><i class="fa fa-user-secret fa-2x color-yellow-1"></i></div>
+                            <div class="counting text-primary"> 服务商管理 </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                    <a th:href="@{/shop/product/create}">
+                        <div class="board board-gray margin-bottom-zero">
+                            <div class="heading"><i class="fa fa-plus fa-2x color-red-1"></i></div>
+                            <div class="counting text-primary"> 发布商品 </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s">
+                    <a th:href="@{/shop/employee/create}">
+                        <div class="board board-gray margin-bottom-zero">
+                            <div class="heading"><i class="fa fa-user-plus fa-2x color-cyan"></i></div>
+                            <div class="counting text-primary"> 新增员工 </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                    <a th:href="@{/shop/service/item/create}">
+                        <div class="board board-gray margin-bottom-zero">
+                            <div class="heading"><i class="fa fa-book fa-2x color-primary"></i></div>
+                            <div class="counting text-primary"> 新增服务 </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-3 col-md-3 col-left-zero col-min margin-bottom-s" th:if="!${#authentication.getPrincipal().isServiceVendor()}">
+                    <a th:href="@{/shop/config/wechat}">
+                        <div class="board board-gray">
+                            <div class="heading"><i class="fa fa-wechat fa-2x  color-green-1"></i></div>
+                            <div class="counting text-primary"> 微信配置 </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section layout:fragment="help" th:remove="tag">
+        <div class="container-fluid pageHelp">
+            <!--<div class="row">
+                <div class="col-sm-6 col-min">
+                    <a class="a-default" href="#"  target="_blank"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/helpcenter/iot-help-factory.html} : @{/helpcenter/iot-help-vendor.html}">
+                        <div class="block-gray">
+                            <i class="fa fa-wrench fa-3x text-second"></i>
+                            <div class="margin-top">操作手册</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-min">
+                    <a class="a-default" href="#" onclick="loadDevice()" target="_blank"
+                       th:href="${#strings.equals(shopType, 'CS')} ? @{/helpcenter/iot-help-factory-faq.html} : @{/helpcenter/iot-help-vendor-faq.html}">
+                        <div class="block-gray">
+                            <i class="fa fa-question-circle-o fa-3x text-second"></i>
+                            <div class="margin-top">常见问题</div>
+                        </div>
+                    </a>
+                </div>
+            </div>-->
+            <div class="row">
+                <!--<h2 class="col-sm h2Title"><b>帮助中心</b><a href="/help/content/index" target="_blank">进入></a></h2>-->
+                <div id="editormd-view" class="col-sm" style="padding: 10px" data:shoptype="${shopType}">
+                    <textarea style="display:none;">
+                    </textarea>
+                </div>
+                <!--<div class="col-sm">
+                    <hr/>
+                    <ul id="editormd-faq" class="list-unstyled">
+                    </ul>
+                </div>-->
+            </div>
+            <!--<div class="row">
+                <h2 class="col-sm h2Title"><b>客服联系</b></h2>
+                <div class="col-sm padding-left padding-right list">
+                    <p>电话:0001-001-001</p>
+                </div>
+            </div>
+            <div class="row">
+                <h2 class="col-sm h2Title"><b>近期活动</b><a id="activityMore">更多</a></h2>
+                <div class=" col-sm padding-left padding-right list" id="activityList">
+                </div>
+            </div>
+            <div class="row">
+                <h2 class="col-sm h2Title"><b>产品动态</b><a  id="updateLogMore">更多</a></h2>
+                <div class="col-sm padding-left padding-right list" id="updateLogList">
+
+                </div>
+            </div>-->
+        </div>
+        <!--<div class="row align-center margin-left-zero margin-right-zero">
+            <div class="col-sm-1" style="width:50%;padding:0 5px 0 0;">
+                <div style="padding: 20px 0;background-color:#F5F5F5">
+                    <div>
+                        <i class="fa fa-headphones fa-3x" style="color: #999;"></i>
+                    </div>
+                    <div style="margin-top:10px;">联系客服</div>
+                </div>
+            </div>
+            <div class="col-sm-1" style="width:50%;padding:0 0 0 5px;">
+                <div style="padding: 20px 0;background-color:#F5F5F5">
+                    <div>
+                        <i class="fa fa-question-circle-o fa-3x" style="color: #999;"></i>
+                    </div>
+                    <div style="margin-top:10px;">帮助中心</div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 50px;">
+            <h4 style="font-weight: 600;">常见问题</h4>
+            <hr/>
+        </div>-->
+    </section>
+</body>
+<!-- 自定义Javascript -->
+<section layout:fragment="scripts" th:remove="tag">
+    <th:block th:include="layouts/markdown::script"></th:block>
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        $(function () {
+            /**/
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

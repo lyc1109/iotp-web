@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-form"
+      th:with="menuCode='productMgm'">
+<head>
+    <title></title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title pull-left" style="margin-top: 40px">问题详情</div>
+    <div class="pull-right" style="margin-top: 30px">
+        <a class="btn btn-default" href="javascript:history.back()" style="line-height: normal">返回</a>
+    </div>
+    <div class="clearfix"></div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+    <div class="container-fluid" th:object="${entity}">
+        <div class="row col-sm-8">
+            <h3 class="header " th:text="*{question}"></h3>
+        </div>
+        <div class="row col-sm-8">
+            <h4 class="color-blue-2">基本信息</h4>
+            <div class="field-info">
+                <span class="field-name">是否通用</span>
+                <span th:text="*{is_common_quest} == 1 ? '是':'否'"></span>
+            </div>
+            <div class="field-info">
+                <span class="field-name">创建日期</span>
+                <span th:text="${#dates.format({entity.createdAt},'yyyy-MM-dd HH:mm:ss')}"></span>
+            </div>
+            <div class="field-info">
+                <span class="field-name">最后修改日期</span>
+                <span th:text="${#dates.format({entity.modifiedAt},'yyyy-MM-dd HH:mm:ss')}"></span>
+            </div>
+            <div class="field-info">
+                <span class="field-name">关联产品</span>
+                <span class="label label-info margin-right"  th:each="productMap:*{productList}" th:text="${productMap['productName']}">未关联</span>
+            </div>
+        </div>
+        <div class="row col-sm-8">
+            <h4 class="color-blue-2">问题描述</h4>
+            <hr class="dash"/>
+            <p th:utext="*{question_content}?*{question_content}:'未描述'">
+            </p>
+        </div>
+        <div class="row  col-sm-8">
+            <h4 class="color-blue-2">解决方案</h4>
+            <hr class="dash"/>
+            <p th:utext="*{solution}?*{solution}:'未描述'">
+            </p>
+        </div>
+        <div></div>
+    </div>
+</section>
+</body>
+</html>

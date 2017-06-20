@@ -1,0 +1,435 @@
+ul{
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  -webkit-padding-start: 0;
+}
+li{
+  list-style-type: none;
+}
+[v-cloak]{
+  display: none;
+}
+.equip{
+  position: absolute;
+  background: #fff;
+  width: 97%;
+  top: 0;
+  margin-bottom: 20px;
+
+  h1{
+    border-bottom:1px solid #ececec;
+//    padding-bottom:10px;
+    line-height: 40px;
+    position: relative;
+
+    .title{
+      font-size: 20px;
+      color: #555;
+      border-left: 5px solid #3a9ada;
+      padding-left: 8px;
+      font-weight:normal;
+      height: 40px;
+    }
+  }
+
+  .addBtn{
+    position: absolute;
+    right: 0;
+    top: -5px;
+  }
+  .equipbox{
+    width:100%;
+    margin-top:10px;
+    display: flex;
+    display: -webkit-flex;
+    display: -moz-flex;
+
+    .equipboxli{
+      flex:1;
+      margin:0 20px;
+      cursor: pointer;
+
+      p{
+        text-align: center;
+        /*line-height: 40px;*/
+        margin-top:20px;
+        color: #777;
+      }
+    }
+    .equipboxMain{
+
+      border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      position: relative;
+      vertical-align: bottom;
+      margin:0 auto;
+      width: 10vw;
+      height: 10vw;
+      padding-left: 0;
+
+      li{
+        width: 100%;
+        line-height: 35px;
+        text-align: center;
+        height: 100%;
+        display: inline-block;
+        position: absolute;
+        top:50%;
+        margin-top:-20px;
+
+        span{
+          color: #fff;
+          font-size: 26px;
+        }
+        i{
+          display: none;
+        }
+      }
+    }
+    .equipboxMain+p{
+      font-size: 24px;
+    }
+
+    .blueBox{
+      background: #32a8ee;
+//      box-shadow: 0 0 20px #32a8ee;
+      border: 8px solid #89d3ff;
+    }
+    .grayBox{
+      background: #a8a8a8;
+//      box-shadow: 0 0 20px #a8a8a8;
+      border: 8px solid #c2c2c2;
+      width: 8vw;
+      height: 8vw;
+      margin-top: 42px;
+
+      &+p{
+        font-size: 20px;
+      }
+    }
+    .redBox{
+      background: #e34551;
+//      box-shadow: 0 0 10px #e34551;
+      border: 8px solid #ffaab1;
+      width: 8vw;
+      height: 8vw;
+      margin-top: 42px;
+
+      &+p{
+        font-size: 20px;
+      }
+    }
+    .yellowBox{
+      background: #ffc64b;
+//      box-shadow: 0 0 10px #ffc64b;
+      border: 8px solid #ffe6af;
+      width: 8vw;
+      height: 8vw;
+      margin-top: 42px;
+
+      &+p{
+        font-size: 20px;
+      }
+    }
+    .blackBox{
+      background: #333;
+//      box-shadow: 0 0 10px #333;
+      border: 8px solid #999;
+      width: 8vw;
+      height: 8vw;
+      margin-top: 42px;
+
+      &+p{
+        font-size: 20px;
+      }
+    }
+
+
+  }
+  .equipRecord{
+    margin-top:20px;
+
+    h2{
+      width: 100%;
+      line-height: 40px;
+
+      b{
+        font-size: 18px;
+        padding-left:10px;
+        border-left:5px solid orange;
+      }
+      span{
+        float: right;
+        font-size: 13px;
+        color: #555;
+        font-weight:normal;
+      }
+    }
+    .equipRecordTable{
+      .overdue{
+        color: #e32b2b;
+      }
+      .page{
+        float: right;
+        margin-top: 20px;
+
+        .showPage{
+          display: inline-block;
+          position: relative;
+          top: 5px;
+          font-size: 13px;
+
+          span{
+            color: #333;
+          }
+          b{
+            font-weight:normal;
+            color: #1a93e9;
+          }
+        }
+        .el-pagination{
+          display: inline-block;
+        }
+      }
+      .el-table__body-wrapper{
+        .cell{
+          height: 30px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+  .equipForm{
+    .el-form-item{
+      float: left;
+      margin-right: 8px;
+
+      &:nth-child(2){
+        width: 30%;
+      }
+
+      label{
+        display: inline-block;
+        float: left;
+        margin:0 10px;
+      }
+      .el-button{
+        margin-left:-6px;
+        padding: 11.5px 15px;
+      }
+    }
+  }
+  .el-select{
+    .el-input{
+      width: 100%;
+    }
+  }
+  .searchText{
+    width: 100%;
+    .equipSearch{
+      width: 60%;
+    }
+  }
+}
+
+@media screen and (max-width: 1199px){
+  .iotDeviceMain{
+    padding-left: 10px;
+    padding-right:10px;
+  }
+  .equipRecordTable{
+    .el-table__header-wrapper{
+      display: none;
+    }
+    .el-table__body-wrapper{
+      .el-table__body{
+        table-layout: initial;
+        width: 100%!important;
+
+        tbody{
+          td{
+            display: block;
+            //text-align: right;
+
+            .cell{
+              line-height: 40px;
+              height: 40px!important;
+              width: 80%;
+
+              .el-button{
+                display: block;
+                margin:0 auto;
+              }
+            }
+            .cellTit{
+              display: inline-block;
+              float: left;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+  }
+  .searchText{
+    .el-button--primary{
+      border-color: transparent;
+      background-color: transparent;
+      color: #bfcbd9;
+      font-size: 16px;
+    }
+  }
+
+}
+@media (min-width: 1280px) and (max-width: 1450px){
+  .blueBox{
+    margin-top: .8vw!important;
+  }
+}
+@media screen and (max-width: 768px){
+  .content-wrapper{
+    overflow: initial;
+
+    .equip{
+      position: relative;
+      width: auto;
+
+      .equipbox{
+        display: block!important;
+
+        .equipboxli{
+          &>div{
+            width: 70%;
+            height: 0;
+            padding-bottom:70%;
+            position: relative;
+            margin:0 auto;
+
+            .equipboxMain{
+              width: 100%;
+              height: 100%;
+              -webkit-box-sizing: border-box;
+              -moz-box-sizing: border-box;
+              box-sizing: border-box;
+              position: absolute;
+              background: none;
+
+              &.blueBox{
+                background: #32a8ee;
+              }
+              &.grayBox{
+                background: #a8a8a8;
+                margin-top:0;
+              }
+              &.redBox{
+                background: #e34551;
+                margin-top:0;
+              }
+              &.yellowBox{
+                background: #ffc64b;
+                margin-top:0;
+              }
+              &.blackBox{
+                background: #333;
+                margin-top:0;
+              }
+            }
+          }
+        }
+      }
+    }
+    .page{
+      .showPage{
+        display: none!important;
+      }
+      .el-pagination{
+        float: right;
+      }
+      padding-bottom:20px;
+    }
+    .overdue,.equipRecord{
+      margin-bottom:5px;
+      border-bottom:1px solid #dfe6ec;
+      td{
+        border: 0 none;
+      }
+    }
+    .el-table__empty-block{
+      width:100%!important;
+    }
+    .equipForm{
+      position: relative;
+
+      //.el-col-xs-24{
+      //  position: absolute;
+      //  top:0;
+      //}
+      .el-col-xs-24{
+        //margin-top:35px;
+
+        .el-form-item{
+          margin-bottom:2px;
+          width: 100%;
+        }
+
+        .el-select{
+          //border-right:1px solid #eee;
+          width:100%!important;
+        }
+        &:nth-child(3){
+          .el-select{
+            border-right:0 none;
+          }
+        }
+      }
+
+        .el-input__inner{
+          border: 0 none;
+          color: #333;
+        }
+        //.el-input__icon{
+        //  left:65px;
+        //}
+      .equipSearch{
+        width:83%!important;
+        //.el-input__inner{
+        //  background: #eee;
+        //}
+      }
+    }
+
+  }
+  .el-select-dropdown{
+    border: 0 none;
+    left:0!important;
+    width: 100%;
+    box-shadow: none;
+    //padding-left:20px;
+    border-bottom: 1px solid #c8c7cc;
+    border-top: 1px solid #c8c7cc;
+    background: #f7f7f7;
+    text-align: center;
+
+    .el-select-dropdown__list{
+      padding:0;
+      .el-select-dropdown__item{
+        border-top: 1px solid #c8c7cc;
+
+        &:first-child{
+          border-top: 0 none;
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width: 1199px){
+  .el-table__body-wrapper{
+    overflow: hidden;
+    .cell{
+      width: 65%!important;
+    }
+  }
+}

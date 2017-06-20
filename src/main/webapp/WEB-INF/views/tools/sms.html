@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:data="http://www.thymeleaf.org/extras/data"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      layout:decorator="layouts/layout-grid"
+      th:with="menuCode='productMgm'">
+<head>
+    <title>管理工具箱</title>
+</head>
+<body class="sbs">
+<section layout:fragment="heading" th:remove="tag">
+    <div class="title">短信发送记录查询</div>
+</section>
+<section layout:fragment="content" th:remove="tag">
+
+    <div class="data-grid-container">
+        <div class="data-grid-header padding-left padding-top-s">
+            <div class="input-group grid-search-group">
+                <input type="text" class="form-control grid-search" placeholder="输入手机号码"/>
+                <span class="input-group-btn">
+                <button class="btn btn-primary btn-sm grid-search-go" type="button">搜索</button>
+            </span>
+            </div>
+        </div>
+
+        <table id="dataGrid">
+            <thead>
+            <tr>
+                <th data-width="5%" data-identifier="true" data-column-id="id" data-visible="false"></th>
+                <th data-width="6%" data-column-id="status" data-formatter="formatStatus">状态</th>
+                <th data-width="9%" data-column-id="mobile">手机号码</th>
+                <th data-width="11%" data-column-id="sendAt" data-formatter="formatDateTime" data-order="desc">发送时间</th>
+                <th data-width="24%" data-column-id="content" data-sortable="false">模板内容</th>
+                <th data-width="20%" data-column-id="params" data-sortable="false">模板参数</th>
+                <th data-width="25%" data-column-id="sendResult" data-sortable="false">发送结果</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</section>
+</body>
+<section layout:fragment="scripts" th:remove="tag">
+    <script th:inline="javascript" type="text/javascript">
+        /*<![CDATA[*/
+        var _baseUrl = "/sys/sms/page";
+        var _bootgrid = null;
+
+        $(function () {
+            _bootgrid = new BootGrid({
+                url: _baseUrl,
+                formatters: {
+                    formatStatus: function (column, row) {
+                        if(row.status === 0){
+                            return "<span class='color-red-1'>发送失败</span>";
+                        } else {
+                            return "<span class='color-green-1'>发送成功</span>";
+                        }
+                    }
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+</section>
+</html>

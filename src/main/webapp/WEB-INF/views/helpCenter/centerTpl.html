@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>帮助中心管理</title>
+
+    <th:block th:fragment="head">
+        <link rel="icon" th:href="@{/dist/images/logo/favicon.ico}" type="image/x-ico"/>
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+        <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet"/>
+        <script src="https://cdn.bootcss.com/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+        <link href="https://cdn.bootcss.com/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css" rel="stylesheet"/>
+    </th:block>
+</head>
+<body>
+<th:block th:fragment="center-header">
+    <nav class="navbar navbar-inverse navbar-fixed-top" >
+        <div class="container">
+            <div class="navbar-header" style="top: -5px;position: relative">
+                <!--<a class="navbar-brand" href="#">帮助中心</a>-->
+                <a href="javascript:;" class="navbar-brand" th:href="@{/}">
+                    <div class="brand-logo text-wrapper">
+                        <img id="topShopLogo" src="#" width="32px" height="32px" th:src="@{/dist/images/logo/logo.png}"/>
+                        <span id="topShopName">品智云</span>
+                    </div>
+                </a>
+                <ul class="nav nav-pills pull-right  visible-xs">
+                    <li class="padding-top"><a  style="color: white" th:href="@{/helpCenter(pageCode=help,role=${role})}">帮助手册</a></li>
+                    <li class="padding-top"><a style="color: white" th:href="@{/helpCenter(pageCode=faq,role=${role})}">常见问题</a></li>
+                    <li><span style="color: white;padding-right: 12px;padding-left: 12px" id="searchxs" class="glyphicon glyphicon-search"></span></li>
+            </ul>
+            </div>
+            <div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <li><a th:href="@{/helpCenter(pageCode=help,role=${role})}">帮助手册</a></li>
+                        <li><a th:href="@{/helpCenter(pageCode=faq,role=${role})}">常见问题</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="search opacity" style="position: absolute; top: 50px">
+        <div class="container" style="background-color: #5e7382">
+            <form class="form" style="padding-top: 10px;padding-bottom: 10px" th:action="@{/helpCenter/search/list}" method="get">
+                <div class="input-group">
+                    <input type="text" name="keyword" class="form-control" size="50" placeholder="请用关键字查询" required="required" th:value="${keyword}"/>
+                    <input type="hidden" name="role" th:value="${role}"/>
+                    <div class="input-group-btn right-block">
+                        <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-search"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div class="jumbotron hidden-xs">
+        <div class="container">
+            <div class="inline">
+                <div class="title"><a th:href="@{/helpCenter(role=${role})}" style="text-decoration: none;color: white">帮助中心</a></div>
+                <form class="form" th:action="@{/helpCenter/search/list}" method="get">
+                    <div class="input-group " style="width: 60%;position: relative;margin: 0 auto">
+                        <input type="text" name="keyword" class="form-control input-lg" size="50" placeholder="请用关键字查询" required="required" th:value="${keyword}"/>
+                        <input type="hidden" name="role" th:value="${role}"/>
+                        <div class="input-group-btn right-block">
+                            <button type="submit" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-search"></span></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $("#searchxs").on('click',function () {
+                $(".search").toggleClass("opacity");
+            })
+        })
+    </script>
+
+</th:block>
+</body>
+</html>
